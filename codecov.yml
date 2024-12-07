@@ -1,0 +1,3 @@
+ignore:
+  # exclude any directories that start with "example"
+  - "example/*"
