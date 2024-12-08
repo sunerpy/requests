@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1733635870398,
+  "lastUpdate": 1733662384881,
   "repoUrl": "https://github.com/sunerpy/requests",
   "entries": {
     "Requests-Benchmark": [
@@ -216,6 +216,78 @@ window.BENCHMARK_DATA = {
             "value": 20705,
             "unit": "ns/op",
             "extra": "58940 times\n4 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "nkuzhangshn@gmail.com",
+            "name": "sunerpy",
+            "username": "sunerpy"
+          },
+          "committer": {
+            "email": "nkuzhangshn@gmail.com",
+            "name": "sunerpy",
+            "username": "sunerpy"
+          },
+          "distinct": true,
+          "id": "c8e51a9caf2a6eff1cb52238a31a7a5f31b1b9c9",
+          "message": "feat(requests): 添加自定义 DNS 服务器支持\n\n- 在 Session 类型中增加 WithDNS 方法，支持设置自定义 DNS 服务器\n- 实现自定义 DNS 解析逻辑\n\n- 增加相关单元测试，验证自定义 DNS 功能的正确性",
+          "timestamp": "2024-12-08T20:52:17+08:00",
+          "tree_id": "55f8c734827a3da5f7ef356e94402bbbb2a1c2d6",
+          "url": "https://github.com/sunerpy/requests/commit/c8e51a9caf2a6eff1cb52238a31a7a5f31b1b9c9"
+        },
+        "date": 1733662384100,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkHTTPLibraries/NetHTTP",
+            "value": 95805,
+            "unit": "ns/op",
+            "extra": "12405 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTPLibraries/Requests",
+            "value": 99465,
+            "unit": "ns/op",
+            "extra": "12058 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTPLibraries/Requests_HTTP2",
+            "value": 100949,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTPLibraries/Requests_HTTP2_withmax",
+            "value": 100439,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTPLibrariesParallel/NetHTTP",
+            "value": 25286,
+            "unit": "ns/op",
+            "extra": "46009 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTPLibrariesParallel/Requests",
+            "value": 20489,
+            "unit": "ns/op",
+            "extra": "58611 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTPLibrariesParallel/Requests_HTTP2",
+            "value": 20552,
+            "unit": "ns/op",
+            "extra": "58785 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTPLibrariesParallel/Requests_HTTP2_withmax",
+            "value": 20754,
+            "unit": "ns/op",
+            "extra": "59725 times\n4 procs"
           }
         ]
       }
