@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1733635555690,
+  "lastUpdate": 1733635870398,
   "repoUrl": "https://github.com/sunerpy/requests",
   "entries": {
     "Requests-Benchmark": [
@@ -144,6 +144,78 @@ window.BENCHMARK_DATA = {
             "value": 20922,
             "unit": "ns/op",
             "extra": "58866 times\n4 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "nkuzhangshn@gmail.com",
+            "name": "sunerpy",
+            "username": "sunerpy"
+          },
+          "committer": {
+            "email": "nkuzhangshn@gmail.com",
+            "name": "sunerpy",
+            "username": "sunerpy"
+          },
+          "distinct": true,
+          "id": "7ea5ab731a6c5432699c5f151dbcd6cb70f0c1ea",
+          "message": "docs: 更新 README 文件并添加中文版本\n\n- 更新英文 README.md 文件内容\n- 新增中文 readme-cn.md 文件\n- 优化文档结构，增加目录和徽章\n- 更新示例代码和 API 文档\n- 新增 Benchmark 工作流，运行性能测试生成 HTML 报告并上传到 GitHub Pages",
+          "timestamp": "2024-12-08T13:28:58+08:00",
+          "tree_id": "6ca69b4379cc17bcd5eca42c26ece664d5426412",
+          "url": "https://github.com/sunerpy/requests/commit/7ea5ab731a6c5432699c5f151dbcd6cb70f0c1ea"
+        },
+        "date": 1733635869599,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkHTTPLibraries/NetHTTP",
+            "value": 95525,
+            "unit": "ns/op",
+            "extra": "12519 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTPLibraries/Requests",
+            "value": 99849,
+            "unit": "ns/op",
+            "extra": "12178 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTPLibraries/Requests_HTTP2",
+            "value": 98913,
+            "unit": "ns/op",
+            "extra": "12192 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTPLibraries/Requests_HTTP2_withmax",
+            "value": 98642,
+            "unit": "ns/op",
+            "extra": "12213 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTPLibrariesParallel/NetHTTP",
+            "value": 24988,
+            "unit": "ns/op",
+            "extra": "48128 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTPLibrariesParallel/Requests",
+            "value": 20210,
+            "unit": "ns/op",
+            "extra": "59992 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTPLibrariesParallel/Requests_HTTP2",
+            "value": 20913,
+            "unit": "ns/op",
+            "extra": "60295 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTPLibrariesParallel/Requests_HTTP2_withmax",
+            "value": 20705,
+            "unit": "ns/op",
+            "extra": "58940 times\n4 procs"
           }
         ]
       }
