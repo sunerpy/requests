@@ -14,6 +14,7 @@ Go Requests is a simple and easy-to-use HTTP request library for Go, inspired by
 * Supports HTTP request timeout configuration
 * Supports file upload and download
 * Supports proxy settings
+* Supports DNS server settings
 * Supports request redirection and cookie management
 
 ## Install

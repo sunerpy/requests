@@ -4,12 +4,21 @@ import (
 	"context"
 	"crypto/tls"
 	"errors"
+	"fmt"
+	"net"
 	"net/http"
 	"net/url"
 	"sync"
 	"time"
 
 	"github.com/sunerpy/requests/models"
+)
+
+const (
+	idleConnTimeout         = 90 * time.Second
+	dnsResloveTimeout       = 15 * time.Second
+	defaultDisableKeepAlive = false
+	defaultMaxIdleConns     = 100
 )
 
 var (
@@ -25,10 +34,10 @@ func init() {
 	http1TransportPool = sync.Pool{
 		New: func() interface{} {
 			return &http.Transport{
-				MaxIdleConns:        100,
-				MaxIdleConnsPerHost: 100,
-				IdleConnTimeout:     90 * time.Second,
-				DisableKeepAlives:   false,
+				MaxIdleConns:        defaultMaxIdleConns,
+				MaxIdleConnsPerHost: defaultMaxIdleConns,
+				IdleConnTimeout:     idleConnTimeout,
+				DisableKeepAlives:   defaultDisableKeepAlive,
 				ForceAttemptHTTP2:   false,
 				TLSNextProto:        make(map[string]func(string, *tls.Conn) http.RoundTripper),
 			}
@@ -37,16 +46,34 @@ func init() {
 	http2TransportPool = sync.Pool{
 		New: func() interface{} {
 			return &http.Transport{
-				MaxIdleConns:        100,
-				MaxIdleConnsPerHost: 100,
-				IdleConnTimeout:     90 * time.Second,
-				DisableKeepAlives:   false,
+				MaxIdleConns:        defaultMaxIdleConns,
+				MaxIdleConnsPerHost: defaultMaxIdleConns,
+				IdleConnTimeout:     idleConnTimeout,
+				DisableKeepAlives:   defaultDisableKeepAlive,
 				ForceAttemptHTTP2:   true,
 				// TLSNextProto 保持默认，支持 HTTP/2
 			}
 		},
 	}
 	defaultSess = NewSession()
+}
+
+func GetTransport(enableHTTP2 bool) *http.Transport {
+	if enableHTTP2 {
+		return http2TransportPool.Get().(*http.Transport)
+	}
+	return http1TransportPool.Get().(*http.Transport)
+}
+
+func PutTransport(transport *http.Transport) {
+	if transport == nil {
+		return
+	}
+	if transport.ForceAttemptHTTP2 {
+		http2TransportPool.Put(transport)
+	} else {
+		http1TransportPool.Put(transport)
+	}
 }
 
 // SetHTTP2Enabled 设置全局 HTTP/2 启用状态，并更新默认 Session
@@ -73,11 +100,13 @@ type Session interface {
 	WithBaseURL(base string) Session
 	WithTimeout(d time.Duration) Session
 	WithProxy(proxyURL string) Session
+	WithDNS(dnsServers []string) Session
 	WithHeader(key, value string) Session
 	WithHTTP2(enabled bool) Session
 	WithKeepAlive(enabled bool) Session
 	WithMaxIdleConns(maxIdle int) Session
 	Close() error
+	Clear() Session
 }
 type defaultSession struct {
 	baseURL      string
@@ -89,6 +118,7 @@ type defaultSession struct {
 	keepAlive    bool
 	maxIdleConns int
 	clientLock   sync.Mutex
+	dnsServers   []string
 }
 
 // NewSession 创建一个新的 Session，使用对应的 Transport 池
@@ -106,7 +136,7 @@ func NewSession() Session {
 		client:       &http.Client{Transport: transport},
 		useHTTP2:     defaultHTTP2Enabled,
 		keepAlive:    true,
-		maxIdleConns: 100,
+		maxIdleConns: defaultMaxIdleConns,
 	}
 }
 
@@ -117,10 +147,16 @@ func (s *defaultSession) WithBaseURL(base string) Session {
 	return s
 }
 
+// This function `WithTimeout` in the `defaultSession` struct is setting the timeout duration for the
+// session. It acquires a lock on the client, sets the timeout duration to the provided value `d`, and
+// the timeout duration is a request timeout.
 func (s *defaultSession) WithTimeout(d time.Duration) Session {
 	s.clientLock.Lock()
 	defer s.clientLock.Unlock()
 	s.timeout = d
+	if s.client != nil {
+		s.client.Timeout = d
+	}
 	return s
 }
 
@@ -140,6 +176,62 @@ func (s *defaultSession) WithProxy(proxyURL string) Session {
 		}
 	}
 	return s
+}
+
+func (s *defaultSession) WithDNS(dnsServers []string) Session {
+	s.clientLock.Lock()
+	defer s.clientLock.Unlock()
+	// 设置自定义的 DNS 服务器
+	s.dnsServers = dnsServers
+	if tr, ok := s.client.Transport.(*http.Transport); ok {
+		tr.DialContext = func(ctx context.Context, network, address string) (net.Conn, error) {
+			if len(s.dnsServers) > 0 {
+				return customDial(ctx, network, address, s.dnsServers)
+			}
+			dialer := &net.Dialer{
+				Timeout:   dnsResloveTimeout,
+				DualStack: true,
+			}
+			return dialer.DialContext(ctx, network, address)
+		}
+	}
+	return s
+}
+
+// customDial 使用自定义 DNS 服务器解析并连接目标地址
+func customDial(ctx context.Context, network, address string, dnsServers []string) (net.Conn, error) {
+	dialer := &net.Dialer{
+		Timeout:   dnsResloveTimeout,
+		DualStack: true,
+	}
+	// 创建自定义的 Resolver
+	resolver := &net.Resolver{
+		PreferGo: true,
+		Dial: func(ctx context.Context, network, address string) (net.Conn, error) {
+			for _, dns := range dnsServers {
+				conn, err := dialer.DialContext(ctx, network, dns+":53")
+				if err == nil {
+					return conn, nil
+				}
+			}
+			return nil, fmt.Errorf("failed to connect to any DNS servers: %v", dnsServers)
+		},
+	}
+	host, port, err := net.SplitHostPort(address)
+	if err != nil {
+		return nil, fmt.Errorf("invalid address: %v", err)
+	}
+	ips, err := resolver.LookupHost(ctx, host)
+	if err != nil {
+		return nil, fmt.Errorf("DNS resolution failed for %s: %v", host, err)
+	}
+	for _, ip := range ips {
+		conn, err := dialer.DialContext(ctx, network, net.JoinHostPort(ip, port))
+		if err == nil {
+			return conn, nil
+		}
+	}
+	return nil, fmt.Errorf("failed to connect to any resolved IPs for %s", address)
 }
 
 func (s *defaultSession) WithHeader(key, value string) Session {
@@ -179,9 +271,14 @@ func (s *defaultSession) WithKeepAlive(enabled bool) Session {
 	s.clientLock.Lock()
 	defer s.clientLock.Unlock()
 	s.keepAlive = enabled
-	if tr, ok := s.client.Transport.(*http.Transport); ok {
-		tr.DisableKeepAlives = !enabled
+	var tr *http.Transport
+	if existingTransport, ok := s.client.Transport.(*http.Transport); ok {
+		tr = existingTransport
+	} else {
+		tr = GetTransport(s.useHTTP2)
+		s.client.Transport = tr
 	}
+	tr.DisableKeepAlives = !s.keepAlive
 	return s
 }
 
@@ -189,10 +286,15 @@ func (s *defaultSession) WithMaxIdleConns(maxIdle int) Session {
 	s.clientLock.Lock()
 	defer s.clientLock.Unlock()
 	s.maxIdleConns = maxIdle
-	if tr, ok := s.client.Transport.(*http.Transport); ok {
-		tr.MaxIdleConns = maxIdle
-		tr.MaxIdleConnsPerHost = maxIdle
+	var tr *http.Transport
+	if existingTransport, ok := s.client.Transport.(*http.Transport); ok {
+		tr = existingTransport
+	} else {
+		tr = GetTransport(s.useHTTP2)
+		s.client.Transport = tr
 	}
+	tr.MaxIdleConns = maxIdle
+	tr.MaxIdleConnsPerHost = maxIdle
 	return s
 }
 
@@ -206,13 +308,10 @@ func (s *defaultSession) Clone() Client {
 	} else {
 		transport = http1TransportPool.Get().(*http.Transport)
 	}
-	// 创建新的 http.Client
 	newClient := &http.Client{
 		Transport: transport,
 	}
-	// 复制并深拷贝 headers
 	newHeaders := s.headers.Clone()
-	// 创建新的 Session
 	newSession := &defaultSession{
 		baseURL:      s.baseURL,
 		timeout:      s.timeout,
@@ -223,7 +322,6 @@ func (s *defaultSession) Clone() Client {
 		keepAlive:    s.keepAlive,
 		maxIdleConns: s.maxIdleConns,
 	}
-	// 如果不使用 HTTP/2，清空 TLSNextProto
 	if !s.useHTTP2 {
 		newSession.client.Transport.(*http.Transport).TLSNextProto = make(map[string]func(string, *tls.Conn) http.RoundTripper)
 	}
@@ -239,9 +337,25 @@ func (s *defaultSession) Close() error {
 		} else {
 			http1TransportPool.Put(tr)
 		}
-		s.client.Transport = nil // 防止再次使用
+		s.client.Transport = nil
 	}
 	return nil
+}
+
+// Clear 清空当前 Session 的所有配置并恢复到默认状态
+func (s *defaultSession) Clear() Session {
+	s.clientLock.Lock()
+	defer s.clientLock.Unlock()
+	s.baseURL = ""
+	s.useHTTP2 = false
+	s.keepAlive = true
+	s.maxIdleConns = defaultMaxIdleConns
+	s.timeout = idleConnTimeout
+	s.dnsServers = nil
+	s.client = &http.Client{
+		Transport: GetTransport(false), // 重置为默认 Transport
+	}
+	return s
 }
 
 func (s *defaultSession) Do(req *Request) (*models.Response, error) {
