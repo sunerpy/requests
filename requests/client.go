@@ -3,6 +3,7 @@ package requests
 import (
 	"context"
 	"crypto/tls"
+	"encoding/base64"
 	"errors"
 	"fmt"
 	"net"
@@ -102,6 +103,7 @@ type Session interface {
 	WithProxy(proxyURL string) Session
 	WithDNS(dnsServers []string) Session
 	WithHeader(key, value string) Session
+	WithBasicAuth(username, password string) Session
 	WithHTTP2(enabled bool) Session
 	WithKeepAlive(enabled bool) Session
 	WithMaxIdleConns(maxIdle int) Session
@@ -119,6 +121,7 @@ type defaultSession struct {
 	maxIdleConns int
 	clientLock   sync.Mutex
 	dnsServers   []string
+	authHeader   string
 }
 
 // NewSession 创建一个新的 Session，使用对应的 Transport 池
@@ -232,6 +235,16 @@ func customDial(ctx context.Context, network, address string, dnsServers []strin
 		}
 	}
 	return nil, fmt.Errorf("failed to connect to any resolved IPs for %s", address)
+}
+
+func (s *defaultSession) WithBasicAuth(username, password string) Session {
+	s.clientLock.Lock()
+	defer s.clientLock.Unlock()
+	auth := fmt.Sprintf("%s:%s", username, password)
+	encodedAuth := base64.StdEncoding.EncodeToString([]byte(auth))
+	s.authHeader = fmt.Sprintf("Basic %s", encodedAuth)
+	s.headers.Set("Authorization", s.authHeader)
+	return s
 }
 
 func (s *defaultSession) WithHeader(key, value string) Session {

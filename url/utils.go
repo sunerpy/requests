@@ -17,7 +17,11 @@ func BuildURL(base string, params *Values) (string, error) {
 	return u.String(), nil
 }
 
-func ParseValues(data interface{}) *Values {
+func ParseParams(data interface{}) *Values {
+	return parseValues(data)
+}
+
+func parseValues(data interface{}) *Values {
 	p := NewValues()
 	switch v := data.(type) {
 	case string:

@@ -38,46 +38,46 @@ func TestBuildURL(t *testing.T) {
 func TestParseValues(t *testing.T) {
 	t.Run("Parse string", func(t *testing.T) {
 		data := "key1=value1&key2=value2"
-		values := ParseValues(data)
+		values := parseValues(data)
 		assert.Equal(t, "value1", values.Get("key1"))
 		assert.Equal(t, "value2", values.Get("key2"))
 	})
 	t.Run("Parse empty string", func(t *testing.T) {
 		data := ""
-		values := ParseValues(data)
+		values := parseValues(data)
 		assert.Empty(t, values.Keys())
 	})
 	t.Run("Parse map[string]string", func(t *testing.T) {
 		data := map[string]string{"key1": "value1", "key2": "value2"}
-		values := ParseValues(data)
+		values := parseValues(data)
 		assert.Equal(t, "value1", values.Get("key1"))
 		assert.Equal(t, "value2", values.Get("key2"))
 	})
 	t.Run("Parse map[string][]string", func(t *testing.T) {
 		data := map[string][]string{"key1": {"value1", "value2"}}
-		values := ParseValues(data)
+		values := parseValues(data)
 		assert.Equal(t, []string{"value1", "value2"}, values.GetAll("key1"))
 	})
 	t.Run("Parse map[string]int", func(t *testing.T) {
 		data := map[string]int{"key1": 1, "key2": 2}
-		values := ParseValues(data)
+		values := parseValues(data)
 		assert.Equal(t, "1", values.Get("key1"))
 		assert.Equal(t, "2", values.Get("key2"))
 	})
 	t.Run("Parse map[string][]int", func(t *testing.T) {
 		data := map[string][]int{"key1": {1, 2}}
-		values := ParseValues(data)
+		values := parseValues(data)
 		assert.Equal(t, []string{"1", "2"}, values.GetAll("key1"))
 	})
 	t.Run("Parse map[string]float64", func(t *testing.T) {
 		data := map[string]float64{"key1": 1.23, "key2": 4.56}
-		values := ParseValues(data)
+		values := parseValues(data)
 		assert.Equal(t, "1.23", values.Get("key1"))
 		assert.Equal(t, "4.56", values.Get("key2"))
 	})
 	t.Run("Parse map[string][]float64", func(t *testing.T) {
 		data := map[string][]float64{"key1": {1.23, 4.56}}
-		values := ParseValues(data)
+		values := parseValues(data)
 		assert.Equal(t, []string{"1.23", "4.56"}, values.GetAll("key1"))
 	})
 	t.Run("Parse map[string]interface{}", func(t *testing.T) {
@@ -91,7 +91,7 @@ func TestParseValues(t *testing.T) {
 			"key7": true,
 			"key8": []interface{}{"value4", 6, 7.8, false},
 		}
-		values := ParseValues(data)
+		values := parseValues(data)
 		assert.Equal(t, "value1", values.Get("key1"))
 		assert.Equal(t, []string{"value2", "value3"}, values.GetAll("key2"))
 		assert.Equal(t, "123", values.Get("key3"))
