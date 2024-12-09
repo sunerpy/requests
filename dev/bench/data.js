@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1733725500420,
+  "lastUpdate": 1733725707452,
   "repoUrl": "https://github.com/sunerpy/requests",
   "entries": {
     "Requests-Benchmark": [
@@ -772,6 +772,78 @@ window.BENCHMARK_DATA = {
             "value": 20636,
             "unit": "ns/op",
             "extra": "57961 times\n4 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "nkuzhangshn@gmail.com",
+            "name": "sunerpy",
+            "username": "sunerpy"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "695a40fffbf6e22b862e8cec5ec6ba297d648b19",
+          "message": "添加 WithBasicAuth (#1)\n\n* feat(requests): 添加基本认证功能\r\n\r\n- 在 Session 接口中添加 WithBasicAuth 方法\r\n- 实现基本认证逻辑，生成 Base64 编码的认证头\r\n- 更新单元测试，增加对基本认证功能的测试\r\n\r\n\r\n* ci: 更新工作流以包含代码覆盖率检查和自动审批\r\n\r\n- 在 go-test.yml 中添加代码覆盖率检查步骤\r\n- 如果覆盖率低于 90%，则失败\r\n- 新增 Auto Approve PR 工作流，自动审批通过测试的 PR",
+          "timestamp": "2024-12-09T14:27:47+08:00",
+          "tree_id": "b6e2b8b3a7e25c0853bc7285a42a844988b64627",
+          "url": "https://github.com/sunerpy/requests/commit/695a40fffbf6e22b862e8cec5ec6ba297d648b19"
+        },
+        "date": 1733725707043,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkHTTPLibraries/NetHTTP",
+            "value": 95237,
+            "unit": "ns/op",
+            "extra": "12730 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTPLibraries/Requests",
+            "value": 92775,
+            "unit": "ns/op",
+            "extra": "12168 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTPLibraries/Requests_HTTP2",
+            "value": 98123,
+            "unit": "ns/op",
+            "extra": "12142 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTPLibraries/Requests_HTTP2_withmax",
+            "value": 98887,
+            "unit": "ns/op",
+            "extra": "12196 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTPLibrariesParallel/NetHTTP",
+            "value": 24972,
+            "unit": "ns/op",
+            "extra": "47208 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTPLibrariesParallel/Requests",
+            "value": 21267,
+            "unit": "ns/op",
+            "extra": "54360 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTPLibrariesParallel/Requests_HTTP2",
+            "value": 20216,
+            "unit": "ns/op",
+            "extra": "57548 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTPLibrariesParallel/Requests_HTTP2_withmax",
+            "value": 20762,
+            "unit": "ns/op",
+            "extra": "57081 times\n4 procs"
           }
         ]
       }
