@@ -9,20 +9,22 @@ on:
     types:
       - completed
 
-
 jobs:
   approval:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Check if this is a PR event
-      run: |
-        if [ "${{ github.event.workflow_run.event }}" != "pull_request" ]; then
-          echo "Not triggered by a pull request. Exiting."
-          exit 0
-        fi
+      - name: Check if this is a PR event
+        id: check-pr
+        run: |
+          if [ "${{ github.event.workflow_run.event }}" != "pull_request" ]; then
+            echo "Not triggered by a pull request. Exiting."
+            echo "skip=true" >> $GITHUB_ENV
+            exit 0
+          fi
 
-    - name: Auto approve the pull request
-      uses: hmarr/auto-approve-action@v2
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Auto approve the pull request
+        if: ${{ steps.check-pr.outputs.skip != 'true' }}
+        uses: hmarr/auto-approve-action@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
