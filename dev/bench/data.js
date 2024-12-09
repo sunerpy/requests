@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1733663076904,
+  "lastUpdate": 1733716023406,
   "repoUrl": "https://github.com/sunerpy/requests",
   "entries": {
     "Requests-Benchmark": [
@@ -360,6 +360,78 @@ window.BENCHMARK_DATA = {
             "value": 20751,
             "unit": "ns/op",
             "extra": "59461 times\n4 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "nkuzhangshn@gmail.com",
+            "name": "sunerpy",
+            "username": "sunerpy"
+          },
+          "committer": {
+            "email": "nkuzhangshn@gmail.com",
+            "name": "sunerpy",
+            "username": "sunerpy"
+          },
+          "distinct": true,
+          "id": "b4f9c20a400738d5719449b6bf8979608c50c3df",
+          "message": "ci: 更新 GitHub Actions 工作流触发条件\n\n- 在 benchmark.yml 和 release.yml 中添加 dev 分支的推送触发\n- 在 benchmark.yml 中添加 main 分支的 PR 触发",
+          "timestamp": "2024-12-09T11:45:54+08:00",
+          "tree_id": "b1fd00253b2a1bcba1edde328c7e71cc62f2ab82",
+          "url": "https://github.com/sunerpy/requests/commit/b4f9c20a400738d5719449b6bf8979608c50c3df"
+        },
+        "date": 1733716023147,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkHTTPLibraries/NetHTTP",
+            "value": 94034,
+            "unit": "ns/op",
+            "extra": "12760 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTPLibraries/Requests",
+            "value": 98214,
+            "unit": "ns/op",
+            "extra": "12235 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTPLibraries/Requests_HTTP2",
+            "value": 99346,
+            "unit": "ns/op",
+            "extra": "12130 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTPLibraries/Requests_HTTP2_withmax",
+            "value": 98590,
+            "unit": "ns/op",
+            "extra": "12201 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTPLibrariesParallel/NetHTTP",
+            "value": 30015,
+            "unit": "ns/op",
+            "extra": "48313 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTPLibrariesParallel/Requests",
+            "value": 20370,
+            "unit": "ns/op",
+            "extra": "54230 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTPLibrariesParallel/Requests_HTTP2",
+            "value": 20655,
+            "unit": "ns/op",
+            "extra": "58539 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTPLibrariesParallel/Requests_HTTP2_withmax",
+            "value": 20634,
+            "unit": "ns/op",
+            "extra": "59032 times\n4 procs"
           }
         ]
       }
