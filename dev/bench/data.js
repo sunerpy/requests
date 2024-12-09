@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1733731143015,
+  "lastUpdate": 1733731421259,
   "repoUrl": "https://github.com/sunerpy/requests",
   "entries": {
     "Requests-Benchmark": [
@@ -1400,6 +1400,78 @@ window.BENCHMARK_DATA = {
             "value": 20421,
             "unit": "ns/op",
             "extra": "59282 times\n4 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "nkuzhangshn@gmail.com",
+            "name": "sunerpy",
+            "username": "sunerpy"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "8d7d31d1a9863ff98cc35a81835e31f21e0d75b7",
+          "message": "Dev (#5)\n\n* ci: 添加主分支推送测试工作流\r\n\r\n- 新增 GitHub Actions 工作流，监听主分支推送事件\r\n- 配置 Ubuntu 环境下运行测试\r\n- 包含代码检查、依赖安装、测试执行和覆盖率检查等步骤\r\n- 覆盖率低于 90% 时构建失败\r\n- 集成 Codecov 上传覆盖率报告",
+          "timestamp": "2024-12-09T16:02:59+08:00",
+          "tree_id": "272ab9fd9852b81b119c2f445604e1f669c1d496",
+          "url": "https://github.com/sunerpy/requests/commit/8d7d31d1a9863ff98cc35a81835e31f21e0d75b7"
+        },
+        "date": 1733731420385,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkHTTPLibraries/NetHTTP",
+            "value": 97663,
+            "unit": "ns/op",
+            "extra": "12210 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTPLibraries/Requests",
+            "value": 100931,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTPLibraries/Requests_HTTP2",
+            "value": 101007,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTPLibraries/Requests_HTTP2_withmax",
+            "value": 101062,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTPLibrariesParallel/NetHTTP",
+            "value": 25897,
+            "unit": "ns/op",
+            "extra": "47550 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTPLibrariesParallel/Requests",
+            "value": 24963,
+            "unit": "ns/op",
+            "extra": "57477 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTPLibrariesParallel/Requests_HTTP2",
+            "value": 21235,
+            "unit": "ns/op",
+            "extra": "57405 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTPLibrariesParallel/Requests_HTTP2_withmax",
+            "value": 21269,
+            "unit": "ns/op",
+            "extra": "57969 times\n4 procs"
           }
         ]
       }
