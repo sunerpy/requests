@@ -15,6 +15,7 @@ jobs:
 
     steps:
       - name: Check if this is a PR event
+        id: check-pr
         run: |
           if [ "${{ github.event.workflow_run.event }}" != "pull_request" ]; then
             echo "Not triggered by a pull request. Exiting."
@@ -23,7 +24,7 @@ jobs:
           fi
 
       - name: Auto approve the pull request
-        if: ${{ env.skip != 'true' }}
+        if: ${{ steps.check-pr.outputs.skip != 'true' }}
         uses: hmarr/auto-approve-action@v2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
