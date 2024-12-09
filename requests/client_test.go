@@ -3,6 +3,7 @@ package requests
 import (
 	"bytes"
 	"context"
+	"encoding/base64"
 	"errors"
 	"fmt"
 	"io"
@@ -183,6 +184,15 @@ func TestDefaultSession_WithHeader(t *testing.T) {
 	defaultSess, ok := session.(*defaultSession)
 	assert.True(t, ok)
 	assert.Equal(t, "Bearer token", defaultSess.headers.Get("Authorization"))
+}
+
+func TestWithBasicAuth(t *testing.T) {
+	session := NewSession()
+	username := "testuser"
+	password := "testpassword"
+	session.WithBasicAuth(username, password)
+	expectedAuth := fmt.Sprintf("Basic %s", base64.StdEncoding.EncodeToString([]byte(fmt.Sprintf("%s:%s", username, password))))
+	assert.Equal(t, expectedAuth, session.(*defaultSession).headers.Get("Authorization"), "Authorization header should be set correctly.")
 }
 
 func TestDefaultSession_WithHTTP2(t *testing.T) {
