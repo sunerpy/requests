@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1733727544001,
+  "lastUpdate": 1733727710572,
   "repoUrl": "https://github.com/sunerpy/requests",
   "entries": {
     "Requests-Benchmark": [
@@ -1120,6 +1120,78 @@ window.BENCHMARK_DATA = {
             "value": 20769,
             "unit": "ns/op",
             "extra": "55996 times\n4 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "nkuzhangshn@gmail.com",
+            "name": "sunerpy",
+            "username": "sunerpy"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ce57d46a173737d1b425a3bbf7b3efd9cba75a66",
+          "message": "Dev (#3)\n\n* ci: 移除 auto-approve 工作流中的依赖任务\r\n\r\n- 删除了 approval job 中的 needs 字段\r\n- 添加检查，跳过非 pull request 触发的工作流程\r\n- 为检查 PR 事件步骤添加 id，以便于后续引用",
+          "timestamp": "2024-12-09T15:01:15+08:00",
+          "tree_id": "477172a0c7d6532957267a0c9120b75bac0ca4ce",
+          "url": "https://github.com/sunerpy/requests/commit/ce57d46a173737d1b425a3bbf7b3efd9cba75a66"
+        },
+        "date": 1733727710312,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkHTTPLibraries/NetHTTP",
+            "value": 94199,
+            "unit": "ns/op",
+            "extra": "12525 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTPLibraries/Requests",
+            "value": 97680,
+            "unit": "ns/op",
+            "extra": "12338 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTPLibraries/Requests_HTTP2",
+            "value": 97754,
+            "unit": "ns/op",
+            "extra": "12266 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTPLibraries/Requests_HTTP2_withmax",
+            "value": 98669,
+            "unit": "ns/op",
+            "extra": "12243 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTPLibrariesParallel/NetHTTP",
+            "value": 26265,
+            "unit": "ns/op",
+            "extra": "46410 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTPLibrariesParallel/Requests",
+            "value": 23139,
+            "unit": "ns/op",
+            "extra": "45184 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTPLibrariesParallel/Requests_HTTP2",
+            "value": 20546,
+            "unit": "ns/op",
+            "extra": "57506 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTPLibrariesParallel/Requests_HTTP2_withmax",
+            "value": 20514,
+            "unit": "ns/op",
+            "extra": "58026 times\n4 procs"
           }
         ]
       }
