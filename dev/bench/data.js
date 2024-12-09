@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1733716023406,
+  "lastUpdate": 1733716158462,
   "repoUrl": "https://github.com/sunerpy/requests",
   "entries": {
     "Requests-Benchmark": [
@@ -432,6 +432,74 @@ window.BENCHMARK_DATA = {
             "value": 20634,
             "unit": "ns/op",
             "extra": "59032 times\n4 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "name": "sunerpy",
+            "username": "sunerpy"
+          },
+          "committer": {
+            "name": "sunerpy",
+            "username": "sunerpy"
+          },
+          "id": "b4f9c20a400738d5719449b6bf8979608c50c3df",
+          "message": "添加 WithBasicAuth",
+          "timestamp": "2024-12-08T13:09:20Z",
+          "url": "https://github.com/sunerpy/requests/pull/1/commits/b4f9c20a400738d5719449b6bf8979608c50c3df"
+        },
+        "date": 1733716157995,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkHTTPLibraries/NetHTTP",
+            "value": 95758,
+            "unit": "ns/op",
+            "extra": "12364 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTPLibraries/Requests",
+            "value": 100070,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTPLibraries/Requests_HTTP2",
+            "value": 100494,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTPLibraries/Requests_HTTP2_withmax",
+            "value": 99559,
+            "unit": "ns/op",
+            "extra": "12010 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTPLibrariesParallel/NetHTTP",
+            "value": 25265,
+            "unit": "ns/op",
+            "extra": "46749 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTPLibrariesParallel/Requests",
+            "value": 23320,
+            "unit": "ns/op",
+            "extra": "58154 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTPLibrariesParallel/Requests_HTTP2",
+            "value": 20375,
+            "unit": "ns/op",
+            "extra": "57363 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTPLibrariesParallel/Requests_HTTP2_withmax",
+            "value": 20264,
+            "unit": "ns/op",
+            "extra": "59478 times\n4 procs"
           }
         ]
       }
