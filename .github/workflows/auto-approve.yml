@@ -19,10 +19,12 @@ jobs:
       run: |
         if [ "${{ github.event.workflow_run.event }}" != "pull_request" ]; then
           echo "Not triggered by a pull request. Exiting."
+          echo "skip=true" >> $GITHUB_ENV
           exit 0
         fi
 
     - name: Auto approve the pull request
+      if: ${{ env.skip != 'true' }}
       uses: hmarr/auto-approve-action@v2
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
