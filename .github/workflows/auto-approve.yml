@@ -1,0 +1,29 @@
+name: Auto Approve PR
+
+on:
+  workflow_run:
+    workflows:
+      - Go Test
+      - Benchmark
+      - Deploy GitHub Pages
+    types:
+      - completed
+
+
+jobs:
+  approval:
+    needs: [Go Test, Benchmark, Deploy GitHub Pages]  # 确保依赖任务已完成
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check if this is a PR event
+      run: |
+        if [ "${{ github.event.workflow_run.event }}" != "pull_request" ]; then
+          echo "Not triggered by a pull request. Exiting."
+          exit 0
+        fi
+
+    - name: Auto approve the pull request
+      uses: hmarr/auto-approve-action@v2
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}

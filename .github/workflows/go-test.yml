@@ -1,4 +1,4 @@
-name: Go
+name: Go Test
 
 on:
   push:
@@ -44,14 +44,3 @@ jobs:
       uses: codecov/codecov-action@v5
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
-
-  approval:
-    needs: test
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Auto approve the pull request
-      if: ${{ github.event_name == 'pull_request' }}
-      uses: hmarr/auto-approve-action@v2
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
