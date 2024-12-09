@@ -1,0 +1,41 @@
+name: mainpushtest
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  maintest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: "1.23.1"
+
+      - name: Install dependencies
+        run: go mod tidy
+
+      - name: Run tests
+        run: |
+          go test -coverprofile=coverage.txt ./...
+      - name: Parse and check coverage
+        id: check-coverage
+        run: |
+          grep -v '/example/' coverage.txt > filtered_coverage.out
+          COVERAGE=$(go tool cover -func=filtered_coverage.out | grep total | awk '{print $3}' | tr -d '%')
+          echo "Coverage: $COVERAGE%"
+          if (( $(echo "$COVERAGE < 90" | bc -l) )); then
+            echo "Coverage is below the required threshold of 90%"
+            exit 1
+          fi
+        shell: bash
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
