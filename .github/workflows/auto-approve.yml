@@ -12,7 +12,6 @@ on:
 
 jobs:
   approval:
-    needs: [Go Test, Benchmark, Deploy GitHub Pages]  # 确保依赖任务已完成
     runs-on: ubuntu-latest
 
     steps:
