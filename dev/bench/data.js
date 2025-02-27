@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1740647913051,
+  "lastUpdate": 1740648226462,
   "repoUrl": "https://github.com/sunerpy/requests",
   "entries": {
     "Requests-Benchmark": [
@@ -1540,6 +1540,78 @@ window.BENCHMARK_DATA = {
             "value": 20455,
             "unit": "ns/op",
             "extra": "59859 times\n4 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "nkuzhangshn@gmail.com",
+            "name": "sunerpy",
+            "username": "sunerpy"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a5e3136300d99ccf782e6221a2751850725476dd",
+          "message": "Dev (#6)\n\n* ci: 移除 auto-approve 工作流中的依赖任务\n\n- 删除了 approval job 中的 needs 字段\n\n* ci: 优化自动批准工作流程\n\n- 添加检查，跳过非 pull request 触发的工作流程\n\n* ci: 优化自动批准工作流\n\n- 删除了多余的空行，提高了代码的可读性\n- 调整了步骤的缩进，保持了一致的格式\n\n* ci: 优化自动审批工作流\n\n- 为检查 PR 事件步骤添加 id，以便于后续引用\n- 更新自动审批步骤的条件，使用新的步骤引用\n\n* ci: 重构 GitHub Actions 工作流\n\n- 移除了单独的 Auto Approve PR 工作流\n- 在 Go Test 工作流中添加了自动审批步骤\n- 优化了 Go Test\n\n* ci: 添加主分支推送测试工作流\n\n- 新增 GitHub Actions 工作流，监听主分支推送事件\n- 配置 Ubuntu 环境下运行测试\n- 包含代码检查、依赖安装、测试执行和覆盖率检查等步骤\n- 覆盖率低于 90% 时构建失败\n- 集成 Codecov 上传覆盖率报告\n\n* test(client): 优化拨号错误信息\n\n- 在连接失败时，增加解析出的 IP 地址信息\n- 便于调试和排查网络连接问题",
+          "timestamp": "2025-02-27T17:22:41+08:00",
+          "tree_id": "1fe51ba1dac47ae56c6c4053f3f298565219384f",
+          "url": "https://github.com/sunerpy/requests/commit/a5e3136300d99ccf782e6221a2751850725476dd"
+        },
+        "date": 1740648226198,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkHTTPLibraries/NetHTTP",
+            "value": 95948,
+            "unit": "ns/op",
+            "extra": "12316 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTPLibraries/Requests",
+            "value": 99045,
+            "unit": "ns/op",
+            "extra": "11943 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTPLibraries/Requests_HTTP2",
+            "value": 99017,
+            "unit": "ns/op",
+            "extra": "12052 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTPLibraries/Requests_HTTP2_withmax",
+            "value": 99261,
+            "unit": "ns/op",
+            "extra": "12021 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTPLibrariesParallel/NetHTTP",
+            "value": 25405,
+            "unit": "ns/op",
+            "extra": "47292 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTPLibrariesParallel/Requests",
+            "value": 19988,
+            "unit": "ns/op",
+            "extra": "59425 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTPLibrariesParallel/Requests_HTTP2",
+            "value": 20367,
+            "unit": "ns/op",
+            "extra": "59942 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTPLibrariesParallel/Requests_HTTP2_withmax",
+            "value": 20118,
+            "unit": "ns/op",
+            "extra": "61072 times\n4 procs"
           }
         ]
       }
