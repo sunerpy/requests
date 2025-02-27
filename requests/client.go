@@ -234,7 +234,7 @@ func customDial(ctx context.Context, network, address string, dnsServers []strin
 			return conn, nil
 		}
 	}
-	return nil, fmt.Errorf("failed to connect to any resolved IPs for %s", address)
+	return nil, fmt.Errorf("failed to connect to any resolved IPs for %s, address: %v", address, ips)
 }
 
 func (s *defaultSession) WithBasicAuth(username, password string) Session {
