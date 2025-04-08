@@ -68,6 +68,10 @@ func JSON[T any](r *Response) (T, error) {
 	return result, err
 }
 
+func (r *Response) DecodeJSON(dest any) error {
+	return sonic.Unmarshal(r.body, dest)
+}
+
 // ContentWrapper 封装响应体的二进制数据，并提供链式解码功能
 type ContentWrapper struct {
 	body []byte
