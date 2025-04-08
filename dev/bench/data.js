@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1744077828817,
+  "lastUpdate": 1744078081510,
   "repoUrl": "https://github.com/sunerpy/requests",
   "entries": {
     "Requests-Benchmark": [
@@ -1680,6 +1680,78 @@ window.BENCHMARK_DATA = {
             "value": 20313,
             "unit": "ns/op",
             "extra": "59990 times\n4 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "nkuzhangshn@gmail.com",
+            "name": "sunerpy",
+            "username": "sunerpy"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "fcf7fd91a9a1c446d892b2cdcb3fa1e5ee05bdd8",
+          "message": "添加 Response 解析 JSON 方法 (#7)\n\n* feat(models): 添加 Response 解析 JSON 方法并配置 SonarQube\n\n- 在 Response 结构中添加 DecodeJSON 方法，用于解析 JSON 数据\n- 新增 sonar-project.properties 文件，配置 SonarQube 项目元数据和分析规则\n- 忽略特定目录和文件类型的代码测试和覆盖率报告\n- 配置重复代码检测和特定规则禁用",
+          "timestamp": "2025-04-08T10:06:57+08:00",
+          "tree_id": "2e7683cf646b2877347457d9846bb91cd6e39e5b",
+          "url": "https://github.com/sunerpy/requests/commit/fcf7fd91a9a1c446d892b2cdcb3fa1e5ee05bdd8"
+        },
+        "date": 1744078081215,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkHTTPLibraries/NetHTTP",
+            "value": 96699,
+            "unit": "ns/op",
+            "extra": "12205 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTPLibraries/Requests",
+            "value": 100542,
+            "unit": "ns/op",
+            "extra": "12007 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTPLibraries/Requests_HTTP2",
+            "value": 99431,
+            "unit": "ns/op",
+            "extra": "12091 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTPLibraries/Requests_HTTP2_withmax",
+            "value": 100456,
+            "unit": "ns/op",
+            "extra": "12063 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTPLibrariesParallel/NetHTTP",
+            "value": 25410,
+            "unit": "ns/op",
+            "extra": "44316 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTPLibrariesParallel/Requests",
+            "value": 20590,
+            "unit": "ns/op",
+            "extra": "57403 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTPLibrariesParallel/Requests_HTTP2",
+            "value": 20420,
+            "unit": "ns/op",
+            "extra": "59212 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTPLibrariesParallel/Requests_HTTP2_withmax",
+            "value": 20636,
+            "unit": "ns/op",
+            "extra": "58177 times\n4 procs"
           }
         ]
       }
