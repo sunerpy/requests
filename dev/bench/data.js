@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1749699698090,
+  "lastUpdate": 1749699811516,
   "repoUrl": "https://github.com/sunerpy/requests",
   "entries": {
     "Requests-Benchmark": [
@@ -1888,6 +1888,78 @@ window.BENCHMARK_DATA = {
             "value": 19731,
             "unit": "ns/op",
             "extra": "59745 times\n4 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "nkuzhangshn@gmail.com",
+            "name": "sunerpy",
+            "username": "sunerpy"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "8f1221748e57c2febfdc01390b49208645837dd7",
+          "message": "feat(request): 添加请求上下文功能并优化 timeout 处理 (#8)\n\n* feat(request): 添加请求上下文功能并优化 timeout 处理\n\n- 新增 NewRequestWithContext 函数，支持传入 context.Context\n- 重构 NewRequest 函数，使用 genRequest 内部函数\n- 在请求中添加 Context 字段，用于传递上下文信息\n- 优化 DefaultSession.Do 方法中的 timeout 处理逻辑\n- 更新相关测试用例，增加对新功能的测试\n\n* test(requests): 优化 methods.go 中的测试用例\n\n- 引入 newRequestFunc 变量以替代直接调用 NewRequest 函数\n- 更新 Get、Post、Put、Delete 和 Patch 函数以使用 newRequestFunc\n- 修改测试用例，使用 newRequestFunc 以提高代码可维护性",
+          "timestamp": "2025-06-12T03:42:42Z",
+          "tree_id": "5ea5c32da90154c069dd45a97e615a4b175206bb",
+          "url": "https://github.com/sunerpy/requests/commit/8f1221748e57c2febfdc01390b49208645837dd7"
+        },
+        "date": 1749699811191,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkHTTPLibraries/NetHTTP",
+            "value": 94468,
+            "unit": "ns/op",
+            "extra": "12216 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTPLibraries/Requests",
+            "value": 102481,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTPLibraries/Requests_HTTP2",
+            "value": 101797,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTPLibraries/Requests_HTTP2_withmax",
+            "value": 102141,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTPLibrariesParallel/NetHTTP",
+            "value": 25072,
+            "unit": "ns/op",
+            "extra": "46828 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTPLibrariesParallel/Requests",
+            "value": 20412,
+            "unit": "ns/op",
+            "extra": "58189 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTPLibrariesParallel/Requests_HTTP2",
+            "value": 20056,
+            "unit": "ns/op",
+            "extra": "59310 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTPLibrariesParallel/Requests_HTTP2_withmax",
+            "value": 20184,
+            "unit": "ns/op",
+            "extra": "59800 times\n4 procs"
           }
         ]
       }
