@@ -1,6 +1,7 @@
 package requests
 
 import (
+	"context"
 	"io"
 
 	"github.com/sunerpy/requests/models"
@@ -42,4 +43,8 @@ func NewSession() requests.Session {
 
 func NewRequest(method, rawURL string, params *url.Values, body io.Reader) (*requests.Request, error) {
 	return requests.NewRequest(method, rawURL, params, body)
+}
+
+func NewRequestWithContext(ctx context.Context, method, rawURL string, params *url.Values, body io.Reader) (*requests.Request, error) {
+	return requests.NewRequestWithContext(ctx, method, rawURL, params, body)
 }

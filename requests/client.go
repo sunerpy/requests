@@ -375,6 +375,9 @@ func (s *defaultSession) Do(req *Request) (*models.Response, error) {
 	if req.URL == nil {
 		return nil, errors.New("request URL cannot be nil")
 	}
+	if req.Context == nil {
+		req.Context = context.Background()
+	}
 	finalURL := req.URL
 	if s.baseURL != "" {
 		base, err := url.Parse(s.baseURL)
@@ -383,7 +386,13 @@ func (s *defaultSession) Do(req *Request) (*models.Response, error) {
 		}
 		finalURL = base.ResolveReference(req.URL)
 	}
-	httpReq, err := http.NewRequest(req.Method, finalURL.String(), req.Body)
+	ctx := req.Context
+	if s.timeout > 0 {
+		var cancel context.CancelFunc
+		ctx, cancel = context.WithTimeout(ctx, s.timeout)
+		defer cancel()
+	}
+	httpReq, err := http.NewRequestWithContext(ctx, req.Method, finalURL.String(), req.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -396,13 +405,6 @@ func (s *defaultSession) Do(req *Request) (*models.Response, error) {
 		for _, v := range vals {
 			httpReq.Header.Add(k, v)
 		}
-	}
-	ctx := httpReq.Context()
-	if s.timeout > 0 {
-		var cancel context.CancelFunc
-		ctx, cancel = context.WithTimeout(ctx, s.timeout)
-		defer cancel()
-		httpReq = httpReq.WithContext(ctx)
 	}
 	resp, err := s.client.Do(httpReq)
 	if err != nil {

@@ -244,6 +244,7 @@ func TestDefaultSession_Do(t *testing.T) {
 		req := &Request{
 			Method:  "GET",
 			URL:     mustParseURL("https://example.com"),
+			Context: context.Background(),
 			Headers: http.Header{"Custom-Header": []string{"CustomValue"}},
 		}
 		resp, err := session.Do(req)
@@ -279,6 +280,25 @@ func TestDefaultSession_Do_WithTimeout(t *testing.T) {
 		timeout: 1 * time.Millisecond,
 	}
 	req := &Request{
+		Method:  "GET",
+		Context: context.Background(),
+		URL:     mustParseURL("https://example.com"),
+	}
+	resp, err := session.Do(req)
+	assert.Nil(t, resp)
+	assert.Error(t, err)
+	assert.True(t, errors.Is(err, context.DeadlineExceeded))
+}
+
+func TestDefaultSession_Do_No_Ctx(t *testing.T) {
+	mockTransport := &MockTransport{
+		Err: context.DeadlineExceeded,
+	}
+	session := &defaultSession{
+		client:  &http.Client{Transport: mockTransport},
+		timeout: 1 * time.Millisecond,
+	}
+	req := &Request{
 		Method: "GET",
 		URL:    mustParseURL("https://example.com"),
 	}
@@ -300,8 +320,9 @@ func TestDefaultSession_Do_WithBaseURL(t *testing.T) {
 		baseURL: "https://example.com",
 	}
 	req := &Request{
-		Method: "GET",
-		URL:    mustParseURL("/path"),
+		Method:  "GET",
+		Context: context.Background(),
+		URL:     mustParseURL("/path"),
 	}
 	resp, err := session.Do(req)
 	assert.NoError(t, err)
@@ -313,8 +334,9 @@ func TestDefaultSession_Do_WithBaseURL(t *testing.T) {
 func TestDefaultSession_Do_InvalidURL(t *testing.T) {
 	session := NewSession()
 	req := &Request{
-		Method: "GET",
-		URL:    nil,
+		Context: context.Background(),
+		Method:  "GET",
+		URL:     nil,
 	}
 	resp, err := session.Do(req)
 	assert.Nil(t, resp)

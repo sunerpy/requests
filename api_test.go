@@ -1,6 +1,7 @@
 package requests
 
 import (
+	"context"
 	"encoding/json"
 	"strings"
 	"testing"
@@ -89,6 +90,23 @@ func TestNewRequest(t *testing.T) {
 	})
 	t.Run("Invalid URL", func(t *testing.T) {
 		_, err := NewRequest("GET", "://invalid-url", nil, nil)
+		assert.Error(t, err)
+	})
+}
+
+func TestNewRequestWithContext(t *testing.T) {
+	t.Run("Create New Request WithContext", func(t *testing.T) {
+		params := url.NewURLParams()
+		params.Set("key", "value")
+		body := strings.NewReader("body content")
+		req, err := NewRequestWithContext(context.Background(), "POST", "https://example.com", params, body)
+		assert.NoError(t, err)
+		assert.Equal(t, "POST", req.Method)
+		assert.Equal(t, "https://example.com?key=value", req.URL.String())
+		assert.NotNil(t, req.Body)
+	})
+	t.Run("Invalid URL", func(t *testing.T) {
+		_, err := NewRequestWithContext(context.Background(), "GET", "://invalid-url", nil, nil)
 		assert.Error(t, err)
 	})
 }
