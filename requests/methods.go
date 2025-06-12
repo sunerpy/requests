@@ -13,13 +13,15 @@ const (
 	formContentType = "application/x-www-form-urlencoded"
 )
 
+var newRequestFunc = NewRequest
+
 // Get 发送 GET 请求
 func Get(baseURL string, params *url.Values) (*models.Response, error) {
 	u, err := url.BuildURL(baseURL, params)
 	if err != nil {
 		return nil, err
 	}
-	req, err := NewRequest("GET", u, params, nil)
+	req, err := newRequestFunc("GET", u, params, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -31,7 +33,7 @@ func Post(baseURL string, form *url.Values) (*models.Response, error) {
 	if form != nil {
 		body = strings.NewReader(form.Encode())
 	}
-	req, err := NewRequest("POST", baseURL, nil, body)
+	req, err := newRequestFunc("POST", baseURL, nil, body)
 	if err != nil {
 		return nil, err
 	}
@@ -45,7 +47,7 @@ func Put(baseURL string, form *url.Values) (*models.Response, error) {
 	if form != nil {
 		body = form.Encode()
 	}
-	req, err := NewRequest("PUT", baseURL, nil, strings.NewReader(body))
+	req, err := newRequestFunc("PUT", baseURL, nil, strings.NewReader(body))
 	if err != nil {
 		return nil, err
 	}
@@ -59,7 +61,7 @@ func Delete(baseURL string, params *url.Values) (*models.Response, error) {
 	if err != nil {
 		return nil, err
 	}
-	req, err := NewRequest("DELETE", u, params, nil)
+	req, err := newRequestFunc("DELETE", u, params, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -72,7 +74,7 @@ func Patch(baseURL string, form *url.Values) (*models.Response, error) {
 	if form != nil {
 		body = form.Encode()
 	}
-	req, err := NewRequest("PATCH", baseURL, nil, strings.NewReader(body))
+	req, err := newRequestFunc("PATCH", baseURL, nil, strings.NewReader(body))
 	if err != nil {
 		return nil, err
 	}

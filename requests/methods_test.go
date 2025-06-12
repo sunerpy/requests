@@ -35,7 +35,7 @@ func TestGet_NormalRequest(t *testing.T) {
 }
 
 func TestGet_ErrorInNewRequest_WithGomonkey(t *testing.T) {
-	patches := gomonkey.ApplyFunc(NewRequest, func(method, rawURL string, params *customurl.Values, body io.Reader) (*Request, error) {
+	patches := gomonkey.ApplyFuncVar(&newRequestFunc, func(method, rawURL string, params *customurl.Values, body io.Reader) (*Request, error) {
 		return nil, errors.New("request creation failed")
 	})
 	defer patches.Reset()
@@ -79,7 +79,7 @@ func TestPut(t *testing.T) {
 		assert.Equal(t, `{"status": "updated"}`, resp.Text())
 	})
 	t.Run("Error in NewRequest", func(t *testing.T) {
-		patches := gomonkey.ApplyFunc(NewRequest, func(method string, rawURL string, params *customurl.Values, body io.Reader) (*Request, error) {
+		patches := gomonkey.ApplyFuncVar(&newRequestFunc, func(method, rawURL string, params *customurl.Values, body io.Reader) (*Request, error) {
 			return nil, errors.New("request creation failed")
 		})
 		defer patches.Reset()
@@ -119,7 +119,7 @@ func TestDelete(t *testing.T) {
 		assert.Nil(t, resp)
 	})
 	t.Run("Error in NewRequest", func(t *testing.T) {
-		patches := gomonkey.ApplyFunc(NewRequest, func(method string, rawURL string, params *customurl.Values, body io.Reader) (*Request, error) {
+		patches := gomonkey.ApplyFuncVar(&newRequestFunc, func(method, rawURL string, params *customurl.Values, body io.Reader) (*Request, error) {
 			return nil, errors.New("request creation failed")
 		})
 		defer patches.Reset()
@@ -148,7 +148,7 @@ func TestPatch(t *testing.T) {
 		assert.Equal(t, `{"status": "patched"}`, resp.Text())
 	})
 	t.Run("Error in NewRequest", func(t *testing.T) {
-		patches := gomonkey.ApplyFunc(NewRequest, func(method string, rawURL string, params *customurl.Values, body io.Reader) (*Request, error) {
+		patches := gomonkey.ApplyFuncVar(&newRequestFunc, func(method, rawURL string, params *customurl.Values, body io.Reader) (*Request, error) {
 			return nil, errors.New("request creation failed")
 		})
 		defer patches.Reset()
