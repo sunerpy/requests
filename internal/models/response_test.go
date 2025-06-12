@@ -261,3 +261,113 @@ func TestJSON(t *testing.T) {
 		})
 	}
 }
+
+// Additional tests for coverage
+func TestXML(t *testing.T) {
+	type Person struct {
+		Name string `xml:"name"`
+		Age  int    `xml:"age"`
+	}
+	t.Run("Success", func(t *testing.T) {
+		r := &Response{body: []byte(`<Person><name>John</name><age>30</age></Person>`)}
+		got, err := XML[Person](r)
+		assert.NoError(t, err)
+		assert.Equal(t, "John", got.Name)
+		assert.Equal(t, 30, got.Age)
+	})
+	t.Run("Error", func(t *testing.T) {
+		r := &Response{body: []byte(`<Person><name>John`)}
+		_, err := XML[Person](r)
+		assert.Error(t, err)
+	})
+}
+
+func TestResponse_DecodeJSON(t *testing.T) {
+	type Data struct {
+		Key string `json:"key"`
+	}
+	t.Run("Success", func(t *testing.T) {
+		r := &Response{body: []byte(`{"key": "value"}`)}
+		var data Data
+		err := r.DecodeJSON(&data)
+		assert.NoError(t, err)
+		assert.Equal(t, "value", data.Key)
+	})
+	t.Run("Error", func(t *testing.T) {
+		r := &Response{body: []byte(`invalid json`)}
+		var data Data
+		err := r.DecodeJSON(&data)
+		assert.Error(t, err)
+	})
+}
+
+func TestResponse_DecodeXML(t *testing.T) {
+	type Person struct {
+		Name string `xml:"name"`
+	}
+	t.Run("Success", func(t *testing.T) {
+		r := &Response{body: []byte(`<Person><name>John</name></Person>`)}
+		var person Person
+		err := r.DecodeXML(&person)
+		assert.NoError(t, err)
+		assert.Equal(t, "John", person.Name)
+	})
+	t.Run("Error", func(t *testing.T) {
+		r := &Response{body: []byte(`<Person><name>John`)}
+		var person Person
+		err := r.DecodeXML(&person)
+		assert.Error(t, err)
+	})
+}
+
+func TestResponse_IsSuccess(t *testing.T) {
+	tests := []struct {
+		statusCode int
+		expected   bool
+	}{
+		{200, true},
+		{201, true},
+		{204, true},
+		{299, true},
+		{300, false},
+		{400, false},
+		{500, false},
+	}
+	for _, tc := range tests {
+		r := &Response{StatusCode: tc.statusCode}
+		assert.Equal(t, tc.expected, r.IsSuccess(), "StatusCode: %d", tc.statusCode)
+	}
+}
+
+func TestResponse_IsError(t *testing.T) {
+	tests := []struct {
+		statusCode int
+		expected   bool
+	}{
+		{200, false},
+		{300, false},
+		{399, false},
+		{400, true},
+		{404, true},
+		{500, true},
+		{503, true},
+	}
+	for _, tc := range tests {
+		r := &Response{StatusCode: tc.statusCode}
+		assert.Equal(t, tc.expected, r.IsError(), "StatusCode: %d", tc.statusCode)
+	}
+}
+
+func TestContentWrapper_DecodeUTF8(t *testing.T) {
+	c := &ContentWrapper{body: []byte("utf8 content")}
+	result, err := c.Decode("utf8")
+	assert.NoError(t, err)
+	assert.Equal(t, "utf8 content", result)
+}
+
+func TestContentWrapper_DecodeISO88591(t *testing.T) {
+	c := &ContentWrapper{body: []byte{0xE9, 0xE8, 0xE7}}
+	result, err := c.Decode("iso-8859-1")
+	assert.NoError(t, err)
+	assert.Equal(t, "éèç", result)
+}

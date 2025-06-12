@@ -6,30 +6,213 @@ import (
 	"sync"
 )
 
+// ============================================================================
+// Thread-safe Values (original implementation)
+// ============================================================================
 type Values struct {
 	data     map[string][]string
 	mu       sync.RWMutex
 	indexKey []string
 }
 
+// valuesPool is a pool of thread-safe Values objects for reuse
+var valuesPool = sync.Pool{
+	New: func() any {
+		return &Values{
+			data:     make(map[string][]string, 8),
+			indexKey: make([]string, 0, 8),
+		}
+	},
+}
+
 func NewValues() *Values {
 	return &Values{
-		data: make(map[string][]string),
+		data:     make(map[string][]string, 8),
+		indexKey: make([]string, 0, 8),
 	}
 }
 
 func NewForm() *Values {
 	return &Values{
-		data: make(map[string][]string),
+		data:     make(map[string][]string, 8),
+		indexKey: make([]string, 0, 8),
 	}
 }
 
-func NewURLParams() *Values {
-	return &Values{
-		data: make(map[string][]string),
+// AcquireValues gets a thread-safe Values from the pool.
+// Remember to call ReleaseValues when done.
+func AcquireValues() *Values {
+	return valuesPool.Get().(*Values)
+}
+
+// ReleaseValues returns a thread-safe Values to the pool.
+func ReleaseValues(v *Values) {
+	if v == nil {
+		return
+	}
+	v.Reset()
+	valuesPool.Put(v)
+}
+
+// Reset clears the Values for reuse.
+func (v *Values) Reset() {
+	v.mu.Lock()
+	defer v.mu.Unlock()
+	for k := range v.data {
+		delete(v.data, k)
+	}
+	v.indexKey = v.indexKey[:0]
+}
+
+// ============================================================================
+// FastValues - Lock-free version for single-threaded scenarios
+// ============================================================================
+// FastValues is a high-performance, non-thread-safe URL values container.
+// Use this when you don't need concurrent access for better performance.
+type FastValues struct {
+	data     map[string][]string
+	keyIndex map[string]struct{} // O(1) key existence check
+}
+
+// fastValuesPool is a pool of FastValues objects for reuse
+var fastValuesPool = sync.Pool{
+	New: func() any {
+		return &FastValues{
+			data:     make(map[string][]string, 8),
+			keyIndex: make(map[string]struct{}, 8),
+		}
+	},
+}
+
+// NewFastValues creates a new FastValues instance.
+func NewFastValues() *FastValues {
+	return &FastValues{
+		data:     make(map[string][]string, 8),
+		keyIndex: make(map[string]struct{}, 8),
 	}
 }
 
+// AcquireFastValues gets a FastValues from the pool.
+func AcquireFastValues() *FastValues {
+	return fastValuesPool.Get().(*FastValues)
+}
+
+// ReleaseFastValues returns a FastValues to the pool.
+func ReleaseFastValues(v *FastValues) {
+	if v == nil {
+		return
+	}
+	v.Reset()
+	fastValuesPool.Put(v)
+}
+
+// Reset clears the FastValues for reuse.
+func (v *FastValues) Reset() {
+	for k := range v.data {
+		delete(v.data, k)
+	}
+	for k := range v.keyIndex {
+		delete(v.keyIndex, k)
+	}
+}
+
+// Add adds a value to the key.
+func (v *FastValues) Add(key, value string) {
+	v.data[key] = append(v.data[key], value)
+	v.keyIndex[key] = struct{}{}
+}
+
+// Set sets the key to a single value.
+func (v *FastValues) Set(key, value string) {
+	v.data[key] = []string{value}
+	v.keyIndex[key] = struct{}{}
+}
+
+// Get returns the first value for the key.
+func (v *FastValues) Get(key string) string {
+	if vals, ok := v.data[key]; ok && len(vals) > 0 {
+		return vals[0]
+	}
+	return ""
+}
+
+// GetAll returns all values for the key.
+func (v *FastValues) GetAll(key string) []string {
+	return v.data[key]
+}
+
+// Del deletes the key.
+func (v *FastValues) Del(key string) {
+	delete(v.data, key)
+	delete(v.keyIndex, key)
+}
+
+// Has returns true if the key exists.
+func (v *FastValues) Has(key string) bool {
+	_, ok := v.keyIndex[key]
+	return ok
+}
+
+// Len returns the number of keys.
+func (v *FastValues) Len() int {
+	return len(v.data)
+}
+
+// Encode encodes the values to a URL query string.
+// Uses pre-allocated buffer for better performance.
+func (v *FastValues) Encode() string {
+	if len(v.data) == 0 {
+		return ""
+	}
+	// Pre-allocate buffer: estimate ~32 bytes per key-value pair
+	var sb strings.Builder
+	sb.Grow(len(v.data) * 32)
+	first := true
+	for key, values := range v.data {
+		escapedKey := url.QueryEscape(key)
+		for _, value := range values {
+			if !first {
+				sb.WriteByte('&')
+			}
+			sb.WriteString(escapedKey)
+			sb.WriteByte('=')
+			sb.WriteString(url.QueryEscape(value))
+			first = false
+		}
+	}
+	return sb.String()
+}
+
+// Keys returns all keys.
+func (v *FastValues) Keys() []string {
+	keys := make([]string, 0, len(v.data))
+	for k := range v.data {
+		keys = append(keys, k)
+	}
+	return keys
+}
+
+// Values returns a copy of the underlying data.
+func (v *FastValues) Values() map[string][]string {
+	result := make(map[string][]string, len(v.data))
+	for k, vals := range v.data {
+		result[k] = append([]string(nil), vals...)
+	}
+	return result
+}
+
+// ToURLValues converts to standard url.Values.
+func (v *FastValues) ToURLValues() url.Values {
+	result := make(url.Values, len(v.data))
+	for k, vals := range v.data {
+		result[k] = append([]string(nil), vals...)
+	}
+	return result
+}
+
+// ============================================================================
+// Thread-safe Values methods (original)
+// ============================================================================
 func (v *Values) Add(key, value string) {
 	v.mu.Lock()
 	defer v.mu.Unlock()

@@ -80,8 +80,8 @@ func TestParseValues(t *testing.T) {
 		values := parseValues(data)
 		assert.Equal(t, []string{"1.23", "4.56"}, values.GetAll("key1"))
 	})
-	t.Run("Parse map[string]interface{}", func(t *testing.T) {
-		data := map[string]interface{}{
+	t.Run("Parse map[string]any", func(t *testing.T) {
+		data := map[string]any{
 			"key1": "value1",
 			"key2": []string{"value2", "value3"},
 			"key3": 123,
@@ -89,7 +89,7 @@ func TestParseValues(t *testing.T) {
 			"key5": 1.23,
 			"key6": []float64{4.56, 7.89},
 			"key7": true,
-			"key8": []interface{}{"value4", 6, 7.8, false},
+			"key8": []any{"value4", 6, 7.8, false},
 		}
 		values := parseValues(data)
 		assert.Equal(t, "value1", values.Get("key1"))
@@ -100,5 +100,59 @@ func TestParseValues(t *testing.T) {
 		assert.Equal(t, []string{"4.56", "7.89"}, values.GetAll("key6"))
 		assert.Equal(t, "true", values.Get("key7"))
 		assert.Equal(t, []string{"value4", "6", "7.8", "false"}, values.GetAll("key8"))
+	})
+}
+
+func TestBuildURLWithQuery(t *testing.T) {
+	t.Run("Valid URL with query params", func(t *testing.T) {
+		query := url.Values{}
+		query.Set("key1", "value1")
+		query.Set("key2", "value2")
+		uri, err := BuildURLWithQuery("https://example.com", query)
+		assert.NoError(t, err)
+		parsedURL, err := url.Parse(uri)
+		assert.NoError(t, err)
+		actualParams := parsedURL.Query()
+		assert.Equal(t, "value1", actualParams.Get("key1"))
+		assert.Equal(t, "value2", actualParams.Get("key2"))
+	})
+	t.Run("Valid URL without query params", func(t *testing.T) {
+		uri, err := BuildURLWithQuery("https://example.com", nil)
+		assert.NoError(t, err)
+		assert.Equal(t, "https://example.com", uri)
+	})
+	t.Run("Valid URL with empty query params", func(t *testing.T) {
+		query := url.Values{}
+		uri, err := BuildURLWithQuery("https://example.com", query)
+		assert.NoError(t, err)
+		assert.Equal(t, "https://example.com", uri)
+	})
+	t.Run("Merge with existing query params", func(t *testing.T) {
+		query := url.Values{}
+		query.Set("new_key", "new_value")
+		uri, err := BuildURLWithQuery("https://example.com?existing=param", query)
+		assert.NoError(t, err)
+		parsedURL, err := url.Parse(uri)
+		assert.NoError(t, err)
+		actualParams := parsedURL.Query()
+		assert.Equal(t, "param", actualParams.Get("existing"))
+		assert.Equal(t, "new_value", actualParams.Get("new_key"))
+	})
+	t.Run("Invalid URL", func(t *testing.T) {
+		query := url.Values{}
+		query.Set("key", "value")
+		_, err := BuildURLWithQuery("://invalid-url", query)
+		assert.Error(t, err)
+	})
+	t.Run("Multiple values for same key", func(t *testing.T) {
+		query := url.Values{}
+		query.Add("key", "value1")
+		query.Add("key", "value2")
+		uri, err := BuildURLWithQuery("https://example.com", query)
+		assert.NoError(t, err)
+		parsedURL, err := url.Parse(uri)
+		assert.NoError(t, err)
+		actualParams := parsedURL.Query()
+		assert.Equal(t, []string{"value1", "value2"}, actualParams["key"])
 	})
 }

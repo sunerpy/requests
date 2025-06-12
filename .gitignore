@@ -1,5 +1,7 @@
-bak
-vendor
-coverage.out
-
+.benchmarks/
+.kiro
 .scannerwork
+
+coverage.out
+coverage.html
+vendor

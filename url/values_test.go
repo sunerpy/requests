@@ -80,3 +80,22 @@ func TestValues(t *testing.T) {
 		assert.Equal(t, -1, searchStrings([]string{"a", "b", "c"}, "d"))
 	})
 }
+
+func TestNewForm(t *testing.T) {
+	v := NewForm()
+	assert.NotNil(t, v)
+	assert.NotNil(t, v.data)
+}
+
+func TestNewURLParams(t *testing.T) {
+	v := NewURLParams()
+	assert.NotNil(t, v)
+	assert.NotNil(t, v.data)
+}
+
+func TestParseParams(t *testing.T) {
+	// Test with string
+	v := ParseParams("key1=value1&key2=value2")
+	assert.Equal(t, "value1", v.Get("key1"))
+	assert.Equal(t, "value2", v.Get("key2"))
+}
