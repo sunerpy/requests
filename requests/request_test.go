@@ -1,6 +1,7 @@
 package requests
 
 import (
+	"context"
 	"io"
 	"strings"
 	"testing"
@@ -34,6 +35,11 @@ func TestNewRequest(t *testing.T) {
 	})
 	t.Run("Invalid URL", func(t *testing.T) {
 		req, err := NewRequest("GET", "://invalid-url", nil, nil)
+		assert.Error(t, err)
+		assert.Nil(t, req)
+	})
+	t.Run("Invalid URL with ctx", func(t *testing.T) {
+		req, err := NewRequestWithContext(context.Background(), "GET", "://invalid-url", nil, nil)
 		assert.Error(t, err)
 		assert.Nil(t, req)
 	})
