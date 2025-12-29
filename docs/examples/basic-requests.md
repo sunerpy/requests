@@ -66,7 +66,6 @@ if err != nil {
 
 // 状态码
 fmt.Println("Status:", resp.StatusCode)
-
 // 响应头
 fmt.Println("Content-Type:", resp.Headers.Get("Content-Type"))
 
