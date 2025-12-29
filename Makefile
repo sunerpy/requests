@@ -152,7 +152,7 @@ fmt: ## Format code
 		echo "gofumpt not found. Install with:"; \
 		echo "  go install mvdan.cc/gofumpt@latest"; \
 	fi
-	@echo "Formatting complete."
+	@echo "Formatting code complete."
 
 # ============================================================================
 # Cleanup
