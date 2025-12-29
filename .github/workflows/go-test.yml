@@ -73,7 +73,6 @@ jobs:
       - name: Debug versions
         run: |
           go version
-          golangci-lint version
       - name: Run golangci-lint
         uses: golangci/golangci-lint-action@v9
         with:
