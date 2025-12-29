@@ -147,7 +147,7 @@ fmt: ## Format code
 	@echo "Formatting code..."
 	@go fmt ./...
 	@if command -v gofumpt > /dev/null 2>&1; then \
-		gofumpt -w .; \
+		gofumpt -extra -w .; \
 	else \
 		echo "gofumpt not found. Install with:"; \
 		echo "  go install mvdan.cc/gofumpt@latest"; \

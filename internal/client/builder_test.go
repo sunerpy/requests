@@ -28,7 +28,7 @@ func TestProperty3_BuilderPreservesHeaders(t *testing.T) {
 	parameters.MinSuccessfulTests = 100
 	properties := gopter.NewProperties(parameters)
 	properties.Property("Builder preserves all headers", prop.ForAll(
-		func(headerKeys []string, headerValues []string) bool {
+		func(headerKeys, headerValues []string) bool {
 			// Use fixed number of headers to avoid case-sensitivity collisions
 			// HTTP headers are case-insensitive, so "pK" and "pk" are the same
 			if len(headerKeys) == 0 || len(headerValues) == 0 {

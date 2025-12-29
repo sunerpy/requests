@@ -11,7 +11,7 @@ formatters:
     - gofumpt
     - goimports
   settings:
-    gofmt:
+    gofumpt:
       extra-rules: true
     goimports:
       local-prefixes:
