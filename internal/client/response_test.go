@@ -41,7 +41,7 @@ func TestProperty1_JSONRoundTrip(t *testing.T) {
 	parameters.MinSuccessfulTests = 100
 	properties := gopter.NewProperties(parameters)
 	properties.Property("JSON round-trip preserves struct values", prop.ForAll(
-		func(id int, name string, email string, age int) bool {
+		func(id int, name, email string, age int) bool {
 			// Skip empty strings that might cause issues
 			if name == "" || email == "" {
 				return true
@@ -82,7 +82,7 @@ func TestProperty1_XMLRoundTrip(t *testing.T) {
 	parameters.MinSuccessfulTests = 100
 	properties := gopter.NewProperties(parameters)
 	properties.Property("XML round-trip preserves struct values", prop.ForAll(
-		func(id int, name string, email string, age int) bool {
+		func(id int, name, email string, age int) bool {
 			// Skip empty strings and strings with special XML characters
 			if name == "" || email == "" {
 				return true

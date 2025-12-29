@@ -241,7 +241,7 @@ func TestProperty7_RequestCloneIndependence(t *testing.T) {
 	))
 	// Property: Clone preserves all fields
 	properties.Property("Clone preserves all request fields", prop.ForAll(
-		func(methodIdx int, path string, headerKey, headerValue string) bool {
+		func(methodIdx int, path, headerKey, headerValue string) bool {
 			methods := []Method{MethodGet, MethodPost, MethodPut, MethodDelete, MethodPatch}
 			m := methods[methodIdx%len(methods)]
 			originalURL, _ := url.Parse("https://example.com/" + path)

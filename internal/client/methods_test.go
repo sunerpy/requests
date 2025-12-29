@@ -34,7 +34,7 @@ func TestProperty11_GenericMethodsParseJSON(t *testing.T) {
 	parameters.MinSuccessfulTests = 100
 	properties := gopter.NewProperties(parameters)
 	properties.Property("GetJSON parses response correctly", prop.ForAll(
-		func(id int, name string, email string) bool {
+		func(id int, name, email string) bool {
 			if name == "" || email == "" {
 				return true
 			}
