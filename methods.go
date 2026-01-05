@@ -10,15 +10,9 @@ import (
 	"github.com/sunerpy/requests/url"
 )
 
-// Common header constants to avoid repeated string allocations
 const (
 	contentKey      = "Content-Type"
 	jsonContentType = "application/json"
-	// Additional header constants for internal use
-	headerAccept        = "Accept"
-	headerAuthorization = "Authorization"
-	headerUserAgent     = "User-Agent"
-	headerContentLength = "Content-Length"
 )
 
 // ============================================================================
