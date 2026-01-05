@@ -371,3 +371,189 @@ func TestContentWrapper_DecodeISO88591(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, "éèç", result)
 }
+
+// Tests for buffer pool handling with different response sizes
+func TestNewResponse_SmallContent(t *testing.T) {
+	// Small content (< 4KB) should use small buffer pool
+	smallBody := strings.Repeat("a", 1024) // 1KB
+	mockResp := &http.Response{
+		StatusCode:    200,
+		Header:        http.Header{"Content-Type": []string{"text/plain"}},
+		Body:          io.NopCloser(strings.NewReader(smallBody)),
+		ContentLength: int64(len(smallBody)),
+		Proto:         "HTTP/1.1",
+	}
+	resp, err := NewResponse(mockResp, "https://example.com")
+	assert.NoError(t, err)
+	assert.NotNil(t, resp)
+	assert.Equal(t, smallBody, resp.Text())
+	assert.Equal(t, len(smallBody), len(resp.Bytes()))
+}
+
+func TestNewResponse_MediumContent(t *testing.T) {
+	// Medium content with known length uses exact allocation
+	mediumBody := strings.Repeat("b", 16*1024) // 16KB
+	mockResp := &http.Response{
+		StatusCode:    200,
+		Header:        http.Header{"Content-Type": []string{"text/plain"}},
+		Body:          io.NopCloser(strings.NewReader(mediumBody)),
+		ContentLength: int64(len(mediumBody)),
+		Proto:         "HTTP/1.1",
+	}
+	resp, err := NewResponse(mockResp, "https://example.com")
+	assert.NoError(t, err)
+	assert.NotNil(t, resp)
+	assert.Equal(t, len(mediumBody), len(resp.Bytes()))
+}
+
+// streamReader wraps a reader to simulate chunked/streaming responses
+type streamReader struct {
+	reader io.Reader
+}
+
+func (s *streamReader) Read(p []byte) (n int, err error) {
+	return s.reader.Read(p)
+}
+
+func TestNewResponse_BufferPool_UnknownLength(t *testing.T) {
+	// Unknown content length (-1) uses buffer pool
+	body := strings.Repeat("s", 2*1024) // 2KB
+	mockResp := &http.Response{
+		StatusCode:    200,
+		Header:        http.Header{"Content-Type": []string{"text/plain"}},
+		Body:          io.NopCloser(&streamReader{reader: strings.NewReader(body)}),
+		ContentLength: -1, // Unknown
+		Proto:         "HTTP/1.1",
+	}
+	resp, err := NewResponse(mockResp, "https://example.com")
+	assert.NoError(t, err)
+	assert.NotNil(t, resp)
+	assert.Equal(t, body, resp.Text())
+}
+
+func TestNewResponse_BufferPool_ZeroLength(t *testing.T) {
+	// Zero content length uses buffer pool
+	body := "zero length content"
+	mockResp := &http.Response{
+		StatusCode:    200,
+		Header:        http.Header{"Content-Type": []string{"text/plain"}},
+		Body:          io.NopCloser(strings.NewReader(body)),
+		ContentLength: 0, // Zero length triggers buffer pool
+		Proto:         "HTTP/1.1",
+	}
+	resp, err := NewResponse(mockResp, "https://example.com")
+	assert.NoError(t, err)
+	assert.NotNil(t, resp)
+	assert.Equal(t, body, resp.Text())
+}
+
+func TestNewResponse_BufferPool_ReadError(t *testing.T) {
+	// Test error handling in buffer pool path
+	mockResp := &http.Response{
+		StatusCode:    200,
+		Header:        http.Header{},
+		Body:          io.NopCloser(&errorReader{}),
+		ContentLength: -1, // Unknown length triggers buffer pool
+		Proto:         "HTTP/1.1",
+	}
+	resp, err := NewResponse(mockResp, "https://example.com")
+	assert.Nil(t, resp)
+	assert.Error(t, err)
+}
+
+func TestNewResponse_LargeContent(t *testing.T) {
+	// Large content with known length uses exact allocation
+	largeBody := strings.Repeat("c", 128*1024) // 128KB
+	mockResp := &http.Response{
+		StatusCode:    200,
+		Header:        http.Header{"Content-Type": []string{"text/plain"}},
+		Body:          io.NopCloser(strings.NewReader(largeBody)),
+		ContentLength: int64(len(largeBody)),
+		Proto:         "HTTP/1.1",
+	}
+	resp, err := NewResponse(mockResp, "https://example.com")
+	assert.NoError(t, err)
+	assert.NotNil(t, resp)
+	assert.Equal(t, len(largeBody), len(resp.Bytes()))
+}
+
+func TestNewResponse_VeryLargeContent(t *testing.T) {
+	// Very large content (> 256KB but < 10MB) should use direct allocation
+	veryLargeBody := strings.Repeat("d", 512*1024) // 512KB
+	mockResp := &http.Response{
+		StatusCode:    200,
+		Header:        http.Header{"Content-Type": []string{"text/plain"}},
+		Body:          io.NopCloser(strings.NewReader(veryLargeBody)),
+		ContentLength: int64(len(veryLargeBody)),
+		Proto:         "HTTP/1.1",
+	}
+	resp, err := NewResponse(mockResp, "https://example.com")
+	assert.NoError(t, err)
+	assert.NotNil(t, resp)
+	assert.Equal(t, len(veryLargeBody), len(resp.Bytes()))
+}
+
+func TestNewResponse_UnknownContentLength(t *testing.T) {
+	// Unknown content length (-1) should use small buffer pool
+	body := "unknown length content"
+	mockResp := &http.Response{
+		StatusCode:    200,
+		Header:        http.Header{"Content-Type": []string{"text/plain"}},
+		Body:          io.NopCloser(strings.NewReader(body)),
+		ContentLength: -1, // Unknown content length
+		Proto:         "HTTP/1.1",
+	}
+	resp, err := NewResponse(mockResp, "https://example.com")
+	assert.NoError(t, err)
+	assert.NotNil(t, resp)
+	assert.Equal(t, body, resp.Text())
+}
+
+func TestNewResponse_KnownExactContentLength(t *testing.T) {
+	// Known content length should allocate exact size
+	body := "exact size content"
+	mockResp := &http.Response{
+		StatusCode:    200,
+		Header:        http.Header{"Content-Type": []string{"text/plain"}},
+		Body:          io.NopCloser(strings.NewReader(body)),
+		ContentLength: int64(len(body)),
+		Proto:         "HTTP/1.1",
+	}
+	resp, err := NewResponse(mockResp, "https://example.com")
+	assert.NoError(t, err)
+	assert.NotNil(t, resp)
+	assert.Equal(t, body, resp.Text())
+	assert.Equal(t, len(body), len(resp.Bytes()))
+}
+
+func TestNewResponseFast(t *testing.T) {
+	mockResp := &http.Response{
+		StatusCode: 200,
+		Header:     http.Header{"Content-Type": []string{"application/json"}},
+		Proto:      "HTTP/1.1",
+	}
+	body := []byte(`{"key": "value"}`)
+	finalURL := "https://example.com"
+
+	resp := NewResponseFast(mockResp, finalURL, body)
+
+	assert.NotNil(t, resp)
+	assert.Equal(t, 200, resp.StatusCode)
+	assert.Equal(t, "application/json", resp.Headers.Get("Content-Type"))
+	assert.Equal(t, body, resp.Bytes())
+	assert.Equal(t, finalURL, resp.GetURL())
+	assert.Equal(t, "HTTP/1.1", resp.Proto)
+}
+
+func TestNewResponseFast_EmptyBody(t *testing.T) {
+	mockResp := &http.Response{
+		StatusCode: 204,
+		Header:     http.Header{},
+		Proto:      "HTTP/1.1",
+	}
+	resp := NewResponseFast(mockResp, "https://example.com", nil)
+
+	assert.NotNil(t, resp)
+	assert.Equal(t, 204, resp.StatusCode)
+	assert.Nil(t, resp.Bytes())
+}

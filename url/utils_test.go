@@ -103,6 +103,112 @@ func TestParseValues(t *testing.T) {
 	})
 }
 
+func TestFastBuildURL(t *testing.T) {
+	t.Run("Valid URL with params", func(t *testing.T) {
+		params := NewFastValues()
+		params.Set("key1", "value1")
+		params.Set("key2", "value2")
+		uri, err := FastBuildURL("https://example.com", params)
+		assert.NoError(t, err)
+		parsedURL, err := url.Parse(uri)
+		assert.NoError(t, err)
+		actualParams := parsedURL.Query()
+		assert.Equal(t, "value1", actualParams.Get("key1"))
+		assert.Equal(t, "value2", actualParams.Get("key2"))
+	})
+	t.Run("Invalid URL", func(t *testing.T) {
+		params := NewFastValues()
+		_, err := FastBuildURL("://invalid-url", params)
+		assert.Error(t, err)
+	})
+	t.Run("Valid URL without params", func(t *testing.T) {
+		uri, err := FastBuildURL("https://example.com", nil)
+		assert.NoError(t, err)
+		assert.Equal(t, "https://example.com", uri)
+	})
+	t.Run("Valid URL with empty params", func(t *testing.T) {
+		params := NewFastValues()
+		uri, err := FastBuildURL("https://example.com", params)
+		assert.NoError(t, err)
+		assert.Equal(t, "https://example.com", uri)
+	})
+}
+
+func TestBuildURLFast(t *testing.T) {
+	t.Run("Valid URL with params", func(t *testing.T) {
+		params := map[string]string{
+			"key1": "value1",
+			"key2": "value2",
+		}
+		uri, err := BuildURLFast("https://example.com", params)
+		assert.NoError(t, err)
+		parsedURL, err := url.Parse(uri)
+		assert.NoError(t, err)
+		actualParams := parsedURL.Query()
+		assert.Equal(t, "value1", actualParams.Get("key1"))
+		assert.Equal(t, "value2", actualParams.Get("key2"))
+	})
+	t.Run("Invalid URL", func(t *testing.T) {
+		params := map[string]string{"key": "value"}
+		_, err := BuildURLFast("://invalid-url", params)
+		assert.Error(t, err)
+	})
+	t.Run("Valid URL without params", func(t *testing.T) {
+		uri, err := BuildURLFast("https://example.com", nil)
+		assert.NoError(t, err)
+		assert.Equal(t, "https://example.com", uri)
+	})
+	t.Run("Valid URL with empty params", func(t *testing.T) {
+		params := map[string]string{}
+		uri, err := BuildURLFast("https://example.com", params)
+		assert.NoError(t, err)
+		assert.Equal(t, "https://example.com", uri)
+	})
+	t.Run("URL encode special characters", func(t *testing.T) {
+		params := map[string]string{
+			"key": "value with spaces",
+		}
+		uri, err := BuildURLFast("https://example.com", params)
+		assert.NoError(t, err)
+		assert.Contains(t, uri, "key=value+with+spaces")
+	})
+}
+
+func TestNewURLParamsUnsafe(t *testing.T) {
+	v := NewURLParamsUnsafe()
+	assert.NotNil(t, v)
+	v.Set("key", "value")
+	assert.Equal(t, "value", v.Get("key"))
+}
+
+func TestAcquireReleaseURLParams(t *testing.T) {
+	v := AcquireURLParams()
+	assert.NotNil(t, v)
+	v.Set("key", "value")
+	assert.Equal(t, "value", v.Get("key"))
+	ReleaseURLParams(v)
+
+	// After release, acquire again
+	v2 := AcquireURLParams()
+	assert.NotNil(t, v2)
+	assert.Equal(t, "", v2.Get("key")) // Should be reset
+	ReleaseURLParams(v2)
+}
+
+func TestAcquireReleaseURLParamsUnsafe(t *testing.T) {
+	v := AcquireURLParamsUnsafe()
+	assert.NotNil(t, v)
+	v.Set("key", "value")
+	assert.Equal(t, "value", v.Get("key"))
+	ReleaseURLParamsUnsafe(v)
+
+	// After release, acquire again
+	v2 := AcquireURLParamsUnsafe()
+	assert.NotNil(t, v2)
+	assert.Equal(t, "", v2.Get("key")) // Should be reset
+	ReleaseURLParamsUnsafe(v2)
+}
+
 func TestBuildURLWithQuery(t *testing.T) {
 	t.Run("Valid URL with query params", func(t *testing.T) {
 		query := url.Values{}
