@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1767596388084,
+  "lastUpdate": 1767597317395,
   "repoUrl": "https://github.com/sunerpy/requests",
   "entries": {
     "Requests-Benchmark": [
@@ -97476,6 +97476,4350 @@ window.BENCHMARK_DATA = {
             "value": 13,
             "unit": "allocs/op",
             "extra": "944314 times\n4 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "nkuzhangshn@gmail.com",
+            "name": "sunerpy",
+            "username": "sunerpy"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "bf6c9c30cb4d43b0ffcc53d93aedcd484cce570a",
+          "message": "refactor: Use atomic operations for lock-free reads in hooks and codecs (#18)\n\n* test: test pr ci\n\n* style: 优化代码格式化配置和测试函数参数声明\n\n- 将.golangci.yml中的gofmt配置更改为gofumpt配置\n- 在Makefile的fmt目标中添加-extra参数到gofumpt命令\n\n* refactor: Use atomic operations for lock-free reads in hooks and codecs\n\n- Replace RWMutex with atomic.Value in Hooks for lock-free trigger calls\n- Add fast codec cache with lock-free reads for common content types\n- Convert MetricsHook counters to atomic integers\n- Add large buffer pool (256KB) for response body reading\n- Define common header constants to reduce string allocations\n\n* style(lint): Remove unused header constants\n\n* test: Add tests for coverage and enforce 90% threshold\n\n- Add tests for codec RegisterFast and fast path priority\n- Add tests for response buffer pool handling with various sizes\n- Add tests for URL FastBuildURL, BuildURLFast, and pool functions\n- Simplify response.go buffer pools to single small pool",
+          "timestamp": "2026-01-05T15:10:59+08:00",
+          "tree_id": "08183cf5596ae222667ba7f08f98b43be05b92e7",
+          "url": "https://github.com/sunerpy/requests/commit/bf6c9c30cb4d43b0ffcc53d93aedcd484cce570a"
+        },
+        "date": 1767597316887,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkBasicRequests/NetHTTP_Get",
+            "value": 106346,
+            "unit": "ns/op\t    6277 B/op\t      69 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/NetHTTP_Get - ns/op",
+            "value": 106346,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/NetHTTP_Get - B/op",
+            "value": 6277,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/NetHTTP_Get - allocs/op",
+            "value": 69,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/NetHTTP_Get",
+            "value": 105065,
+            "unit": "ns/op\t    6271 B/op\t      69 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/NetHTTP_Get - ns/op",
+            "value": 105065,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/NetHTTP_Get - B/op",
+            "value": 6271,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/NetHTTP_Get - allocs/op",
+            "value": 69,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/NetHTTP_Get",
+            "value": 105455,
+            "unit": "ns/op\t    6270 B/op\t      69 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/NetHTTP_Get - ns/op",
+            "value": 105455,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/NetHTTP_Get - B/op",
+            "value": 6270,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/NetHTTP_Get - allocs/op",
+            "value": 69,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/NetHTTP_Get",
+            "value": 105770,
+            "unit": "ns/op\t    6271 B/op\t      69 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/NetHTTP_Get - ns/op",
+            "value": 105770,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/NetHTTP_Get - B/op",
+            "value": 6271,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/NetHTTP_Get - allocs/op",
+            "value": 69,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/NetHTTP_Get",
+            "value": 105699,
+            "unit": "ns/op\t    6270 B/op\t      69 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/NetHTTP_Get - ns/op",
+            "value": 105699,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/NetHTTP_Get - B/op",
+            "value": 6270,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/NetHTTP_Get - allocs/op",
+            "value": 69,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/Requests_Get",
+            "value": 110134,
+            "unit": "ns/op\t    6353 B/op\t      75 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/Requests_Get - ns/op",
+            "value": 110134,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/Requests_Get - B/op",
+            "value": 6353,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/Requests_Get - allocs/op",
+            "value": 75,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/Requests_Get",
+            "value": 108275,
+            "unit": "ns/op\t    6352 B/op\t      75 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/Requests_Get - ns/op",
+            "value": 108275,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/Requests_Get - B/op",
+            "value": 6352,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/Requests_Get - allocs/op",
+            "value": 75,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/Requests_Get",
+            "value": 108824,
+            "unit": "ns/op\t    6352 B/op\t      75 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/Requests_Get - ns/op",
+            "value": 108824,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/Requests_Get - B/op",
+            "value": 6352,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/Requests_Get - allocs/op",
+            "value": 75,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/Requests_Get",
+            "value": 110825,
+            "unit": "ns/op\t    6353 B/op\t      75 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/Requests_Get - ns/op",
+            "value": 110825,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/Requests_Get - B/op",
+            "value": 6353,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/Requests_Get - allocs/op",
+            "value": 75,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/Requests_Get",
+            "value": 110075,
+            "unit": "ns/op\t    6354 B/op\t      75 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/Requests_Get - ns/op",
+            "value": 110075,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/Requests_Get - B/op",
+            "value": 6354,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/Requests_Get - allocs/op",
+            "value": 75,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/NetHTTP_Get_WithQuery",
+            "value": 106048,
+            "unit": "ns/op\t    6309 B/op\t      70 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/NetHTTP_Get_WithQuery - ns/op",
+            "value": 106048,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/NetHTTP_Get_WithQuery - B/op",
+            "value": 6309,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/NetHTTP_Get_WithQuery - allocs/op",
+            "value": 70,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/NetHTTP_Get_WithQuery",
+            "value": 105647,
+            "unit": "ns/op\t    6310 B/op\t      70 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/NetHTTP_Get_WithQuery - ns/op",
+            "value": 105647,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/NetHTTP_Get_WithQuery - B/op",
+            "value": 6310,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/NetHTTP_Get_WithQuery - allocs/op",
+            "value": 70,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/NetHTTP_Get_WithQuery",
+            "value": 105646,
+            "unit": "ns/op\t    6310 B/op\t      70 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/NetHTTP_Get_WithQuery - ns/op",
+            "value": 105646,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/NetHTTP_Get_WithQuery - B/op",
+            "value": 6310,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/NetHTTP_Get_WithQuery - allocs/op",
+            "value": 70,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/NetHTTP_Get_WithQuery",
+            "value": 104946,
+            "unit": "ns/op\t    6310 B/op\t      70 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/NetHTTP_Get_WithQuery - ns/op",
+            "value": 104946,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/NetHTTP_Get_WithQuery - B/op",
+            "value": 6310,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/NetHTTP_Get_WithQuery - allocs/op",
+            "value": 70,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/NetHTTP_Get_WithQuery",
+            "value": 105709,
+            "unit": "ns/op\t    6309 B/op\t      70 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/NetHTTP_Get_WithQuery - ns/op",
+            "value": 105709,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/NetHTTP_Get_WithQuery - B/op",
+            "value": 6309,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/NetHTTP_Get_WithQuery - allocs/op",
+            "value": 70,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/Requests_Get_WithQuery",
+            "value": 111176,
+            "unit": "ns/op\t    6434 B/op\t      79 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/Requests_Get_WithQuery - ns/op",
+            "value": 111176,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/Requests_Get_WithQuery - B/op",
+            "value": 6434,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/Requests_Get_WithQuery - allocs/op",
+            "value": 79,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/Requests_Get_WithQuery",
+            "value": 111331,
+            "unit": "ns/op\t    6436 B/op\t      79 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/Requests_Get_WithQuery - ns/op",
+            "value": 111331,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/Requests_Get_WithQuery - B/op",
+            "value": 6436,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/Requests_Get_WithQuery - allocs/op",
+            "value": 79,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/Requests_Get_WithQuery",
+            "value": 110678,
+            "unit": "ns/op\t    6434 B/op\t      79 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/Requests_Get_WithQuery - ns/op",
+            "value": 110678,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/Requests_Get_WithQuery - B/op",
+            "value": 6434,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/Requests_Get_WithQuery - allocs/op",
+            "value": 79,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/Requests_Get_WithQuery",
+            "value": 111047,
+            "unit": "ns/op\t    6435 B/op\t      79 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/Requests_Get_WithQuery - ns/op",
+            "value": 111047,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/Requests_Get_WithQuery - B/op",
+            "value": 6435,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/Requests_Get_WithQuery - allocs/op",
+            "value": 79,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/Requests_Get_WithQuery",
+            "value": 110978,
+            "unit": "ns/op\t    6437 B/op\t      79 allocs/op",
+            "extra": "9525 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/Requests_Get_WithQuery - ns/op",
+            "value": 110978,
+            "unit": "ns/op",
+            "extra": "9525 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/Requests_Get_WithQuery - B/op",
+            "value": 6437,
+            "unit": "B/op",
+            "extra": "9525 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/Requests_Get_WithQuery - allocs/op",
+            "value": 79,
+            "unit": "allocs/op",
+            "extra": "9525 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/NetHTTP_Get_PrebuiltURL",
+            "value": 105912,
+            "unit": "ns/op\t    6240 B/op\t      68 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/NetHTTP_Get_PrebuiltURL - ns/op",
+            "value": 105912,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/NetHTTP_Get_PrebuiltURL - B/op",
+            "value": 6240,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/NetHTTP_Get_PrebuiltURL - allocs/op",
+            "value": 68,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/NetHTTP_Get_PrebuiltURL",
+            "value": 106561,
+            "unit": "ns/op\t    6240 B/op\t      68 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/NetHTTP_Get_PrebuiltURL - ns/op",
+            "value": 106561,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/NetHTTP_Get_PrebuiltURL - B/op",
+            "value": 6240,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/NetHTTP_Get_PrebuiltURL - allocs/op",
+            "value": 68,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/NetHTTP_Get_PrebuiltURL",
+            "value": 106044,
+            "unit": "ns/op\t    6242 B/op\t      68 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/NetHTTP_Get_PrebuiltURL - ns/op",
+            "value": 106044,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/NetHTTP_Get_PrebuiltURL - B/op",
+            "value": 6242,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/NetHTTP_Get_PrebuiltURL - allocs/op",
+            "value": 68,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/NetHTTP_Get_PrebuiltURL",
+            "value": 105784,
+            "unit": "ns/op\t    6239 B/op\t      68 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/NetHTTP_Get_PrebuiltURL - ns/op",
+            "value": 105784,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/NetHTTP_Get_PrebuiltURL - B/op",
+            "value": 6239,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/NetHTTP_Get_PrebuiltURL - allocs/op",
+            "value": 68,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/NetHTTP_Get_PrebuiltURL",
+            "value": 105759,
+            "unit": "ns/op\t    6241 B/op\t      68 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/NetHTTP_Get_PrebuiltURL - ns/op",
+            "value": 105759,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/NetHTTP_Get_PrebuiltURL - B/op",
+            "value": 6241,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/NetHTTP_Get_PrebuiltURL - allocs/op",
+            "value": 68,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/Requests_Get_PrebuiltURL",
+            "value": 110530,
+            "unit": "ns/op\t    6319 B/op\t      74 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/Requests_Get_PrebuiltURL - ns/op",
+            "value": 110530,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/Requests_Get_PrebuiltURL - B/op",
+            "value": 6319,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/Requests_Get_PrebuiltURL - allocs/op",
+            "value": 74,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/Requests_Get_PrebuiltURL",
+            "value": 109600,
+            "unit": "ns/op\t    6322 B/op\t      74 allocs/op",
+            "extra": "9973 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/Requests_Get_PrebuiltURL - ns/op",
+            "value": 109600,
+            "unit": "ns/op",
+            "extra": "9973 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/Requests_Get_PrebuiltURL - B/op",
+            "value": 6322,
+            "unit": "B/op",
+            "extra": "9973 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/Requests_Get_PrebuiltURL - allocs/op",
+            "value": 74,
+            "unit": "allocs/op",
+            "extra": "9973 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/Requests_Get_PrebuiltURL",
+            "value": 110891,
+            "unit": "ns/op\t    6322 B/op\t      74 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/Requests_Get_PrebuiltURL - ns/op",
+            "value": 110891,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/Requests_Get_PrebuiltURL - B/op",
+            "value": 6322,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/Requests_Get_PrebuiltURL - allocs/op",
+            "value": 74,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/Requests_Get_PrebuiltURL",
+            "value": 109907,
+            "unit": "ns/op\t    6323 B/op\t      74 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/Requests_Get_PrebuiltURL - ns/op",
+            "value": 109907,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/Requests_Get_PrebuiltURL - B/op",
+            "value": 6323,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/Requests_Get_PrebuiltURL - allocs/op",
+            "value": 74,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/Requests_Get_PrebuiltURL",
+            "value": 109872,
+            "unit": "ns/op\t    6322 B/op\t      74 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/Requests_Get_PrebuiltURL - ns/op",
+            "value": 109872,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/Requests_Get_PrebuiltURL - B/op",
+            "value": 6322,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkBasicRequests/Requests_Get_PrebuiltURL - allocs/op",
+            "value": 74,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/NetHTTP_GetJSON",
+            "value": 110031,
+            "unit": "ns/op\t    6536 B/op\t      76 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/NetHTTP_GetJSON - ns/op",
+            "value": 110031,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/NetHTTP_GetJSON - B/op",
+            "value": 6536,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/NetHTTP_GetJSON - allocs/op",
+            "value": 76,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/NetHTTP_GetJSON",
+            "value": 109175,
+            "unit": "ns/op\t    6536 B/op\t      76 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/NetHTTP_GetJSON - ns/op",
+            "value": 109175,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/NetHTTP_GetJSON - B/op",
+            "value": 6536,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/NetHTTP_GetJSON - allocs/op",
+            "value": 76,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/NetHTTP_GetJSON",
+            "value": 110082,
+            "unit": "ns/op\t    6536 B/op\t      76 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/NetHTTP_GetJSON - ns/op",
+            "value": 110082,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/NetHTTP_GetJSON - B/op",
+            "value": 6536,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/NetHTTP_GetJSON - allocs/op",
+            "value": 76,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/NetHTTP_GetJSON",
+            "value": 110649,
+            "unit": "ns/op\t    6536 B/op\t      76 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/NetHTTP_GetJSON - ns/op",
+            "value": 110649,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/NetHTTP_GetJSON - B/op",
+            "value": 6536,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/NetHTTP_GetJSON - allocs/op",
+            "value": 76,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/NetHTTP_GetJSON",
+            "value": 109503,
+            "unit": "ns/op\t    6536 B/op\t      76 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/NetHTTP_GetJSON - ns/op",
+            "value": 109503,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/NetHTTP_GetJSON - B/op",
+            "value": 6536,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/NetHTTP_GetJSON - allocs/op",
+            "value": 76,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/Requests_GetJSON",
+            "value": 114012,
+            "unit": "ns/op\t    6788 B/op\t      81 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/Requests_GetJSON - ns/op",
+            "value": 114012,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/Requests_GetJSON - B/op",
+            "value": 6788,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/Requests_GetJSON - allocs/op",
+            "value": 81,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/Requests_GetJSON",
+            "value": 113912,
+            "unit": "ns/op\t    6789 B/op\t      81 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/Requests_GetJSON - ns/op",
+            "value": 113912,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/Requests_GetJSON - B/op",
+            "value": 6789,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/Requests_GetJSON - allocs/op",
+            "value": 81,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/Requests_GetJSON",
+            "value": 113885,
+            "unit": "ns/op\t    6787 B/op\t      81 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/Requests_GetJSON - ns/op",
+            "value": 113885,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/Requests_GetJSON - B/op",
+            "value": 6787,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/Requests_GetJSON - allocs/op",
+            "value": 81,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/Requests_GetJSON",
+            "value": 113938,
+            "unit": "ns/op\t    6787 B/op\t      81 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/Requests_GetJSON - ns/op",
+            "value": 113938,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/Requests_GetJSON - B/op",
+            "value": 6787,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/Requests_GetJSON - allocs/op",
+            "value": 81,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/Requests_GetJSON",
+            "value": 113357,
+            "unit": "ns/op\t    6787 B/op\t      81 allocs/op",
+            "extra": "9651 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/Requests_GetJSON - ns/op",
+            "value": 113357,
+            "unit": "ns/op",
+            "extra": "9651 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/Requests_GetJSON - B/op",
+            "value": 6787,
+            "unit": "B/op",
+            "extra": "9651 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/Requests_GetJSON - allocs/op",
+            "value": 81,
+            "unit": "allocs/op",
+            "extra": "9651 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/NetHTTP_GetJSON_WithQuery",
+            "value": 112472,
+            "unit": "ns/op\t    7346 B/op\t      83 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/NetHTTP_GetJSON_WithQuery - ns/op",
+            "value": 112472,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/NetHTTP_GetJSON_WithQuery - B/op",
+            "value": 7346,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/NetHTTP_GetJSON_WithQuery - allocs/op",
+            "value": 83,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/NetHTTP_GetJSON_WithQuery",
+            "value": 112828,
+            "unit": "ns/op\t    7348 B/op\t      83 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/NetHTTP_GetJSON_WithQuery - ns/op",
+            "value": 112828,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/NetHTTP_GetJSON_WithQuery - B/op",
+            "value": 7348,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/NetHTTP_GetJSON_WithQuery - allocs/op",
+            "value": 83,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/NetHTTP_GetJSON_WithQuery",
+            "value": 112544,
+            "unit": "ns/op\t    7346 B/op\t      83 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/NetHTTP_GetJSON_WithQuery - ns/op",
+            "value": 112544,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/NetHTTP_GetJSON_WithQuery - B/op",
+            "value": 7346,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/NetHTTP_GetJSON_WithQuery - allocs/op",
+            "value": 83,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/NetHTTP_GetJSON_WithQuery",
+            "value": 113217,
+            "unit": "ns/op\t    7346 B/op\t      83 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/NetHTTP_GetJSON_WithQuery - ns/op",
+            "value": 113217,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/NetHTTP_GetJSON_WithQuery - B/op",
+            "value": 7346,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/NetHTTP_GetJSON_WithQuery - allocs/op",
+            "value": 83,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/NetHTTP_GetJSON_WithQuery",
+            "value": 113140,
+            "unit": "ns/op\t    7346 B/op\t      83 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/NetHTTP_GetJSON_WithQuery - ns/op",
+            "value": 113140,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/NetHTTP_GetJSON_WithQuery - B/op",
+            "value": 7346,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/NetHTTP_GetJSON_WithQuery - allocs/op",
+            "value": 83,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/Requests_GetJSON_WithOptions",
+            "value": 123819,
+            "unit": "ns/op\t    8599 B/op\t     103 allocs/op",
+            "extra": "9391 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/Requests_GetJSON_WithOptions - ns/op",
+            "value": 123819,
+            "unit": "ns/op",
+            "extra": "9391 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/Requests_GetJSON_WithOptions - B/op",
+            "value": 8599,
+            "unit": "B/op",
+            "extra": "9391 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/Requests_GetJSON_WithOptions - allocs/op",
+            "value": 103,
+            "unit": "allocs/op",
+            "extra": "9391 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/Requests_GetJSON_WithOptions",
+            "value": 124478,
+            "unit": "ns/op\t    8599 B/op\t     103 allocs/op",
+            "extra": "9265 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/Requests_GetJSON_WithOptions - ns/op",
+            "value": 124478,
+            "unit": "ns/op",
+            "extra": "9265 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/Requests_GetJSON_WithOptions - B/op",
+            "value": 8599,
+            "unit": "B/op",
+            "extra": "9265 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/Requests_GetJSON_WithOptions - allocs/op",
+            "value": 103,
+            "unit": "allocs/op",
+            "extra": "9265 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/Requests_GetJSON_WithOptions",
+            "value": 123728,
+            "unit": "ns/op\t    8601 B/op\t     103 allocs/op",
+            "extra": "9399 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/Requests_GetJSON_WithOptions - ns/op",
+            "value": 123728,
+            "unit": "ns/op",
+            "extra": "9399 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/Requests_GetJSON_WithOptions - B/op",
+            "value": 8601,
+            "unit": "B/op",
+            "extra": "9399 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/Requests_GetJSON_WithOptions - allocs/op",
+            "value": 103,
+            "unit": "allocs/op",
+            "extra": "9399 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/Requests_GetJSON_WithOptions",
+            "value": 123980,
+            "unit": "ns/op\t    8597 B/op\t     103 allocs/op",
+            "extra": "9505 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/Requests_GetJSON_WithOptions - ns/op",
+            "value": 123980,
+            "unit": "ns/op",
+            "extra": "9505 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/Requests_GetJSON_WithOptions - B/op",
+            "value": 8597,
+            "unit": "B/op",
+            "extra": "9505 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/Requests_GetJSON_WithOptions - allocs/op",
+            "value": 103,
+            "unit": "allocs/op",
+            "extra": "9505 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/Requests_GetJSON_WithOptions",
+            "value": 123680,
+            "unit": "ns/op\t    8600 B/op\t     103 allocs/op",
+            "extra": "9189 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/Requests_GetJSON_WithOptions - ns/op",
+            "value": 123680,
+            "unit": "ns/op",
+            "extra": "9189 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/Requests_GetJSON_WithOptions - B/op",
+            "value": 8600,
+            "unit": "B/op",
+            "extra": "9189 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/Requests_GetJSON_WithOptions - allocs/op",
+            "value": 103,
+            "unit": "allocs/op",
+            "extra": "9189 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/NetHTTP_Manual_Parse",
+            "value": 110603,
+            "unit": "ns/op\t    6537 B/op\t      76 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/NetHTTP_Manual_Parse - ns/op",
+            "value": 110603,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/NetHTTP_Manual_Parse - B/op",
+            "value": 6537,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/NetHTTP_Manual_Parse - allocs/op",
+            "value": 76,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/NetHTTP_Manual_Parse",
+            "value": 110869,
+            "unit": "ns/op\t    6536 B/op\t      76 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/NetHTTP_Manual_Parse - ns/op",
+            "value": 110869,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/NetHTTP_Manual_Parse - B/op",
+            "value": 6536,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/NetHTTP_Manual_Parse - allocs/op",
+            "value": 76,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/NetHTTP_Manual_Parse",
+            "value": 110744,
+            "unit": "ns/op\t    6538 B/op\t      76 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/NetHTTP_Manual_Parse - ns/op",
+            "value": 110744,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/NetHTTP_Manual_Parse - B/op",
+            "value": 6538,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/NetHTTP_Manual_Parse - allocs/op",
+            "value": 76,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/NetHTTP_Manual_Parse",
+            "value": 110382,
+            "unit": "ns/op\t    6537 B/op\t      76 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/NetHTTP_Manual_Parse - ns/op",
+            "value": 110382,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/NetHTTP_Manual_Parse - B/op",
+            "value": 6537,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/NetHTTP_Manual_Parse - allocs/op",
+            "value": 76,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/NetHTTP_Manual_Parse",
+            "value": 110245,
+            "unit": "ns/op\t    6537 B/op\t      76 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/NetHTTP_Manual_Parse - ns/op",
+            "value": 110245,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/NetHTTP_Manual_Parse - B/op",
+            "value": 6537,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/NetHTTP_Manual_Parse - allocs/op",
+            "value": 76,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/Requests_Manual_Parse",
+            "value": 116338,
+            "unit": "ns/op\t    6621 B/op\t      82 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/Requests_Manual_Parse - ns/op",
+            "value": 116338,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/Requests_Manual_Parse - B/op",
+            "value": 6621,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/Requests_Manual_Parse - allocs/op",
+            "value": 82,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/Requests_Manual_Parse",
+            "value": 116384,
+            "unit": "ns/op\t    6617 B/op\t      82 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/Requests_Manual_Parse - ns/op",
+            "value": 116384,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/Requests_Manual_Parse - B/op",
+            "value": 6617,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/Requests_Manual_Parse - allocs/op",
+            "value": 82,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/Requests_Manual_Parse",
+            "value": 116232,
+            "unit": "ns/op\t    6621 B/op\t      82 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/Requests_Manual_Parse - ns/op",
+            "value": 116232,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/Requests_Manual_Parse - B/op",
+            "value": 6621,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/Requests_Manual_Parse - allocs/op",
+            "value": 82,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/Requests_Manual_Parse",
+            "value": 117382,
+            "unit": "ns/op\t    6618 B/op\t      82 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/Requests_Manual_Parse - ns/op",
+            "value": 117382,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/Requests_Manual_Parse - B/op",
+            "value": 6618,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/Requests_Manual_Parse - allocs/op",
+            "value": 82,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/Requests_Manual_Parse",
+            "value": 116767,
+            "unit": "ns/op\t    6620 B/op\t      82 allocs/op",
+            "extra": "9663 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/Requests_Manual_Parse - ns/op",
+            "value": 116767,
+            "unit": "ns/op",
+            "extra": "9663 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/Requests_Manual_Parse - B/op",
+            "value": 6620,
+            "unit": "B/op",
+            "extra": "9663 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkJSONParsing/Requests_Manual_Parse - allocs/op",
+            "value": 82,
+            "unit": "allocs/op",
+            "extra": "9663 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/NetHTTP_Client_Create",
+            "value": 0.3118,
+            "unit": "ns/op\t       0 B/op\t       0 allocs/op",
+            "extra": "1000000000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/NetHTTP_Client_Create - ns/op",
+            "value": 0.3118,
+            "unit": "ns/op",
+            "extra": "1000000000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/NetHTTP_Client_Create - B/op",
+            "value": 0,
+            "unit": "B/op",
+            "extra": "1000000000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/NetHTTP_Client_Create - allocs/op",
+            "value": 0,
+            "unit": "allocs/op",
+            "extra": "1000000000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/NetHTTP_Client_Create",
+            "value": 0.312,
+            "unit": "ns/op\t       0 B/op\t       0 allocs/op",
+            "extra": "1000000000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/NetHTTP_Client_Create - ns/op",
+            "value": 0.312,
+            "unit": "ns/op",
+            "extra": "1000000000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/NetHTTP_Client_Create - B/op",
+            "value": 0,
+            "unit": "B/op",
+            "extra": "1000000000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/NetHTTP_Client_Create - allocs/op",
+            "value": 0,
+            "unit": "allocs/op",
+            "extra": "1000000000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/NetHTTP_Client_Create",
+            "value": 0.3126,
+            "unit": "ns/op\t       0 B/op\t       0 allocs/op",
+            "extra": "1000000000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/NetHTTP_Client_Create - ns/op",
+            "value": 0.3126,
+            "unit": "ns/op",
+            "extra": "1000000000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/NetHTTP_Client_Create - B/op",
+            "value": 0,
+            "unit": "B/op",
+            "extra": "1000000000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/NetHTTP_Client_Create - allocs/op",
+            "value": 0,
+            "unit": "allocs/op",
+            "extra": "1000000000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/NetHTTP_Client_Create",
+            "value": 0.3123,
+            "unit": "ns/op\t       0 B/op\t       0 allocs/op",
+            "extra": "1000000000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/NetHTTP_Client_Create - ns/op",
+            "value": 0.3123,
+            "unit": "ns/op",
+            "extra": "1000000000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/NetHTTP_Client_Create - B/op",
+            "value": 0,
+            "unit": "B/op",
+            "extra": "1000000000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/NetHTTP_Client_Create - allocs/op",
+            "value": 0,
+            "unit": "allocs/op",
+            "extra": "1000000000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/NetHTTP_Client_Create",
+            "value": 0.3112,
+            "unit": "ns/op\t       0 B/op\t       0 allocs/op",
+            "extra": "1000000000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/NetHTTP_Client_Create - ns/op",
+            "value": 0.3112,
+            "unit": "ns/op",
+            "extra": "1000000000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/NetHTTP_Client_Create - B/op",
+            "value": 0,
+            "unit": "B/op",
+            "extra": "1000000000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/NetHTTP_Client_Create - allocs/op",
+            "value": 0,
+            "unit": "allocs/op",
+            "extra": "1000000000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/Requests_Session_Create",
+            "value": 219.8,
+            "unit": "ns/op\t     336 B/op\t       5 allocs/op",
+            "extra": "5586627 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/Requests_Session_Create - ns/op",
+            "value": 219.8,
+            "unit": "ns/op",
+            "extra": "5586627 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/Requests_Session_Create - B/op",
+            "value": 336,
+            "unit": "B/op",
+            "extra": "5586627 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/Requests_Session_Create - allocs/op",
+            "value": 5,
+            "unit": "allocs/op",
+            "extra": "5586627 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/Requests_Session_Create",
+            "value": 218.6,
+            "unit": "ns/op\t     336 B/op\t       5 allocs/op",
+            "extra": "5286514 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/Requests_Session_Create - ns/op",
+            "value": 218.6,
+            "unit": "ns/op",
+            "extra": "5286514 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/Requests_Session_Create - B/op",
+            "value": 336,
+            "unit": "B/op",
+            "extra": "5286514 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/Requests_Session_Create - allocs/op",
+            "value": 5,
+            "unit": "allocs/op",
+            "extra": "5286514 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/Requests_Session_Create",
+            "value": 221,
+            "unit": "ns/op\t     336 B/op\t       5 allocs/op",
+            "extra": "5378792 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/Requests_Session_Create - ns/op",
+            "value": 221,
+            "unit": "ns/op",
+            "extra": "5378792 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/Requests_Session_Create - B/op",
+            "value": 336,
+            "unit": "B/op",
+            "extra": "5378792 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/Requests_Session_Create - allocs/op",
+            "value": 5,
+            "unit": "allocs/op",
+            "extra": "5378792 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/Requests_Session_Create",
+            "value": 221.3,
+            "unit": "ns/op\t     336 B/op\t       5 allocs/op",
+            "extra": "5382076 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/Requests_Session_Create - ns/op",
+            "value": 221.3,
+            "unit": "ns/op",
+            "extra": "5382076 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/Requests_Session_Create - B/op",
+            "value": 336,
+            "unit": "B/op",
+            "extra": "5382076 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/Requests_Session_Create - allocs/op",
+            "value": 5,
+            "unit": "allocs/op",
+            "extra": "5382076 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/Requests_Session_Create",
+            "value": 219.2,
+            "unit": "ns/op\t     336 B/op\t       5 allocs/op",
+            "extra": "5449256 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/Requests_Session_Create - ns/op",
+            "value": 219.2,
+            "unit": "ns/op",
+            "extra": "5449256 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/Requests_Session_Create - B/op",
+            "value": 336,
+            "unit": "B/op",
+            "extra": "5449256 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/Requests_Session_Create - allocs/op",
+            "value": 5,
+            "unit": "allocs/op",
+            "extra": "5449256 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/Requests_Session_WithConfig",
+            "value": 399.2,
+            "unit": "ns/op\t     704 B/op\t       7 allocs/op",
+            "extra": "2946564 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/Requests_Session_WithConfig - ns/op",
+            "value": 399.2,
+            "unit": "ns/op",
+            "extra": "2946564 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/Requests_Session_WithConfig - B/op",
+            "value": 704,
+            "unit": "B/op",
+            "extra": "2946564 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/Requests_Session_WithConfig - allocs/op",
+            "value": 7,
+            "unit": "allocs/op",
+            "extra": "2946564 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/Requests_Session_WithConfig",
+            "value": 409.3,
+            "unit": "ns/op\t     704 B/op\t       7 allocs/op",
+            "extra": "2925398 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/Requests_Session_WithConfig - ns/op",
+            "value": 409.3,
+            "unit": "ns/op",
+            "extra": "2925398 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/Requests_Session_WithConfig - B/op",
+            "value": 704,
+            "unit": "B/op",
+            "extra": "2925398 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/Requests_Session_WithConfig - allocs/op",
+            "value": 7,
+            "unit": "allocs/op",
+            "extra": "2925398 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/Requests_Session_WithConfig",
+            "value": 418.1,
+            "unit": "ns/op\t     704 B/op\t       7 allocs/op",
+            "extra": "2927036 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/Requests_Session_WithConfig - ns/op",
+            "value": 418.1,
+            "unit": "ns/op",
+            "extra": "2927036 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/Requests_Session_WithConfig - B/op",
+            "value": 704,
+            "unit": "B/op",
+            "extra": "2927036 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/Requests_Session_WithConfig - allocs/op",
+            "value": 7,
+            "unit": "allocs/op",
+            "extra": "2927036 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/Requests_Session_WithConfig",
+            "value": 407.3,
+            "unit": "ns/op\t     704 B/op\t       7 allocs/op",
+            "extra": "2940231 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/Requests_Session_WithConfig - ns/op",
+            "value": 407.3,
+            "unit": "ns/op",
+            "extra": "2940231 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/Requests_Session_WithConfig - B/op",
+            "value": 704,
+            "unit": "B/op",
+            "extra": "2940231 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/Requests_Session_WithConfig - allocs/op",
+            "value": 7,
+            "unit": "allocs/op",
+            "extra": "2940231 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/Requests_Session_WithConfig",
+            "value": 400.1,
+            "unit": "ns/op\t     704 B/op\t       7 allocs/op",
+            "extra": "2991093 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/Requests_Session_WithConfig - ns/op",
+            "value": 400.1,
+            "unit": "ns/op",
+            "extra": "2991093 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/Requests_Session_WithConfig - B/op",
+            "value": 704,
+            "unit": "B/op",
+            "extra": "2991093 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/Requests_Session_WithConfig - allocs/op",
+            "value": 7,
+            "unit": "allocs/op",
+            "extra": "2991093 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/NetHTTP_Client_Reuse",
+            "value": 105134,
+            "unit": "ns/op\t    6271 B/op\t      69 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/NetHTTP_Client_Reuse - ns/op",
+            "value": 105134,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/NetHTTP_Client_Reuse - B/op",
+            "value": 6271,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/NetHTTP_Client_Reuse - allocs/op",
+            "value": 69,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/NetHTTP_Client_Reuse",
+            "value": 105382,
+            "unit": "ns/op\t    6271 B/op\t      69 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/NetHTTP_Client_Reuse - ns/op",
+            "value": 105382,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/NetHTTP_Client_Reuse - B/op",
+            "value": 6271,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/NetHTTP_Client_Reuse - allocs/op",
+            "value": 69,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/NetHTTP_Client_Reuse",
+            "value": 105154,
+            "unit": "ns/op\t    6271 B/op\t      69 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/NetHTTP_Client_Reuse - ns/op",
+            "value": 105154,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/NetHTTP_Client_Reuse - B/op",
+            "value": 6271,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/NetHTTP_Client_Reuse - allocs/op",
+            "value": 69,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/NetHTTP_Client_Reuse",
+            "value": 106057,
+            "unit": "ns/op\t    6270 B/op\t      69 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/NetHTTP_Client_Reuse - ns/op",
+            "value": 106057,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/NetHTTP_Client_Reuse - B/op",
+            "value": 6270,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/NetHTTP_Client_Reuse - allocs/op",
+            "value": 69,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/NetHTTP_Client_Reuse",
+            "value": 106215,
+            "unit": "ns/op\t    6271 B/op\t      69 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/NetHTTP_Client_Reuse - ns/op",
+            "value": 106215,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/NetHTTP_Client_Reuse - B/op",
+            "value": 6271,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/NetHTTP_Client_Reuse - allocs/op",
+            "value": 69,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/Requests_Session_Reuse",
+            "value": 109643,
+            "unit": "ns/op\t    6353 B/op\t      75 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/Requests_Session_Reuse - ns/op",
+            "value": 109643,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/Requests_Session_Reuse - B/op",
+            "value": 6353,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/Requests_Session_Reuse - allocs/op",
+            "value": 75,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/Requests_Session_Reuse",
+            "value": 109285,
+            "unit": "ns/op\t    6353 B/op\t      75 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/Requests_Session_Reuse - ns/op",
+            "value": 109285,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/Requests_Session_Reuse - B/op",
+            "value": 6353,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/Requests_Session_Reuse - allocs/op",
+            "value": 75,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/Requests_Session_Reuse",
+            "value": 110378,
+            "unit": "ns/op\t    6355 B/op\t      75 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/Requests_Session_Reuse - ns/op",
+            "value": 110378,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/Requests_Session_Reuse - B/op",
+            "value": 6355,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/Requests_Session_Reuse - allocs/op",
+            "value": 75,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/Requests_Session_Reuse",
+            "value": 110240,
+            "unit": "ns/op\t    6354 B/op\t      75 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/Requests_Session_Reuse - ns/op",
+            "value": 110240,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/Requests_Session_Reuse - B/op",
+            "value": 6354,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/Requests_Session_Reuse - allocs/op",
+            "value": 75,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/Requests_Session_Reuse",
+            "value": 109525,
+            "unit": "ns/op\t    6353 B/op\t      75 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/Requests_Session_Reuse - ns/op",
+            "value": 109525,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/Requests_Session_Reuse - B/op",
+            "value": 6353,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSession/Requests_Session_Reuse - allocs/op",
+            "value": 75,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_Simple",
+            "value": 373.9,
+            "unit": "ns/op\t     512 B/op\t       3 allocs/op",
+            "extra": "3218422 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_Simple - ns/op",
+            "value": 373.9,
+            "unit": "ns/op",
+            "extra": "3218422 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_Simple - B/op",
+            "value": 512,
+            "unit": "B/op",
+            "extra": "3218422 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_Simple - allocs/op",
+            "value": 3,
+            "unit": "allocs/op",
+            "extra": "3218422 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_Simple",
+            "value": 370.8,
+            "unit": "ns/op\t     512 B/op\t       3 allocs/op",
+            "extra": "3230269 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_Simple - ns/op",
+            "value": 370.8,
+            "unit": "ns/op",
+            "extra": "3230269 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_Simple - B/op",
+            "value": 512,
+            "unit": "B/op",
+            "extra": "3230269 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_Simple - allocs/op",
+            "value": 3,
+            "unit": "allocs/op",
+            "extra": "3230269 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_Simple",
+            "value": 374.6,
+            "unit": "ns/op\t     512 B/op\t       3 allocs/op",
+            "extra": "3257955 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_Simple - ns/op",
+            "value": 374.6,
+            "unit": "ns/op",
+            "extra": "3257955 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_Simple - B/op",
+            "value": 512,
+            "unit": "B/op",
+            "extra": "3257955 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_Simple - allocs/op",
+            "value": 3,
+            "unit": "allocs/op",
+            "extra": "3257955 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_Simple",
+            "value": 372.3,
+            "unit": "ns/op\t     512 B/op\t       3 allocs/op",
+            "extra": "3037276 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_Simple - ns/op",
+            "value": 372.3,
+            "unit": "ns/op",
+            "extra": "3037276 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_Simple - B/op",
+            "value": 512,
+            "unit": "B/op",
+            "extra": "3037276 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_Simple - allocs/op",
+            "value": 3,
+            "unit": "allocs/op",
+            "extra": "3037276 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_Simple",
+            "value": 370.9,
+            "unit": "ns/op\t     512 B/op\t       3 allocs/op",
+            "extra": "3099740 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_Simple - ns/op",
+            "value": 370.9,
+            "unit": "ns/op",
+            "extra": "3099740 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_Simple - B/op",
+            "value": 512,
+            "unit": "B/op",
+            "extra": "3099740 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_Simple - allocs/op",
+            "value": 3,
+            "unit": "allocs/op",
+            "extra": "3099740 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_Simple",
+            "value": 318.2,
+            "unit": "ns/op\t     320 B/op\t       3 allocs/op",
+            "extra": "3742946 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_Simple - ns/op",
+            "value": 318.2,
+            "unit": "ns/op",
+            "extra": "3742946 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_Simple - B/op",
+            "value": 320,
+            "unit": "B/op",
+            "extra": "3742946 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_Simple - allocs/op",
+            "value": 3,
+            "unit": "allocs/op",
+            "extra": "3742946 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_Simple",
+            "value": 323.3,
+            "unit": "ns/op\t     320 B/op\t       3 allocs/op",
+            "extra": "3671536 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_Simple - ns/op",
+            "value": 323.3,
+            "unit": "ns/op",
+            "extra": "3671536 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_Simple - B/op",
+            "value": 320,
+            "unit": "B/op",
+            "extra": "3671536 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_Simple - allocs/op",
+            "value": 3,
+            "unit": "allocs/op",
+            "extra": "3671536 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_Simple",
+            "value": 317.7,
+            "unit": "ns/op\t     320 B/op\t       3 allocs/op",
+            "extra": "3672748 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_Simple - ns/op",
+            "value": 317.7,
+            "unit": "ns/op",
+            "extra": "3672748 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_Simple - B/op",
+            "value": 320,
+            "unit": "B/op",
+            "extra": "3672748 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_Simple - allocs/op",
+            "value": 3,
+            "unit": "allocs/op",
+            "extra": "3672748 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_Simple",
+            "value": 311.9,
+            "unit": "ns/op\t     320 B/op\t       3 allocs/op",
+            "extra": "3759621 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_Simple - ns/op",
+            "value": 311.9,
+            "unit": "ns/op",
+            "extra": "3759621 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_Simple - B/op",
+            "value": 320,
+            "unit": "B/op",
+            "extra": "3759621 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_Simple - allocs/op",
+            "value": 3,
+            "unit": "allocs/op",
+            "extra": "3759621 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_Simple",
+            "value": 322.6,
+            "unit": "ns/op\t     320 B/op\t       3 allocs/op",
+            "extra": "3738452 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_Simple - ns/op",
+            "value": 322.6,
+            "unit": "ns/op",
+            "extra": "3738452 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_Simple - B/op",
+            "value": 320,
+            "unit": "B/op",
+            "extra": "3738452 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_Simple - allocs/op",
+            "value": 3,
+            "unit": "allocs/op",
+            "extra": "3738452 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_WithQuery",
+            "value": 391,
+            "unit": "ns/op\t     512 B/op\t       3 allocs/op",
+            "extra": "3099436 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_WithQuery - ns/op",
+            "value": 391,
+            "unit": "ns/op",
+            "extra": "3099436 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_WithQuery - B/op",
+            "value": 512,
+            "unit": "B/op",
+            "extra": "3099436 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_WithQuery - allocs/op",
+            "value": 3,
+            "unit": "allocs/op",
+            "extra": "3099436 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_WithQuery",
+            "value": 387,
+            "unit": "ns/op\t     512 B/op\t       3 allocs/op",
+            "extra": "3112524 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_WithQuery - ns/op",
+            "value": 387,
+            "unit": "ns/op",
+            "extra": "3112524 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_WithQuery - B/op",
+            "value": 512,
+            "unit": "B/op",
+            "extra": "3112524 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_WithQuery - allocs/op",
+            "value": 3,
+            "unit": "allocs/op",
+            "extra": "3112524 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_WithQuery",
+            "value": 391.8,
+            "unit": "ns/op\t     512 B/op\t       3 allocs/op",
+            "extra": "3058356 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_WithQuery - ns/op",
+            "value": 391.8,
+            "unit": "ns/op",
+            "extra": "3058356 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_WithQuery - B/op",
+            "value": 512,
+            "unit": "B/op",
+            "extra": "3058356 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_WithQuery - allocs/op",
+            "value": 3,
+            "unit": "allocs/op",
+            "extra": "3058356 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_WithQuery",
+            "value": 386.4,
+            "unit": "ns/op\t     512 B/op\t       3 allocs/op",
+            "extra": "3057831 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_WithQuery - ns/op",
+            "value": 386.4,
+            "unit": "ns/op",
+            "extra": "3057831 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_WithQuery - B/op",
+            "value": 512,
+            "unit": "B/op",
+            "extra": "3057831 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_WithQuery - allocs/op",
+            "value": 3,
+            "unit": "allocs/op",
+            "extra": "3057831 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_WithQuery",
+            "value": 398.8,
+            "unit": "ns/op\t     512 B/op\t       3 allocs/op",
+            "extra": "3093087 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_WithQuery - ns/op",
+            "value": 398.8,
+            "unit": "ns/op",
+            "extra": "3093087 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_WithQuery - B/op",
+            "value": 512,
+            "unit": "B/op",
+            "extra": "3093087 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_WithQuery - allocs/op",
+            "value": 3,
+            "unit": "allocs/op",
+            "extra": "3093087 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_WithQuery",
+            "value": 640.2,
+            "unit": "ns/op\t     472 B/op\t       8 allocs/op",
+            "extra": "1888209 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_WithQuery - ns/op",
+            "value": 640.2,
+            "unit": "ns/op",
+            "extra": "1888209 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_WithQuery - B/op",
+            "value": 472,
+            "unit": "B/op",
+            "extra": "1888209 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_WithQuery - allocs/op",
+            "value": 8,
+            "unit": "allocs/op",
+            "extra": "1888209 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_WithQuery",
+            "value": 629.9,
+            "unit": "ns/op\t     472 B/op\t       8 allocs/op",
+            "extra": "1931148 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_WithQuery - ns/op",
+            "value": 629.9,
+            "unit": "ns/op",
+            "extra": "1931148 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_WithQuery - B/op",
+            "value": 472,
+            "unit": "B/op",
+            "extra": "1931148 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_WithQuery - allocs/op",
+            "value": 8,
+            "unit": "allocs/op",
+            "extra": "1931148 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_WithQuery",
+            "value": 629.2,
+            "unit": "ns/op\t     472 B/op\t       8 allocs/op",
+            "extra": "1947728 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_WithQuery - ns/op",
+            "value": 629.2,
+            "unit": "ns/op",
+            "extra": "1947728 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_WithQuery - B/op",
+            "value": 472,
+            "unit": "B/op",
+            "extra": "1947728 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_WithQuery - allocs/op",
+            "value": 8,
+            "unit": "allocs/op",
+            "extra": "1947728 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_WithQuery",
+            "value": 625.5,
+            "unit": "ns/op\t     472 B/op\t       8 allocs/op",
+            "extra": "1911368 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_WithQuery - ns/op",
+            "value": 625.5,
+            "unit": "ns/op",
+            "extra": "1911368 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_WithQuery - B/op",
+            "value": 472,
+            "unit": "B/op",
+            "extra": "1911368 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_WithQuery - allocs/op",
+            "value": 8,
+            "unit": "allocs/op",
+            "extra": "1911368 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_WithQuery",
+            "value": 624.3,
+            "unit": "ns/op\t     472 B/op\t       8 allocs/op",
+            "extra": "1917987 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_WithQuery - ns/op",
+            "value": 624.3,
+            "unit": "ns/op",
+            "extra": "1917987 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_WithQuery - B/op",
+            "value": 472,
+            "unit": "B/op",
+            "extra": "1917987 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_WithQuery - allocs/op",
+            "value": 8,
+            "unit": "allocs/op",
+            "extra": "1917987 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_WithHeaders",
+            "value": 692.5,
+            "unit": "ns/op\t     912 B/op\t       7 allocs/op",
+            "extra": "1763263 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_WithHeaders - ns/op",
+            "value": 692.5,
+            "unit": "ns/op",
+            "extra": "1763263 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_WithHeaders - B/op",
+            "value": 912,
+            "unit": "B/op",
+            "extra": "1763263 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_WithHeaders - allocs/op",
+            "value": 7,
+            "unit": "allocs/op",
+            "extra": "1763263 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_WithHeaders",
+            "value": 699.8,
+            "unit": "ns/op\t     912 B/op\t       7 allocs/op",
+            "extra": "1732731 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_WithHeaders - ns/op",
+            "value": 699.8,
+            "unit": "ns/op",
+            "extra": "1732731 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_WithHeaders - B/op",
+            "value": 912,
+            "unit": "B/op",
+            "extra": "1732731 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_WithHeaders - allocs/op",
+            "value": 7,
+            "unit": "allocs/op",
+            "extra": "1732731 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_WithHeaders",
+            "value": 694.6,
+            "unit": "ns/op\t     912 B/op\t       7 allocs/op",
+            "extra": "1729851 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_WithHeaders - ns/op",
+            "value": 694.6,
+            "unit": "ns/op",
+            "extra": "1729851 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_WithHeaders - B/op",
+            "value": 912,
+            "unit": "B/op",
+            "extra": "1729851 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_WithHeaders - allocs/op",
+            "value": 7,
+            "unit": "allocs/op",
+            "extra": "1729851 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_WithHeaders",
+            "value": 683.1,
+            "unit": "ns/op\t     912 B/op\t       7 allocs/op",
+            "extra": "1759257 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_WithHeaders - ns/op",
+            "value": 683.1,
+            "unit": "ns/op",
+            "extra": "1759257 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_WithHeaders - B/op",
+            "value": 912,
+            "unit": "B/op",
+            "extra": "1759257 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_WithHeaders - allocs/op",
+            "value": 7,
+            "unit": "allocs/op",
+            "extra": "1759257 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_WithHeaders",
+            "value": 688.6,
+            "unit": "ns/op\t     912 B/op\t       7 allocs/op",
+            "extra": "1780083 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_WithHeaders - ns/op",
+            "value": 688.6,
+            "unit": "ns/op",
+            "extra": "1780083 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_WithHeaders - B/op",
+            "value": 912,
+            "unit": "B/op",
+            "extra": "1780083 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_WithHeaders - allocs/op",
+            "value": 7,
+            "unit": "allocs/op",
+            "extra": "1780083 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_WithHeaders",
+            "value": 633.5,
+            "unit": "ns/op\t     720 B/op\t       7 allocs/op",
+            "extra": "1892613 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_WithHeaders - ns/op",
+            "value": 633.5,
+            "unit": "ns/op",
+            "extra": "1892613 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_WithHeaders - B/op",
+            "value": 720,
+            "unit": "B/op",
+            "extra": "1892613 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_WithHeaders - allocs/op",
+            "value": 7,
+            "unit": "allocs/op",
+            "extra": "1892613 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_WithHeaders",
+            "value": 638.8,
+            "unit": "ns/op\t     720 B/op\t       7 allocs/op",
+            "extra": "1833481 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_WithHeaders - ns/op",
+            "value": 638.8,
+            "unit": "ns/op",
+            "extra": "1833481 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_WithHeaders - B/op",
+            "value": 720,
+            "unit": "B/op",
+            "extra": "1833481 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_WithHeaders - allocs/op",
+            "value": 7,
+            "unit": "allocs/op",
+            "extra": "1833481 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_WithHeaders",
+            "value": 639.6,
+            "unit": "ns/op\t     720 B/op\t       7 allocs/op",
+            "extra": "1879191 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_WithHeaders - ns/op",
+            "value": 639.6,
+            "unit": "ns/op",
+            "extra": "1879191 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_WithHeaders - B/op",
+            "value": 720,
+            "unit": "B/op",
+            "extra": "1879191 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_WithHeaders - allocs/op",
+            "value": 7,
+            "unit": "allocs/op",
+            "extra": "1879191 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_WithHeaders",
+            "value": 635.8,
+            "unit": "ns/op\t     720 B/op\t       7 allocs/op",
+            "extra": "1784066 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_WithHeaders - ns/op",
+            "value": 635.8,
+            "unit": "ns/op",
+            "extra": "1784066 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_WithHeaders - B/op",
+            "value": 720,
+            "unit": "B/op",
+            "extra": "1784066 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_WithHeaders - allocs/op",
+            "value": 7,
+            "unit": "allocs/op",
+            "extra": "1784066 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_WithHeaders",
+            "value": 642.6,
+            "unit": "ns/op\t     720 B/op\t       7 allocs/op",
+            "extra": "1882174 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_WithHeaders - ns/op",
+            "value": 642.6,
+            "unit": "ns/op",
+            "extra": "1882174 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_WithHeaders - B/op",
+            "value": 720,
+            "unit": "B/op",
+            "extra": "1882174 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_WithHeaders - allocs/op",
+            "value": 7,
+            "unit": "allocs/op",
+            "extra": "1882174 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_Complex",
+            "value": 697.2,
+            "unit": "ns/op\t     912 B/op\t       7 allocs/op",
+            "extra": "1741360 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_Complex - ns/op",
+            "value": 697.2,
+            "unit": "ns/op",
+            "extra": "1741360 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_Complex - B/op",
+            "value": 912,
+            "unit": "B/op",
+            "extra": "1741360 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_Complex - allocs/op",
+            "value": 7,
+            "unit": "allocs/op",
+            "extra": "1741360 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_Complex",
+            "value": 691.8,
+            "unit": "ns/op\t     912 B/op\t       7 allocs/op",
+            "extra": "1719361 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_Complex - ns/op",
+            "value": 691.8,
+            "unit": "ns/op",
+            "extra": "1719361 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_Complex - B/op",
+            "value": 912,
+            "unit": "B/op",
+            "extra": "1719361 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_Complex - allocs/op",
+            "value": 7,
+            "unit": "allocs/op",
+            "extra": "1719361 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_Complex",
+            "value": 709.3,
+            "unit": "ns/op\t     912 B/op\t       7 allocs/op",
+            "extra": "1682054 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_Complex - ns/op",
+            "value": 709.3,
+            "unit": "ns/op",
+            "extra": "1682054 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_Complex - B/op",
+            "value": 912,
+            "unit": "B/op",
+            "extra": "1682054 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_Complex - allocs/op",
+            "value": 7,
+            "unit": "allocs/op",
+            "extra": "1682054 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_Complex",
+            "value": 706.9,
+            "unit": "ns/op\t     912 B/op\t       7 allocs/op",
+            "extra": "1702263 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_Complex - ns/op",
+            "value": 706.9,
+            "unit": "ns/op",
+            "extra": "1702263 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_Complex - B/op",
+            "value": 912,
+            "unit": "B/op",
+            "extra": "1702263 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_Complex - allocs/op",
+            "value": 7,
+            "unit": "allocs/op",
+            "extra": "1702263 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_Complex",
+            "value": 705.8,
+            "unit": "ns/op\t     912 B/op\t       7 allocs/op",
+            "extra": "1699393 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_Complex - ns/op",
+            "value": 705.8,
+            "unit": "ns/op",
+            "extra": "1699393 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_Complex - B/op",
+            "value": 912,
+            "unit": "B/op",
+            "extra": "1699393 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/NetHTTP_NewRequest_Complex - allocs/op",
+            "value": 7,
+            "unit": "allocs/op",
+            "extra": "1699393 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_Complex",
+            "value": 1608,
+            "unit": "ns/op\t    1397 B/op\t      18 allocs/op",
+            "extra": "746726 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_Complex - ns/op",
+            "value": 1608,
+            "unit": "ns/op",
+            "extra": "746726 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_Complex - B/op",
+            "value": 1397,
+            "unit": "B/op",
+            "extra": "746726 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_Complex - allocs/op",
+            "value": 18,
+            "unit": "allocs/op",
+            "extra": "746726 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_Complex",
+            "value": 1621,
+            "unit": "ns/op\t    1394 B/op\t      18 allocs/op",
+            "extra": "687319 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_Complex - ns/op",
+            "value": 1621,
+            "unit": "ns/op",
+            "extra": "687319 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_Complex - B/op",
+            "value": 1394,
+            "unit": "B/op",
+            "extra": "687319 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_Complex - allocs/op",
+            "value": 18,
+            "unit": "allocs/op",
+            "extra": "687319 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_Complex",
+            "value": 1611,
+            "unit": "ns/op\t    1393 B/op\t      18 allocs/op",
+            "extra": "719202 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_Complex - ns/op",
+            "value": 1611,
+            "unit": "ns/op",
+            "extra": "719202 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_Complex - B/op",
+            "value": 1393,
+            "unit": "B/op",
+            "extra": "719202 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_Complex - allocs/op",
+            "value": 18,
+            "unit": "allocs/op",
+            "extra": "719202 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_Complex",
+            "value": 1624,
+            "unit": "ns/op\t    1390 B/op\t      18 allocs/op",
+            "extra": "743444 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_Complex - ns/op",
+            "value": 1624,
+            "unit": "ns/op",
+            "extra": "743444 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_Complex - B/op",
+            "value": 1390,
+            "unit": "B/op",
+            "extra": "743444 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_Complex - allocs/op",
+            "value": 18,
+            "unit": "allocs/op",
+            "extra": "743444 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_Complex",
+            "value": 1601,
+            "unit": "ns/op\t    1392 B/op\t      18 allocs/op",
+            "extra": "700641 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_Complex - ns/op",
+            "value": 1601,
+            "unit": "ns/op",
+            "extra": "700641 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_Complex - B/op",
+            "value": 1392,
+            "unit": "B/op",
+            "extra": "700641 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkRequestBuilder/Requests_Builder_Complex - allocs/op",
+            "value": 18,
+            "unit": "allocs/op",
+            "extra": "700641 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkResultType/Result_Access",
+            "value": 0.3114,
+            "unit": "ns/op\t       0 B/op\t       0 allocs/op",
+            "extra": "1000000000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkResultType/Result_Access - ns/op",
+            "value": 0.3114,
+            "unit": "ns/op",
+            "extra": "1000000000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkResultType/Result_Access - B/op",
+            "value": 0,
+            "unit": "B/op",
+            "extra": "1000000000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkResultType/Result_Access - allocs/op",
+            "value": 0,
+            "unit": "allocs/op",
+            "extra": "1000000000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkResultType/Result_Access",
+            "value": 0.3112,
+            "unit": "ns/op\t       0 B/op\t       0 allocs/op",
+            "extra": "1000000000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkResultType/Result_Access - ns/op",
+            "value": 0.3112,
+            "unit": "ns/op",
+            "extra": "1000000000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkResultType/Result_Access - B/op",
+            "value": 0,
+            "unit": "B/op",
+            "extra": "1000000000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkResultType/Result_Access - allocs/op",
+            "value": 0,
+            "unit": "allocs/op",
+            "extra": "1000000000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkResultType/Result_Access",
+            "value": 0.3122,
+            "unit": "ns/op\t       0 B/op\t       0 allocs/op",
+            "extra": "1000000000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkResultType/Result_Access - ns/op",
+            "value": 0.3122,
+            "unit": "ns/op",
+            "extra": "1000000000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkResultType/Result_Access - B/op",
+            "value": 0,
+            "unit": "B/op",
+            "extra": "1000000000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkResultType/Result_Access - allocs/op",
+            "value": 0,
+            "unit": "allocs/op",
+            "extra": "1000000000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkResultType/Result_Access",
+            "value": 0.3119,
+            "unit": "ns/op\t       0 B/op\t       0 allocs/op",
+            "extra": "1000000000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkResultType/Result_Access - ns/op",
+            "value": 0.3119,
+            "unit": "ns/op",
+            "extra": "1000000000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkResultType/Result_Access - B/op",
+            "value": 0,
+            "unit": "B/op",
+            "extra": "1000000000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkResultType/Result_Access - allocs/op",
+            "value": 0,
+            "unit": "allocs/op",
+            "extra": "1000000000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkResultType/Result_Access",
+            "value": 0.3117,
+            "unit": "ns/op\t       0 B/op\t       0 allocs/op",
+            "extra": "1000000000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkResultType/Result_Access - ns/op",
+            "value": 0.3117,
+            "unit": "ns/op",
+            "extra": "1000000000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkResultType/Result_Access - B/op",
+            "value": 0,
+            "unit": "B/op",
+            "extra": "1000000000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkResultType/Result_Access - allocs/op",
+            "value": 0,
+            "unit": "allocs/op",
+            "extra": "1000000000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/NetHTTP_Default",
+            "value": 106641,
+            "unit": "ns/op\t    6271 B/op\t      69 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/NetHTTP_Default - ns/op",
+            "value": 106641,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/NetHTTP_Default - B/op",
+            "value": 6271,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/NetHTTP_Default - allocs/op",
+            "value": 69,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/NetHTTP_Default",
+            "value": 105387,
+            "unit": "ns/op\t    6272 B/op\t      69 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/NetHTTP_Default - ns/op",
+            "value": 105387,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/NetHTTP_Default - B/op",
+            "value": 6272,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/NetHTTP_Default - allocs/op",
+            "value": 69,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/NetHTTP_Default",
+            "value": 104973,
+            "unit": "ns/op\t    6272 B/op\t      69 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/NetHTTP_Default - ns/op",
+            "value": 104973,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/NetHTTP_Default - B/op",
+            "value": 6272,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/NetHTTP_Default - allocs/op",
+            "value": 69,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/NetHTTP_Default",
+            "value": 105546,
+            "unit": "ns/op\t    6272 B/op\t      69 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/NetHTTP_Default - ns/op",
+            "value": 105546,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/NetHTTP_Default - B/op",
+            "value": 6272,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/NetHTTP_Default - allocs/op",
+            "value": 69,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/NetHTTP_Default",
+            "value": 106020,
+            "unit": "ns/op\t    6270 B/op\t      69 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/NetHTTP_Default - ns/op",
+            "value": 106020,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/NetHTTP_Default - B/op",
+            "value": 6270,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/NetHTTP_Default - allocs/op",
+            "value": 69,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/Requests_HTTP1",
+            "value": 109588,
+            "unit": "ns/op\t    6351 B/op\t      75 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/Requests_HTTP1 - ns/op",
+            "value": 109588,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/Requests_HTTP1 - B/op",
+            "value": 6351,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/Requests_HTTP1 - allocs/op",
+            "value": 75,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/Requests_HTTP1",
+            "value": 110239,
+            "unit": "ns/op\t    6353 B/op\t      75 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/Requests_HTTP1 - ns/op",
+            "value": 110239,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/Requests_HTTP1 - B/op",
+            "value": 6353,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/Requests_HTTP1 - allocs/op",
+            "value": 75,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/Requests_HTTP1",
+            "value": 111552,
+            "unit": "ns/op\t    6351 B/op\t      75 allocs/op",
+            "extra": "9854 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/Requests_HTTP1 - ns/op",
+            "value": 111552,
+            "unit": "ns/op",
+            "extra": "9854 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/Requests_HTTP1 - B/op",
+            "value": 6351,
+            "unit": "B/op",
+            "extra": "9854 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/Requests_HTTP1 - allocs/op",
+            "value": 75,
+            "unit": "allocs/op",
+            "extra": "9854 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/Requests_HTTP1",
+            "value": 110957,
+            "unit": "ns/op\t    6353 B/op\t      75 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/Requests_HTTP1 - ns/op",
+            "value": 110957,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/Requests_HTTP1 - B/op",
+            "value": 6353,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/Requests_HTTP1 - allocs/op",
+            "value": 75,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/Requests_HTTP1",
+            "value": 110219,
+            "unit": "ns/op\t    6353 B/op\t      75 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/Requests_HTTP1 - ns/op",
+            "value": 110219,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/Requests_HTTP1 - B/op",
+            "value": 6353,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/Requests_HTTP1 - allocs/op",
+            "value": 75,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/Requests_HTTP2",
+            "value": 110826,
+            "unit": "ns/op\t    6350 B/op\t      75 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/Requests_HTTP2 - ns/op",
+            "value": 110826,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/Requests_HTTP2 - B/op",
+            "value": 6350,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/Requests_HTTP2 - allocs/op",
+            "value": 75,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/Requests_HTTP2",
+            "value": 109936,
+            "unit": "ns/op\t    6356 B/op\t      75 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/Requests_HTTP2 - ns/op",
+            "value": 109936,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/Requests_HTTP2 - B/op",
+            "value": 6356,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/Requests_HTTP2 - allocs/op",
+            "value": 75,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/Requests_HTTP2",
+            "value": 110737,
+            "unit": "ns/op\t    6353 B/op\t      75 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/Requests_HTTP2 - ns/op",
+            "value": 110737,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/Requests_HTTP2 - B/op",
+            "value": 6353,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/Requests_HTTP2 - allocs/op",
+            "value": 75,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/Requests_HTTP2",
+            "value": 109891,
+            "unit": "ns/op\t    6354 B/op\t      75 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/Requests_HTTP2 - ns/op",
+            "value": 109891,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/Requests_HTTP2 - B/op",
+            "value": 6354,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/Requests_HTTP2 - allocs/op",
+            "value": 75,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/Requests_HTTP2",
+            "value": 110529,
+            "unit": "ns/op\t    6355 B/op\t      75 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/Requests_HTTP2 - ns/op",
+            "value": 110529,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/Requests_HTTP2 - B/op",
+            "value": 6355,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/Requests_HTTP2 - allocs/op",
+            "value": 75,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/Requests_HTTP2_WithMaxIdleConns",
+            "value": 110425,
+            "unit": "ns/op\t    6355 B/op\t      75 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/Requests_HTTP2_WithMaxIdleConns - ns/op",
+            "value": 110425,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/Requests_HTTP2_WithMaxIdleConns - B/op",
+            "value": 6355,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/Requests_HTTP2_WithMaxIdleConns - allocs/op",
+            "value": 75,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/Requests_HTTP2_WithMaxIdleConns",
+            "value": 110138,
+            "unit": "ns/op\t    6353 B/op\t      75 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/Requests_HTTP2_WithMaxIdleConns - ns/op",
+            "value": 110138,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/Requests_HTTP2_WithMaxIdleConns - B/op",
+            "value": 6353,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/Requests_HTTP2_WithMaxIdleConns - allocs/op",
+            "value": 75,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/Requests_HTTP2_WithMaxIdleConns",
+            "value": 110180,
+            "unit": "ns/op\t    6357 B/op\t      75 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/Requests_HTTP2_WithMaxIdleConns - ns/op",
+            "value": 110180,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/Requests_HTTP2_WithMaxIdleConns - B/op",
+            "value": 6357,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/Requests_HTTP2_WithMaxIdleConns - allocs/op",
+            "value": 75,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/Requests_HTTP2_WithMaxIdleConns",
+            "value": 110493,
+            "unit": "ns/op\t    6356 B/op\t      75 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/Requests_HTTP2_WithMaxIdleConns - ns/op",
+            "value": 110493,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/Requests_HTTP2_WithMaxIdleConns - B/op",
+            "value": 6356,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/Requests_HTTP2_WithMaxIdleConns - allocs/op",
+            "value": 75,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/Requests_HTTP2_WithMaxIdleConns",
+            "value": 110447,
+            "unit": "ns/op\t    6356 B/op\t      75 allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/Requests_HTTP2_WithMaxIdleConns - ns/op",
+            "value": 110447,
+            "unit": "ns/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/Requests_HTTP2_WithMaxIdleConns - B/op",
+            "value": 6356,
+            "unit": "B/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkHTTP2/Requests_HTTP2_WithMaxIdleConns - allocs/op",
+            "value": 75,
+            "unit": "allocs/op",
+            "extra": "10000 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkParallel/NetHTTP_Parallel",
+            "value": 27999,
+            "unit": "ns/op\t    7454 B/op\t      74 allocs/op",
+            "extra": "43274 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkParallel/NetHTTP_Parallel - ns/op",
+            "value": 27999,
+            "unit": "ns/op",
+            "extra": "43274 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkParallel/NetHTTP_Parallel - B/op",
+            "value": 7454,
+            "unit": "B/op",
+            "extra": "43274 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkParallel/NetHTTP_Parallel - allocs/op",
+            "value": 74,
+            "unit": "allocs/op",
+            "extra": "43274 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkParallel/NetHTTP_Parallel",
+            "value": 27785,
+            "unit": "ns/op\t    7398 B/op\t      74 allocs/op",
+            "extra": "44239 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkParallel/NetHTTP_Parallel - ns/op",
+            "value": 27785,
+            "unit": "ns/op",
+            "extra": "44239 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkParallel/NetHTTP_Parallel - B/op",
+            "value": 7398,
+            "unit": "B/op",
+            "extra": "44239 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkParallel/NetHTTP_Parallel - allocs/op",
+            "value": 74,
+            "unit": "allocs/op",
+            "extra": "44239 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkParallel/NetHTTP_Parallel",
+            "value": 27562,
+            "unit": "ns/op\t    7391 B/op\t      74 allocs/op",
+            "extra": "43020 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkParallel/NetHTTP_Parallel - ns/op",
+            "value": 27562,
+            "unit": "ns/op",
+            "extra": "43020 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkParallel/NetHTTP_Parallel - B/op",
+            "value": 7391,
+            "unit": "B/op",
+            "extra": "43020 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkParallel/NetHTTP_Parallel - allocs/op",
+            "value": 74,
+            "unit": "allocs/op",
+            "extra": "43020 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkParallel/NetHTTP_Parallel",
+            "value": 27723,
+            "unit": "ns/op\t    7398 B/op\t      74 allocs/op",
+            "extra": "43786 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkParallel/NetHTTP_Parallel - ns/op",
+            "value": 27723,
+            "unit": "ns/op",
+            "extra": "43786 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkParallel/NetHTTP_Parallel - B/op",
+            "value": 7398,
+            "unit": "B/op",
+            "extra": "43786 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkParallel/NetHTTP_Parallel - allocs/op",
+            "value": 74,
+            "unit": "allocs/op",
+            "extra": "43786 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkParallel/NetHTTP_Parallel",
+            "value": 28092,
+            "unit": "ns/op\t    7421 B/op\t      74 allocs/op",
+            "extra": "42688 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkParallel/NetHTTP_Parallel - ns/op",
+            "value": 28092,
+            "unit": "ns/op",
+            "extra": "42688 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkParallel/NetHTTP_Parallel - B/op",
+            "value": 7421,
+            "unit": "B/op",
+            "extra": "42688 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkParallel/NetHTTP_Parallel - allocs/op",
+            "value": 74,
+            "unit": "allocs/op",
+            "extra": "42688 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkParallel/Requests_Parallel",
+            "value": 25749,
+            "unit": "ns/op\t    7150 B/op\t      88 allocs/op",
+            "extra": "47427 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkParallel/Requests_Parallel - ns/op",
+            "value": 25749,
+            "unit": "ns/op",
+            "extra": "47427 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkParallel/Requests_Parallel - B/op",
+            "value": 7150,
+            "unit": "B/op",
+            "extra": "47427 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkParallel/Requests_Parallel - allocs/op",
+            "value": 88,
+            "unit": "allocs/op",
+            "extra": "47427 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkParallel/Requests_Parallel",
+            "value": 25492,
+            "unit": "ns/op\t    7150 B/op\t      88 allocs/op",
+            "extra": "47295 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkParallel/Requests_Parallel - ns/op",
+            "value": 25492,
+            "unit": "ns/op",
+            "extra": "47295 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkParallel/Requests_Parallel - B/op",
+            "value": 7150,
+            "unit": "B/op",
+            "extra": "47295 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkParallel/Requests_Parallel - allocs/op",
+            "value": 88,
+            "unit": "allocs/op",
+            "extra": "47295 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkParallel/Requests_Parallel",
+            "value": 26492,
+            "unit": "ns/op\t    7150 B/op\t      88 allocs/op",
+            "extra": "46884 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkParallel/Requests_Parallel - ns/op",
+            "value": 26492,
+            "unit": "ns/op",
+            "extra": "46884 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkParallel/Requests_Parallel - B/op",
+            "value": 7150,
+            "unit": "B/op",
+            "extra": "46884 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkParallel/Requests_Parallel - allocs/op",
+            "value": 88,
+            "unit": "allocs/op",
+            "extra": "46884 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkParallel/Requests_Parallel",
+            "value": 25464,
+            "unit": "ns/op\t    7150 B/op\t      88 allocs/op",
+            "extra": "46797 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkParallel/Requests_Parallel - ns/op",
+            "value": 25464,
+            "unit": "ns/op",
+            "extra": "46797 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkParallel/Requests_Parallel - B/op",
+            "value": 7150,
+            "unit": "B/op",
+            "extra": "46797 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkParallel/Requests_Parallel - allocs/op",
+            "value": 88,
+            "unit": "allocs/op",
+            "extra": "46797 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkParallel/Requests_Parallel",
+            "value": 25674,
+            "unit": "ns/op\t    7151 B/op\t      88 allocs/op",
+            "extra": "46359 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkParallel/Requests_Parallel - ns/op",
+            "value": 25674,
+            "unit": "ns/op",
+            "extra": "46359 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkParallel/Requests_Parallel - B/op",
+            "value": 7151,
+            "unit": "B/op",
+            "extra": "46359 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkParallel/Requests_Parallel - allocs/op",
+            "value": 88,
+            "unit": "allocs/op",
+            "extra": "46359 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkParallel/Requests_Parallel_Session",
+            "value": 25005,
+            "unit": "ns/op\t    6351 B/op\t      75 allocs/op",
+            "extra": "47766 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkParallel/Requests_Parallel_Session - ns/op",
+            "value": 25005,
+            "unit": "ns/op",
+            "extra": "47766 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkParallel/Requests_Parallel_Session - B/op",
+            "value": 6351,
+            "unit": "B/op",
+            "extra": "47766 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkParallel/Requests_Parallel_Session - allocs/op",
+            "value": 75,
+            "unit": "allocs/op",
+            "extra": "47766 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkParallel/Requests_Parallel_Session",
+            "value": 25814,
+            "unit": "ns/op\t    6350 B/op\t      75 allocs/op",
+            "extra": "46180 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkParallel/Requests_Parallel_Session - ns/op",
+            "value": 25814,
+            "unit": "ns/op",
+            "extra": "46180 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkParallel/Requests_Parallel_Session - B/op",
+            "value": 6350,
+            "unit": "B/op",
+            "extra": "46180 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkParallel/Requests_Parallel_Session - allocs/op",
+            "value": 75,
+            "unit": "allocs/op",
+            "extra": "46180 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkParallel/Requests_Parallel_Session",
+            "value": 25500,
+            "unit": "ns/op\t    6350 B/op\t      75 allocs/op",
+            "extra": "46941 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkParallel/Requests_Parallel_Session - ns/op",
+            "value": 25500,
+            "unit": "ns/op",
+            "extra": "46941 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkParallel/Requests_Parallel_Session - B/op",
+            "value": 6350,
+            "unit": "B/op",
+            "extra": "46941 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkParallel/Requests_Parallel_Session - allocs/op",
+            "value": 75,
+            "unit": "allocs/op",
+            "extra": "46941 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkParallel/Requests_Parallel_Session",
+            "value": 24722,
+            "unit": "ns/op\t    6348 B/op\t      75 allocs/op",
+            "extra": "48111 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkParallel/Requests_Parallel_Session - ns/op",
+            "value": 24722,
+            "unit": "ns/op",
+            "extra": "48111 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkParallel/Requests_Parallel_Session - B/op",
+            "value": 6348,
+            "unit": "B/op",
+            "extra": "48111 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkParallel/Requests_Parallel_Session - allocs/op",
+            "value": 75,
+            "unit": "allocs/op",
+            "extra": "48111 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkParallel/Requests_Parallel_Session",
+            "value": 24816,
+            "unit": "ns/op\t    6345 B/op\t      74 allocs/op",
+            "extra": "48090 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkParallel/Requests_Parallel_Session - ns/op",
+            "value": 24816,
+            "unit": "ns/op",
+            "extra": "48090 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkParallel/Requests_Parallel_Session - B/op",
+            "value": 6345,
+            "unit": "B/op",
+            "extra": "48090 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkParallel/Requests_Parallel_Session - allocs/op",
+            "value": 74,
+            "unit": "allocs/op",
+            "extra": "48090 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkURLBuilding/NetHTTP_URLParse",
+            "value": 424.9,
+            "unit": "ns/op\t     512 B/op\t       3 allocs/op",
+            "extra": "2801983 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkURLBuilding/NetHTTP_URLParse - ns/op",
+            "value": 424.9,
+            "unit": "ns/op",
+            "extra": "2801983 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkURLBuilding/NetHTTP_URLParse - B/op",
+            "value": 512,
+            "unit": "B/op",
+            "extra": "2801983 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkURLBuilding/NetHTTP_URLParse - allocs/op",
+            "value": 3,
+            "unit": "allocs/op",
+            "extra": "2801983 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkURLBuilding/NetHTTP_URLParse",
+            "value": 423.4,
+            "unit": "ns/op\t     512 B/op\t       3 allocs/op",
+            "extra": "2831814 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkURLBuilding/NetHTTP_URLParse - ns/op",
+            "value": 423.4,
+            "unit": "ns/op",
+            "extra": "2831814 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkURLBuilding/NetHTTP_URLParse - B/op",
+            "value": 512,
+            "unit": "B/op",
+            "extra": "2831814 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkURLBuilding/NetHTTP_URLParse - allocs/op",
+            "value": 3,
+            "unit": "allocs/op",
+            "extra": "2831814 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkURLBuilding/NetHTTP_URLParse",
+            "value": 428.2,
+            "unit": "ns/op\t     512 B/op\t       3 allocs/op",
+            "extra": "2827742 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkURLBuilding/NetHTTP_URLParse - ns/op",
+            "value": 428.2,
+            "unit": "ns/op",
+            "extra": "2827742 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkURLBuilding/NetHTTP_URLParse - B/op",
+            "value": 512,
+            "unit": "B/op",
+            "extra": "2827742 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkURLBuilding/NetHTTP_URLParse - allocs/op",
+            "value": 3,
+            "unit": "allocs/op",
+            "extra": "2827742 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkURLBuilding/NetHTTP_URLParse",
+            "value": 426.5,
+            "unit": "ns/op\t     512 B/op\t       3 allocs/op",
+            "extra": "2837672 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkURLBuilding/NetHTTP_URLParse - ns/op",
+            "value": 426.5,
+            "unit": "ns/op",
+            "extra": "2837672 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkURLBuilding/NetHTTP_URLParse - B/op",
+            "value": 512,
+            "unit": "B/op",
+            "extra": "2837672 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkURLBuilding/NetHTTP_URLParse - allocs/op",
+            "value": 3,
+            "unit": "allocs/op",
+            "extra": "2837672 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkURLBuilding/NetHTTP_URLParse",
+            "value": 424.1,
+            "unit": "ns/op\t     512 B/op\t       3 allocs/op",
+            "extra": "2842924 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkURLBuilding/NetHTTP_URLParse - ns/op",
+            "value": 424.1,
+            "unit": "ns/op",
+            "extra": "2842924 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkURLBuilding/NetHTTP_URLParse - B/op",
+            "value": 512,
+            "unit": "B/op",
+            "extra": "2842924 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkURLBuilding/NetHTTP_URLParse - allocs/op",
+            "value": 3,
+            "unit": "allocs/op",
+            "extra": "2842924 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkURLBuilding/Requests_URLParams_Build",
+            "value": 827.7,
+            "unit": "ns/op\t     368 B/op\t       6 allocs/op",
+            "extra": "1445590 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkURLBuilding/Requests_URLParams_Build - ns/op",
+            "value": 827.7,
+            "unit": "ns/op",
+            "extra": "1445590 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkURLBuilding/Requests_URLParams_Build - B/op",
+            "value": 368,
+            "unit": "B/op",
+            "extra": "1445590 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkURLBuilding/Requests_URLParams_Build - allocs/op",
+            "value": 6,
+            "unit": "allocs/op",
+            "extra": "1445590 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkURLBuilding/Requests_URLParams_Build",
+            "value": 819.4,
+            "unit": "ns/op\t     368 B/op\t       6 allocs/op",
+            "extra": "1452139 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkURLBuilding/Requests_URLParams_Build - ns/op",
+            "value": 819.4,
+            "unit": "ns/op",
+            "extra": "1452139 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkURLBuilding/Requests_URLParams_Build - B/op",
+            "value": 368,
+            "unit": "B/op",
+            "extra": "1452139 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkURLBuilding/Requests_URLParams_Build - allocs/op",
+            "value": 6,
+            "unit": "allocs/op",
+            "extra": "1452139 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkURLBuilding/Requests_URLParams_Build",
+            "value": 829.1,
+            "unit": "ns/op\t     368 B/op\t       6 allocs/op",
+            "extra": "1457732 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkURLBuilding/Requests_URLParams_Build - ns/op",
+            "value": 829.1,
+            "unit": "ns/op",
+            "extra": "1457732 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkURLBuilding/Requests_URLParams_Build - B/op",
+            "value": 368,
+            "unit": "B/op",
+            "extra": "1457732 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkURLBuilding/Requests_URLParams_Build - allocs/op",
+            "value": 6,
+            "unit": "allocs/op",
+            "extra": "1457732 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkURLBuilding/Requests_URLParams_Build",
+            "value": 824.5,
+            "unit": "ns/op\t     368 B/op\t       6 allocs/op",
+            "extra": "1456531 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkURLBuilding/Requests_URLParams_Build - ns/op",
+            "value": 824.5,
+            "unit": "ns/op",
+            "extra": "1456531 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkURLBuilding/Requests_URLParams_Build - B/op",
+            "value": 368,
+            "unit": "B/op",
+            "extra": "1456531 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkURLBuilding/Requests_URLParams_Build - allocs/op",
+            "value": 6,
+            "unit": "allocs/op",
+            "extra": "1456531 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkURLBuilding/Requests_URLParams_Build",
+            "value": 821.6,
+            "unit": "ns/op\t     368 B/op\t       6 allocs/op",
+            "extra": "1460948 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkURLBuilding/Requests_URLParams_Build - ns/op",
+            "value": 821.6,
+            "unit": "ns/op",
+            "extra": "1460948 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkURLBuilding/Requests_URLParams_Build - B/op",
+            "value": 368,
+            "unit": "B/op",
+            "extra": "1460948 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkURLBuilding/Requests_URLParams_Build - allocs/op",
+            "value": 6,
+            "unit": "allocs/op",
+            "extra": "1460948 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkURLBuilding/Requests_URLParams_Build_Safe",
+            "value": 1225,
+            "unit": "ns/op\t     984 B/op\t      13 allocs/op",
+            "extra": "923463 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkURLBuilding/Requests_URLParams_Build_Safe - ns/op",
+            "value": 1225,
+            "unit": "ns/op",
+            "extra": "923463 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkURLBuilding/Requests_URLParams_Build_Safe - B/op",
+            "value": 984,
+            "unit": "B/op",
+            "extra": "923463 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkURLBuilding/Requests_URLParams_Build_Safe - allocs/op",
+            "value": 13,
+            "unit": "allocs/op",
+            "extra": "923463 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkURLBuilding/Requests_URLParams_Build_Safe",
+            "value": 1226,
+            "unit": "ns/op\t     984 B/op\t      13 allocs/op",
+            "extra": "923284 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkURLBuilding/Requests_URLParams_Build_Safe - ns/op",
+            "value": 1226,
+            "unit": "ns/op",
+            "extra": "923284 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkURLBuilding/Requests_URLParams_Build_Safe - B/op",
+            "value": 984,
+            "unit": "B/op",
+            "extra": "923284 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkURLBuilding/Requests_URLParams_Build_Safe - allocs/op",
+            "value": 13,
+            "unit": "allocs/op",
+            "extra": "923284 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkURLBuilding/Requests_URLParams_Build_Safe",
+            "value": 1217,
+            "unit": "ns/op\t     984 B/op\t      13 allocs/op",
+            "extra": "925824 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkURLBuilding/Requests_URLParams_Build_Safe - ns/op",
+            "value": 1217,
+            "unit": "ns/op",
+            "extra": "925824 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkURLBuilding/Requests_URLParams_Build_Safe - B/op",
+            "value": 984,
+            "unit": "B/op",
+            "extra": "925824 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkURLBuilding/Requests_URLParams_Build_Safe - allocs/op",
+            "value": 13,
+            "unit": "allocs/op",
+            "extra": "925824 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkURLBuilding/Requests_URLParams_Build_Safe",
+            "value": 1224,
+            "unit": "ns/op\t     984 B/op\t      13 allocs/op",
+            "extra": "908640 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkURLBuilding/Requests_URLParams_Build_Safe - ns/op",
+            "value": 1224,
+            "unit": "ns/op",
+            "extra": "908640 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkURLBuilding/Requests_URLParams_Build_Safe - B/op",
+            "value": 984,
+            "unit": "B/op",
+            "extra": "908640 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkURLBuilding/Requests_URLParams_Build_Safe - allocs/op",
+            "value": 13,
+            "unit": "allocs/op",
+            "extra": "908640 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkURLBuilding/Requests_URLParams_Build_Safe",
+            "value": 1245,
+            "unit": "ns/op\t     984 B/op\t      13 allocs/op",
+            "extra": "898141 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkURLBuilding/Requests_URLParams_Build_Safe - ns/op",
+            "value": 1245,
+            "unit": "ns/op",
+            "extra": "898141 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkURLBuilding/Requests_URLParams_Build_Safe - B/op",
+            "value": 984,
+            "unit": "B/op",
+            "extra": "898141 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkURLBuilding/Requests_URLParams_Build_Safe - allocs/op",
+            "value": 13,
+            "unit": "allocs/op",
+            "extra": "898141 times\n4 procs"
           }
         ]
       }
