@@ -5,6 +5,20 @@ import (
 	"sync"
 )
 
+// fastCodecCache stores commonly used codecs for lock-free access.
+// This is populated lazily on first access to avoid init order issues.
+var (
+	fastCodecCache     map[string]Codec
+	fastCodecCacheOnce sync.Once
+)
+
+// initFastCache initializes the fast codec cache lazily.
+func initFastCache() {
+	fastCodecCacheOnce.Do(func() {
+		fastCodecCache = make(map[string]Codec, 8)
+	})
+}
+
 // Registry manages codec registration by content type.
 type Registry struct {
 	mu     sync.RWMutex
@@ -26,10 +40,21 @@ func (r *Registry) Register(contentType string, codec Codec) {
 }
 
 // GetCodec returns the codec for the given content type.
+// Uses fast path for commonly registered codecs to avoid lock contention.
 func (r *Registry) GetCodec(contentType string) (Codec, bool) {
+	normalized := normalizeContentType(contentType)
+
+	// Fast path: check cache first (lock-free read after init)
+	if fastCodecCache != nil {
+		if codec, ok := fastCodecCache[normalized]; ok {
+			return codec, true
+		}
+	}
+
+	// Slow path: check registry with lock
 	r.mu.RLock()
 	defer r.mu.RUnlock()
-	codec, ok := r.codecs[normalizeContentType(contentType)]
+	codec, ok := r.codecs[normalized]
 	return codec, ok
 }
 
@@ -94,6 +119,15 @@ func init() {
 	// Register XML codecs (JSON is registered in sonic.go or sonic_fallback.go)
 	DefaultRegistry.Register("application/xml", NewXMLCodec())
 	DefaultRegistry.Register("text/xml", NewXMLCodec())
+}
+
+// RegisterFast registers a codec in both the default registry and fast cache.
+// Use this for frequently accessed content types to avoid lock contention.
+func RegisterFast(contentType string, c Codec) {
+	initFastCache()
+	normalized := normalizeContentType(contentType)
+	fastCodecCache[normalized] = c
+	DefaultRegistry.Register(contentType, c)
 }
 
 // Register registers a codec in the default registry.

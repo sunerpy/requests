@@ -14,9 +14,10 @@ import (
 
 // Buffer pool sizes
 const (
-	smallBufSize  = 4 * 1024         // 4KB for small responses
-	mediumBufSize = 32 * 1024        // 32KB for medium responses
-	largeBufSize  = 10 * 1024 * 1024 // 10MB threshold
+	smallBufSize     = 4 * 1024         // 4KB for small responses
+	mediumBufSize    = 32 * 1024        // 32KB for medium responses
+	largeBufPoolSize = 256 * 1024       // 256KB for large responses
+	largeBufSize     = 10 * 1024 * 1024 // 10MB threshold
 )
 
 // Buffer pools for different response sizes
@@ -29,6 +30,11 @@ var (
 	mediumBufPool = sync.Pool{
 		New: func() any {
 			return bytes.NewBuffer(make([]byte, 0, mediumBufSize))
+		},
+	}
+	largeBufPool = sync.Pool{
+		New: func() any {
+			return bytes.NewBuffer(make([]byte, 0, largeBufPoolSize))
 		},
 	}
 )
@@ -77,8 +83,18 @@ func NewResponse(resp *http.Response, finalURL string) (*Response, error) {
 			copy(data, buf.Bytes())
 		}
 		mediumBufPool.Put(buf)
+	} else if contentLen <= largeBufPoolSize {
+		// Large content: use large buffer pool
+		buf := largeBufPool.Get().(*bytes.Buffer)
+		buf.Reset()
+		_, err = buf.ReadFrom(resp.Body)
+		if err == nil {
+			data = make([]byte, buf.Len())
+			copy(data, buf.Bytes())
+		}
+		largeBufPool.Put(buf)
 	} else {
-		// Large content: direct allocation
+		// Very large content: direct allocation
 		data, err = io.ReadAll(resp.Body)
 	}
 	if err != nil {
