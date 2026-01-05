@@ -14,30 +14,16 @@ import (
 
 // Buffer pool sizes
 const (
-	smallBufSize     = 4 * 1024         // 4KB for small responses
-	mediumBufSize    = 32 * 1024        // 32KB for medium responses
-	largeBufPoolSize = 256 * 1024       // 256KB for large responses
-	largeBufSize     = 10 * 1024 * 1024 // 10MB threshold
+	smallBufSize = 4 * 1024         // 4KB for small responses
+	largeBufSize = 10 * 1024 * 1024 // 10MB threshold
 )
 
-// Buffer pools for different response sizes
-var (
-	smallBufPool = sync.Pool{
-		New: func() any {
-			return bytes.NewBuffer(make([]byte, 0, smallBufSize))
-		},
-	}
-	mediumBufPool = sync.Pool{
-		New: func() any {
-			return bytes.NewBuffer(make([]byte, 0, mediumBufSize))
-		},
-	}
-	largeBufPool = sync.Pool{
-		New: func() any {
-			return bytes.NewBuffer(make([]byte, 0, largeBufPoolSize))
-		},
-	}
-)
+// Buffer pool for response reading
+var smallBufPool = sync.Pool{
+	New: func() any {
+		return bytes.NewBuffer(make([]byte, 0, smallBufSize))
+	},
+}
 
 // Response 表示 HTTP 响应
 type Response struct {
@@ -59,11 +45,11 @@ func NewResponse(resp *http.Response, finalURL string) (*Response, error) {
 	var err error
 	contentLen := resp.ContentLength
 	if contentLen > 0 && contentLen < largeBufSize {
-		// Known content length: allocate exact size
+		// Known content length within reasonable size: allocate exact size
 		data = make([]byte, contentLen)
 		_, err = io.ReadFull(resp.Body, data)
-	} else if contentLen == -1 || contentLen <= smallBufSize {
-		// Unknown or small content: use small buffer pool
+	} else if contentLen == -1 || contentLen == 0 {
+		// Unknown or zero content length: use buffer pool based on actual read size
 		buf := smallBufPool.Get().(*bytes.Buffer)
 		buf.Reset()
 		_, err = buf.ReadFrom(resp.Body)
@@ -73,28 +59,8 @@ func NewResponse(resp *http.Response, finalURL string) (*Response, error) {
 			copy(data, buf.Bytes())
 		}
 		smallBufPool.Put(buf)
-	} else if contentLen <= mediumBufSize {
-		// Medium content: use medium buffer pool
-		buf := mediumBufPool.Get().(*bytes.Buffer)
-		buf.Reset()
-		_, err = buf.ReadFrom(resp.Body)
-		if err == nil {
-			data = make([]byte, buf.Len())
-			copy(data, buf.Bytes())
-		}
-		mediumBufPool.Put(buf)
-	} else if contentLen <= largeBufPoolSize {
-		// Large content: use large buffer pool
-		buf := largeBufPool.Get().(*bytes.Buffer)
-		buf.Reset()
-		_, err = buf.ReadFrom(resp.Body)
-		if err == nil {
-			data = make([]byte, buf.Len())
-			copy(data, buf.Bytes())
-		}
-		largeBufPool.Put(buf)
 	} else {
-		// Very large content: direct allocation
+		// Very large content (>= 10MB): direct allocation
 		data, err = io.ReadAll(resp.Body)
 	}
 	if err != nil {

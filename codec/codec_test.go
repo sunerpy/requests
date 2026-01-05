@@ -499,3 +499,83 @@ func TestDecoderFunc_Decode(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, "decoded", result)
 }
+
+func TestRegisterFast(t *testing.T) {
+	// Register a custom codec using RegisterFast
+	customCodec := NewJSONCodec()
+	RegisterFast("application/x-fast-test", customCodec)
+
+	// Should be retrievable via GetCodec
+	retrieved, ok := GetCodec("application/x-fast-test")
+	assert.True(t, ok)
+	assert.Equal(t, customCodec, retrieved)
+
+	// Should also work with charset parameter
+	retrieved, ok = GetCodec("application/x-fast-test; charset=utf-8")
+	assert.True(t, ok)
+	assert.Equal(t, customCodec, retrieved)
+}
+
+func TestRegisterFast_FastPath(t *testing.T) {
+	// Register multiple codecs with RegisterFast
+	codec1 := NewJSONCodec()
+	codec2 := NewXMLCodec()
+
+	RegisterFast("application/x-fast-json", codec1)
+	RegisterFast("application/x-fast-xml", codec2)
+
+	// Both should be retrievable
+	retrieved1, ok1 := GetCodec("application/x-fast-json")
+	retrieved2, ok2 := GetCodec("application/x-fast-xml")
+
+	assert.True(t, ok1)
+	assert.True(t, ok2)
+	assert.Equal(t, codec1, retrieved1)
+	assert.Equal(t, codec2, retrieved2)
+}
+
+func TestFastCodecCache_Initialization(t *testing.T) {
+	// initFastCache should be safe to call multiple times
+	initFastCache()
+	initFastCache()
+	initFastCache()
+
+	// Cache should be initialized
+	assert.NotNil(t, fastCodecCache)
+}
+
+func TestRegistry_GetCodec_FastPathPriority(t *testing.T) {
+	// Create a new registry
+	registry := NewRegistry()
+
+	// Register a codec in the registry
+	slowCodec := NewJSONCodec()
+	registry.Register("application/x-priority-test", slowCodec)
+
+	// Register a different codec in fast cache
+	fastCodec := NewXMLCodec()
+	initFastCache()
+	fastCodecCache["application/x-priority-test"] = fastCodec
+
+	// Fast cache should take priority
+	retrieved, ok := registry.GetCodec("application/x-priority-test")
+	assert.True(t, ok)
+	assert.Equal(t, fastCodec, retrieved)
+
+	// Clean up
+	delete(fastCodecCache, "application/x-priority-test")
+}
+
+func TestRegistry_GetCodec_FallbackToRegistry(t *testing.T) {
+	// Create a new registry
+	registry := NewRegistry()
+
+	// Register a codec only in the registry (not in fast cache)
+	codec := NewJSONCodec()
+	registry.Register("application/x-fallback-test", codec)
+
+	// Should still be found via registry fallback
+	retrieved, ok := registry.GetCodec("application/x-fallback-test")
+	assert.True(t, ok)
+	assert.Equal(t, codec, retrieved)
+}

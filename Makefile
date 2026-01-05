@@ -46,12 +46,14 @@ test: ## Run all tests
 	@echo "Running tests..."
 	@go test ./...
 
-test-coverage: ## Run tests with coverage report
+test-coverage: ## Run tests with coverage report (90% threshold required)
 	@echo "Running tests with coverage..."
-	@go test -coverprofile=$(COVERAGE_FILE) ./...
+	@go test -coverprofile=$(COVERAGE_FILE) $$(go list ./... | grep -v /example | grep -v /test)
 	@go tool cover -html=$(COVERAGE_FILE) -o $(COVERAGE_HTML)
 	@echo "Coverage report generated: $(COVERAGE_HTML)"
 	@go tool cover -func=$(COVERAGE_FILE) | tail -1
+	@echo "Checking coverage threshold (90%)..."
+	@go tool cover -func=$(COVERAGE_FILE) | grep total | awk '{gsub(/%/, "", $$3); if ($$3 < 90) { print "Coverage " $$3 "% is below 90% threshold"; exit 1 } else { print "Coverage " $$3 "% meets 90% threshold" }}'
 
 test-race: ## Run tests with race detector
 	@echo "Running tests with race detector..."
