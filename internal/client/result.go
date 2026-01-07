@@ -1,20 +1,32 @@
 package client
 
-import "net/http"
+import (
+	"net/http"
+
+	"github.com/sunerpy/requests/internal/models"
+)
 
 // Result encapsulates both the parsed response data and response metadata.
 // It provides a clean API that returns only 2 values (Result[T], error) instead of 3.
+// Fields are cached at construction time for fast access in hot paths.
 type Result[T any] struct {
-	data     T
-	response *Response
+	data       T
+	response   *models.Response
+	statusCode int         // cached for fast access
+	headers    http.Header // cached for fast access
 }
 
 // NewResult creates a new Result with the given data and response.
-func NewResult[T any](data T, response *Response) Result[T] {
-	return Result[T]{
+func NewResult[T any](data T, response *models.Response) Result[T] {
+	r := Result[T]{
 		data:     data,
 		response: response,
 	}
+	if response != nil {
+		r.statusCode = response.StatusCode
+		r.headers = response.Headers
+	}
+	return r
 }
 
 // Data returns the parsed response body as type T.
@@ -23,48 +35,38 @@ func (r Result[T]) Data() T {
 }
 
 // Response returns the underlying Response object.
-func (r Result[T]) Response() *Response {
+func (r Result[T]) Response() *models.Response {
 	return r.response
 }
 
 // StatusCode returns the HTTP status code.
 func (r Result[T]) StatusCode() int {
-	if r.response == nil {
-		return 0
-	}
-	return r.response.StatusCode
+	return r.statusCode
 }
 
 // Headers returns the response headers.
 func (r Result[T]) Headers() http.Header {
-	if r.response == nil {
-		return nil
-	}
-	return r.response.Headers
+	return r.headers
 }
 
 // IsSuccess returns true if the status code is 2xx.
 func (r Result[T]) IsSuccess() bool {
-	code := r.StatusCode()
-	return code >= 200 && code < 300
+	return r.statusCode >= 200 && r.statusCode < 300
 }
 
 // IsError returns true if the status code is 4xx or 5xx.
 func (r Result[T]) IsError() bool {
-	code := r.StatusCode()
-	return code >= 400
+	return r.statusCode >= 400
 }
 
 // IsClientError returns true if the status code is 4xx.
 func (r Result[T]) IsClientError() bool {
-	code := r.StatusCode()
-	return code >= 400 && code < 500
+	return r.statusCode >= 400 && r.statusCode < 500
 }
 
 // IsServerError returns true if the status code is 5xx.
 func (r Result[T]) IsServerError() bool {
-	code := r.StatusCode()
-	return code >= 500
+	return r.statusCode >= 500
 }
 
 // Cookies returns the response cookies.

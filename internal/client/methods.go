@@ -9,6 +9,8 @@ import (
 	"net/url"
 	"reflect"
 	"time"
+
+	"github.com/sunerpy/requests/internal/models"
 )
 
 // HTTPClient is the interface for executing HTTP requests.
@@ -27,7 +29,7 @@ func SetDefaultClient(client HTTPClient) {
 }
 
 // doRequest executes an HTTP request and returns the response.
-func doRequest(ctx context.Context, method Method, rawURL string, body io.Reader, opts ...RequestOption) (*Response, error) {
+func doRequest(ctx context.Context, method Method, rawURL string, body io.Reader, opts ...RequestOption) (*models.Response, error) {
 	config := NewRequestConfig()
 	config.Apply(opts...)
 	// Parse URL
@@ -68,29 +70,29 @@ func doRequest(ctx context.Context, method Method, rawURL string, body io.Reader
 	if err != nil {
 		return nil, &RequestError{Op: "Do", URL: rawURL, Err: err}
 	}
-	return NewResponse(httpResp, parsedURL.String())
+	return models.NewResponse(httpResp, parsedURL.String())
 }
 
 // ============================================================================
-// Basic HTTP Methods - return (*Response, error)
+// Basic HTTP Methods - return (*models.Response, error)
 // ============================================================================
 // Get performs a GET request and returns the response.
-func Get(rawURL string, opts ...RequestOption) (*Response, error) {
+func Get(rawURL string, opts ...RequestOption) (*models.Response, error) {
 	return doRequest(context.Background(), MethodGet, rawURL, nil, opts...)
 }
 
 // GetWithContext performs a GET request with context.
-func GetWithContext(ctx context.Context, rawURL string, opts ...RequestOption) (*Response, error) {
+func GetWithContext(ctx context.Context, rawURL string, opts ...RequestOption) (*models.Response, error) {
 	return doRequest(ctx, MethodGet, rawURL, nil, opts...)
 }
 
 // Post performs a POST request and returns the response.
-func Post(rawURL string, body any, opts ...RequestOption) (*Response, error) {
+func Post(rawURL string, body any, opts ...RequestOption) (*models.Response, error) {
 	return PostWithContext(context.Background(), rawURL, body, opts...)
 }
 
 // PostWithContext performs a POST request with context.
-func PostWithContext(ctx context.Context, rawURL string, body any, opts ...RequestOption) (*Response, error) {
+func PostWithContext(ctx context.Context, rawURL string, body any, opts ...RequestOption) (*models.Response, error) {
 	reader, contentType, err := PrepareBody(body)
 	if err != nil {
 		return nil, err
@@ -102,12 +104,12 @@ func PostWithContext(ctx context.Context, rawURL string, body any, opts ...Reque
 }
 
 // Put performs a PUT request and returns the response.
-func Put(rawURL string, body any, opts ...RequestOption) (*Response, error) {
+func Put(rawURL string, body any, opts ...RequestOption) (*models.Response, error) {
 	return PutWithContext(context.Background(), rawURL, body, opts...)
 }
 
 // PutWithContext performs a PUT request with context.
-func PutWithContext(ctx context.Context, rawURL string, body any, opts ...RequestOption) (*Response, error) {
+func PutWithContext(ctx context.Context, rawURL string, body any, opts ...RequestOption) (*models.Response, error) {
 	reader, contentType, err := PrepareBody(body)
 	if err != nil {
 		return nil, err
@@ -119,22 +121,22 @@ func PutWithContext(ctx context.Context, rawURL string, body any, opts ...Reques
 }
 
 // Delete performs a DELETE request and returns the response.
-func Delete(rawURL string, opts ...RequestOption) (*Response, error) {
+func Delete(rawURL string, opts ...RequestOption) (*models.Response, error) {
 	return doRequest(context.Background(), MethodDelete, rawURL, nil, opts...)
 }
 
 // DeleteWithContext performs a DELETE request with context.
-func DeleteWithContext(ctx context.Context, rawURL string, opts ...RequestOption) (*Response, error) {
+func DeleteWithContext(ctx context.Context, rawURL string, opts ...RequestOption) (*models.Response, error) {
 	return doRequest(ctx, MethodDelete, rawURL, nil, opts...)
 }
 
 // Patch performs a PATCH request and returns the response.
-func Patch(rawURL string, body any, opts ...RequestOption) (*Response, error) {
+func Patch(rawURL string, body any, opts ...RequestOption) (*models.Response, error) {
 	return PatchWithContext(context.Background(), rawURL, body, opts...)
 }
 
 // PatchWithContext performs a PATCH request with context.
-func PatchWithContext(ctx context.Context, rawURL string, body any, opts ...RequestOption) (*Response, error) {
+func PatchWithContext(ctx context.Context, rawURL string, body any, opts ...RequestOption) (*models.Response, error) {
 	reader, contentType, err := PrepareBody(body)
 	if err != nil {
 		return nil, err
@@ -146,22 +148,22 @@ func PatchWithContext(ctx context.Context, rawURL string, body any, opts ...Requ
 }
 
 // Head performs a HEAD request and returns the response.
-func Head(rawURL string, opts ...RequestOption) (*Response, error) {
+func Head(rawURL string, opts ...RequestOption) (*models.Response, error) {
 	return doRequest(context.Background(), MethodHead, rawURL, nil, opts...)
 }
 
 // HeadWithContext performs a HEAD request with context.
-func HeadWithContext(ctx context.Context, rawURL string, opts ...RequestOption) (*Response, error) {
+func HeadWithContext(ctx context.Context, rawURL string, opts ...RequestOption) (*models.Response, error) {
 	return doRequest(ctx, MethodHead, rawURL, nil, opts...)
 }
 
 // Options performs an OPTIONS request and returns the response.
-func Options(rawURL string, opts ...RequestOption) (*Response, error) {
+func Options(rawURL string, opts ...RequestOption) (*models.Response, error) {
 	return doRequest(context.Background(), MethodOptions, rawURL, nil, opts...)
 }
 
 // OptionsWithContext performs an OPTIONS request with context.
-func OptionsWithContext(ctx context.Context, rawURL string, opts ...RequestOption) (*Response, error) {
+func OptionsWithContext(ctx context.Context, rawURL string, opts ...RequestOption) (*models.Response, error) {
 	return doRequest(ctx, MethodOptions, rawURL, nil, opts...)
 }
 
@@ -220,7 +222,7 @@ func GetJSONWithContext[T any](ctx context.Context, rawURL string, opts ...Reque
 	if err != nil {
 		return zero, err
 	}
-	data, err := JSON[T](resp)
+	data, err := models.JSON[T](resp)
 	if err != nil {
 		return zero, err
 	}
@@ -246,7 +248,7 @@ func PostJSONWithContext[T any](ctx context.Context, rawURL string, body any, op
 	if err != nil {
 		return zero, err
 	}
-	data, err := JSON[T](resp)
+	data, err := models.JSON[T](resp)
 	if err != nil {
 		return zero, err
 	}
@@ -272,7 +274,7 @@ func PutJSONWithContext[T any](ctx context.Context, rawURL string, body any, opt
 	if err != nil {
 		return zero, err
 	}
-	data, err := JSON[T](resp)
+	data, err := models.JSON[T](resp)
 	if err != nil {
 		return zero, err
 	}
@@ -291,7 +293,7 @@ func DeleteJSONWithContext[T any](ctx context.Context, rawURL string, opts ...Re
 	if err != nil {
 		return zero, err
 	}
-	data, err := JSON[T](resp)
+	data, err := models.JSON[T](resp)
 	if err != nil {
 		return zero, err
 	}
@@ -317,7 +319,7 @@ func PatchJSONWithContext[T any](ctx context.Context, rawURL string, body any, o
 	if err != nil {
 		return zero, err
 	}
-	data, err := JSON[T](resp)
+	data, err := models.JSON[T](resp)
 	if err != nil {
 		return zero, err
 	}
@@ -339,7 +341,7 @@ func GetXMLWithContext[T any](ctx context.Context, rawURL string, opts ...Reques
 	if err != nil {
 		return zero, err
 	}
-	data, err := XML[T](resp)
+	data, err := models.XML[T](resp)
 	if err != nil {
 		return zero, err
 	}
@@ -365,7 +367,7 @@ func PostXMLWithContext[T any](ctx context.Context, rawURL string, body any, opt
 	if err != nil {
 		return zero, err
 	}
-	data, err := XML[T](resp)
+	data, err := models.XML[T](resp)
 	if err != nil {
 		return zero, err
 	}

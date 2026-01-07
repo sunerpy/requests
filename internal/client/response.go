@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/sunerpy/requests/codec"
+	"github.com/sunerpy/requests/internal/models"
 )
 
 // Response represents an HTTP response with generic parsing capabilities.
@@ -203,19 +204,7 @@ func MustXML[T any](r *Response) T {
 	return result
 }
 
-// CreateMockResponse creates a Response for testing purposes.
-func CreateMockResponse(statusCode int, body []byte, headers http.Header) *Response {
-	if headers == nil {
-		headers = make(http.Header)
-	}
-	return &Response{
-		StatusCode: statusCode,
-		Status:     http.StatusText(statusCode),
-		Headers:    headers,
-		Cookies:    nil,
-		Proto:      "HTTP/1.1",
-		body:       body,
-		finalURL:   "",
-		rawResp:    nil,
-	}
+// CreateMockResponse creates a models.Response for testing purposes.
+func CreateMockResponse(statusCode int, body []byte, headers http.Header) *models.Response {
+	return models.CreateMockResponse(statusCode, body, headers)
 }

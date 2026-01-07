@@ -4,13 +4,15 @@ import (
 	"sync"
 	"sync/atomic"
 	"time"
+
+	"github.com/sunerpy/requests/internal/models"
 )
 
 // RequestHook is called before a request is sent.
 type (
 	RequestHook func(req *Request)
 	// ResponseHook is called after a response is received.
-	ResponseHook func(req *Request, resp *Response, duration time.Duration)
+	ResponseHook func(req *Request, resp *models.Response, duration time.Duration)
 	// ErrorHook is called when an error occurs.
 	ErrorHook func(req *Request, err error, duration time.Duration)
 
@@ -107,7 +109,7 @@ func (h *Hooks) TriggerRequest(req *Request) {
 }
 
 // TriggerResponse calls all registered response hooks (lock-free).
-func (h *Hooks) TriggerResponse(req *Request, resp *Response, duration time.Duration) {
+func (h *Hooks) TriggerResponse(req *Request, resp *models.Response, duration time.Duration) {
 	data := h.getData()
 	for _, hook := range data.onResponse {
 		hook(req, resp, duration)
@@ -161,7 +163,7 @@ func (h *Hooks) Len() int {
 
 // HooksMiddleware creates a middleware that triggers hooks.
 func HooksMiddleware(hooks *Hooks) Middleware {
-	return MiddlewareFunc(func(req *Request, next Handler) (*Response, error) {
+	return MiddlewareFunc(func(req *Request, next Handler) (*models.Response, error) {
 		start := time.Now()
 		// Trigger request hooks
 		hooks.TriggerRequest(req)
@@ -187,7 +189,7 @@ func LoggingHook(logger func(format string, args ...any)) RequestHook {
 
 // ResponseLoggingHook creates a response hook that logs responses.
 func ResponseLoggingHook(logger func(format string, args ...any)) ResponseHook {
-	return func(req *Request, resp *Response, duration time.Duration) {
+	return func(req *Request, resp *models.Response, duration time.Duration) {
 		logger("Response: %s %s -> %d (%v)", req.Method, req.URL, resp.StatusCode, duration)
 	}
 }
@@ -221,7 +223,7 @@ func (m *MetricsHook) RequestHook() RequestHook {
 
 // ResponseHook returns a response hook for counting responses.
 func (m *MetricsHook) ResponseHook() ResponseHook {
-	return func(req *Request, resp *Response, duration time.Duration) {
+	return func(req *Request, resp *models.Response, duration time.Duration) {
 		m.responseCount.Add(1)
 		m.totalDuration.Add(int64(duration))
 	}

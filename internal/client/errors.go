@@ -4,6 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"time"
+
+	"github.com/sunerpy/requests/internal/models"
 )
 
 // Sentinel errors
@@ -52,7 +54,7 @@ type ResponseError struct {
 	StatusCode int
 	Status     string
 	Body       []byte
-	Response   *Response
+	Response   *models.Response
 	Err        error
 }
 

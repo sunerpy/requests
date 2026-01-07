@@ -21,6 +21,7 @@ type TestCase struct {
 func initResponse(fields any) *Response {
 	f := fields.(struct {
 		StatusCode int
+		Status     string
 		Headers    http.Header
 		Cookies    []*http.Cookie
 		body       []byte
@@ -32,6 +33,7 @@ func initResponse(fields any) *Response {
 	})
 	return &Response{
 		StatusCode: f.StatusCode,
+		Status:     f.Status,
 		Headers:    f.Headers,
 		Cookies:    f.Cookies,
 		body:       f.body,
@@ -63,6 +65,7 @@ func (e *errorReader) Read(p []byte) (n int, err error) {
 func TestNewResponse(t *testing.T) {
 	mockResp := &http.Response{
 		StatusCode: 200,
+		Status:     "200 OK",
 		Header:     http.Header{"Content-Type": []string{"application/json"}},
 		Body:       io.NopCloser(strings.NewReader(`{"key": "value"}`)),
 		Proto:      "HTTP/2.0",
@@ -72,6 +75,7 @@ func TestNewResponse(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, resp)
 	assert.Equal(t, 200, resp.StatusCode)
+	assert.Equal(t, "200 OK", resp.Status)
 	assert.Equal(t, "application/json", resp.Headers.Get("Content-Type"))
 	assert.Equal(t, `{"key": "value"}`, resp.Text())
 	assert.Equal(t, "HTTP/2.0", resp.Proto)
@@ -123,6 +127,7 @@ func TestResponse(t *testing.T) {
 			Name: "Test NewResponse",
 			Fields: struct {
 				StatusCode int
+				Status     string
 				Headers    http.Header
 				Cookies    []*http.Cookie
 				body       []byte
@@ -133,6 +138,7 @@ func TestResponse(t *testing.T) {
 				rawResp    *http.Response
 			}{
 				StatusCode: 200,
+				Status:     "200 OK",
 				Headers:    http.Header{"Content-Type": []string{"application/json"}},
 				body:       []byte(`{"key": "value"}`),
 				finalURL:   "https://example.com",
@@ -144,6 +150,7 @@ func TestResponse(t *testing.T) {
 			Name: "Test Text",
 			Fields: struct {
 				StatusCode int
+				Status     string
 				Headers    http.Header
 				Cookies    []*http.Cookie
 				body       []byte
@@ -556,4 +563,170 @@ func TestNewResponseFast_EmptyBody(t *testing.T) {
 	assert.NotNil(t, resp)
 	assert.Equal(t, 204, resp.StatusCode)
 	assert.Nil(t, resp.Bytes())
+}
+
+// Tests for new status check methods
+func TestResponse_IsRedirect(t *testing.T) {
+	tests := []struct {
+		statusCode int
+		expected   bool
+	}{
+		{200, false},
+		{299, false},
+		{300, true},
+		{301, true},
+		{302, true},
+		{307, true},
+		{399, true},
+		{400, false},
+		{500, false},
+	}
+	for _, tc := range tests {
+		r := &Response{StatusCode: tc.statusCode}
+		assert.Equal(t, tc.expected, r.IsRedirect(), "StatusCode: %d", tc.statusCode)
+	}
+}
+
+func TestResponse_IsClientError(t *testing.T) {
+	tests := []struct {
+		statusCode int
+		expected   bool
+	}{
+		{200, false},
+		{300, false},
+		{399, false},
+		{400, true},
+		{401, true},
+		{403, true},
+		{404, true},
+		{499, true},
+		{500, false},
+		{503, false},
+	}
+	for _, tc := range tests {
+		r := &Response{StatusCode: tc.statusCode}
+		assert.Equal(t, tc.expected, r.IsClientError(), "StatusCode: %d", tc.statusCode)
+	}
+}
+
+func TestResponse_IsServerError(t *testing.T) {
+	tests := []struct {
+		statusCode int
+		expected   bool
+	}{
+		{200, false},
+		{300, false},
+		{400, false},
+		{499, false},
+		{500, true},
+		{502, true},
+		{503, true},
+		{504, true},
+		{599, true},
+	}
+	for _, tc := range tests {
+		r := &Response{StatusCode: tc.statusCode}
+		assert.Equal(t, tc.expected, r.IsServerError(), "StatusCode: %d", tc.statusCode)
+	}
+}
+
+func TestResponse_ContentType(t *testing.T) {
+	tests := []struct {
+		name     string
+		headers  http.Header
+		expected string
+	}{
+		{
+			name:     "JSON content type",
+			headers:  http.Header{"Content-Type": []string{"application/json"}},
+			expected: "application/json",
+		},
+		{
+			name:     "HTML content type",
+			headers:  http.Header{"Content-Type": []string{"text/html; charset=utf-8"}},
+			expected: "text/html; charset=utf-8",
+		},
+		{
+			name:     "No content type",
+			headers:  http.Header{},
+			expected: "",
+		},
+		{
+			name:     "Nil headers",
+			headers:  nil,
+			expected: "",
+		},
+	}
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			r := &Response{Headers: tc.headers}
+			assert.Equal(t, tc.expected, r.ContentType())
+		})
+	}
+}
+
+func TestResponse_Status(t *testing.T) {
+	mockResp := &http.Response{
+		StatusCode: 404,
+		Status:     "404 Not Found",
+		Header:     http.Header{},
+		Body:       io.NopCloser(strings.NewReader("")),
+		Proto:      "HTTP/1.1",
+	}
+	resp, err := NewResponse(mockResp, "https://example.com")
+	assert.NoError(t, err)
+	assert.Equal(t, "404 Not Found", resp.Status)
+}
+
+// Tests for DecodeError
+func TestDecodeError_Error(t *testing.T) {
+	err := &DecodeError{
+		ContentType: "application/json",
+		Err:         io.EOF,
+	}
+	expected := "decode error for content type application/json: EOF"
+	assert.Equal(t, expected, err.Error())
+}
+
+func TestDecodeError_Unwrap(t *testing.T) {
+	innerErr := io.EOF
+	err := &DecodeError{
+		ContentType: "application/xml",
+		Err:         innerErr,
+	}
+	assert.Equal(t, innerErr, err.Unwrap())
+}
+
+// Tests for CreateMockResponse
+func TestCreateMockResponse(t *testing.T) {
+	t.Run("with headers", func(t *testing.T) {
+		headers := http.Header{"Content-Type": []string{"application/json"}}
+		resp := CreateMockResponse(200, []byte(`{"key":"value"}`), headers)
+
+		assert.Equal(t, 200, resp.StatusCode)
+		assert.Equal(t, "OK", resp.Status)
+		assert.Equal(t, "application/json", resp.Headers.Get("Content-Type"))
+		assert.Equal(t, `{"key":"value"}`, resp.Text())
+		assert.Equal(t, "HTTP/1.1", resp.Proto)
+		assert.Empty(t, resp.GetURL())
+		assert.Nil(t, resp.Raw())
+	})
+
+	t.Run("with nil headers", func(t *testing.T) {
+		resp := CreateMockResponse(404, []byte("not found"), nil)
+
+		assert.Equal(t, 404, resp.StatusCode)
+		assert.Equal(t, "Not Found", resp.Status)
+		assert.NotNil(t, resp.Headers)
+		assert.Equal(t, "not found", resp.Text())
+	})
+
+	t.Run("with empty body", func(t *testing.T) {
+		resp := CreateMockResponse(204, nil, nil)
+
+		assert.Equal(t, 204, resp.StatusCode)
+		assert.Equal(t, "No Content", resp.Status)
+		assert.Empty(t, resp.Text())
+		assert.Nil(t, resp.Bytes())
+	})
 }

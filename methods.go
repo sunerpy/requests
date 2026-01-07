@@ -6,7 +6,6 @@ import (
 
 	"github.com/sunerpy/requests/codec"
 	"github.com/sunerpy/requests/internal/client"
-	"github.com/sunerpy/requests/internal/models"
 	"github.com/sunerpy/requests/url"
 )
 
@@ -18,8 +17,8 @@ const (
 // ============================================================================
 // Basic HTTP Methods (with variadic options)
 // ============================================================================
-// Get sends a GET request.
-func Get(baseURL string, opts ...client.RequestOption) (*models.Response, error) {
+// Get sends a GET request and returns the response.
+func Get(baseURL string, opts ...client.RequestOption) (*Response, error) {
 	config := client.AcquireConfig()
 	defer client.ReleaseConfig(config)
 	config.Apply(opts...)
@@ -36,8 +35,8 @@ func Get(baseURL string, opts ...client.RequestOption) (*models.Response, error)
 	return defaultSess.Do(req)
 }
 
-// Post sends a POST request with optional body.
-func Post(baseURL string, body any, opts ...client.RequestOption) (*models.Response, error) {
+// Post sends a POST request with optional body and returns the response.
+func Post(baseURL string, body any, opts ...client.RequestOption) (*Response, error) {
 	config := client.AcquireConfig()
 	defer client.ReleaseConfig(config)
 	config.Apply(opts...)
@@ -57,8 +56,8 @@ func Post(baseURL string, body any, opts ...client.RequestOption) (*models.Respo
 	return defaultSess.Do(req)
 }
 
-// Put sends a PUT request with optional body.
-func Put(baseURL string, body any, opts ...client.RequestOption) (*models.Response, error) {
+// Put sends a PUT request with optional body and returns the response.
+func Put(baseURL string, body any, opts ...client.RequestOption) (*Response, error) {
 	config := client.AcquireConfig()
 	defer client.ReleaseConfig(config)
 	config.Apply(opts...)
@@ -78,8 +77,8 @@ func Put(baseURL string, body any, opts ...client.RequestOption) (*models.Respon
 	return defaultSess.Do(req)
 }
 
-// Delete sends a DELETE request.
-func Delete(baseURL string, opts ...client.RequestOption) (*models.Response, error) {
+// Delete sends a DELETE request and returns the response.
+func Delete(baseURL string, opts ...client.RequestOption) (*Response, error) {
 	config := client.AcquireConfig()
 	defer client.ReleaseConfig(config)
 	config.Apply(opts...)
@@ -95,8 +94,8 @@ func Delete(baseURL string, opts ...client.RequestOption) (*models.Response, err
 	return defaultSess.Do(req)
 }
 
-// Patch sends a PATCH request with optional body.
-func Patch(baseURL string, body any, opts ...client.RequestOption) (*models.Response, error) {
+// Patch sends a PATCH request with optional body and returns the response.
+func Patch(baseURL string, body any, opts ...client.RequestOption) (*Response, error) {
 	config := client.AcquireConfig()
 	defer client.ReleaseConfig(config)
 	config.Apply(opts...)
@@ -116,8 +115,8 @@ func Patch(baseURL string, body any, opts ...client.RequestOption) (*models.Resp
 	return defaultSess.Do(req)
 }
 
-// Head sends a HEAD request.
-func Head(baseURL string, opts ...client.RequestOption) (*models.Response, error) {
+// Head sends a HEAD request and returns the response.
+func Head(baseURL string, opts ...client.RequestOption) (*Response, error) {
 	config := client.AcquireConfig()
 	defer client.ReleaseConfig(config)
 	config.Apply(opts...)
@@ -133,8 +132,8 @@ func Head(baseURL string, opts ...client.RequestOption) (*models.Response, error
 	return defaultSess.Do(req)
 }
 
-// Options sends an OPTIONS request.
-func Options(baseURL string, opts ...client.RequestOption) (*models.Response, error) {
+// Options sends an OPTIONS request and returns the response.
+func Options(baseURL string, opts ...client.RequestOption) (*Response, error) {
 	config := client.AcquireConfig()
 	defer client.ReleaseConfig(config)
 	config.Apply(opts...)
@@ -169,7 +168,7 @@ func GetJSON[T any](baseURL string, opts ...client.RequestOption) (Result[T], er
 	if err := codec.Unmarshal(resp.Bytes(), &result); err != nil {
 		return zero, &client.DecodeError{ContentType: jsonContentType, Err: err}
 	}
-	return client.NewResult(result, convertResponse(resp)), nil
+	return client.NewResult(result, resp), nil
 }
 
 // PostJSON sends a POST request with JSON body and returns Result[T].
@@ -187,7 +186,7 @@ func PostJSON[T any](baseURL string, data any, opts ...client.RequestOption) (Re
 	if err := codec.Unmarshal(resp.Bytes(), &result); err != nil {
 		return zero, &client.DecodeError{ContentType: jsonContentType, Err: err}
 	}
-	return client.NewResult(result, convertResponse(resp)), nil
+	return client.NewResult(result, resp), nil
 }
 
 // PutJSON sends a PUT request with JSON body and returns Result[T].
@@ -205,7 +204,7 @@ func PutJSON[T any](baseURL string, data any, opts ...client.RequestOption) (Res
 	if err := codec.Unmarshal(resp.Bytes(), &result); err != nil {
 		return zero, &client.DecodeError{ContentType: jsonContentType, Err: err}
 	}
-	return client.NewResult(result, convertResponse(resp)), nil
+	return client.NewResult(result, resp), nil
 }
 
 // DeleteJSON sends a DELETE request and returns Result[T].
@@ -219,7 +218,7 @@ func DeleteJSON[T any](baseURL string, opts ...client.RequestOption) (Result[T],
 	if err := codec.Unmarshal(resp.Bytes(), &result); err != nil {
 		return zero, &client.DecodeError{ContentType: jsonContentType, Err: err}
 	}
-	return client.NewResult(result, convertResponse(resp)), nil
+	return client.NewResult(result, resp), nil
 }
 
 // PatchJSON sends a PATCH request with JSON body and returns Result[T].
@@ -237,7 +236,7 @@ func PatchJSON[T any](baseURL string, data any, opts ...client.RequestOption) (R
 	if err := codec.Unmarshal(resp.Bytes(), &result); err != nil {
 		return zero, &client.DecodeError{ContentType: jsonContentType, Err: err}
 	}
-	return client.NewResult(result, convertResponse(resp)), nil
+	return client.NewResult(result, resp), nil
 }
 
 // ============================================================================
@@ -277,19 +276,5 @@ func applyConfigToRequest(req *Request, config *client.RequestConfig) {
 		for _, v := range vs {
 			req.AddHeader(k, v)
 		}
-	}
-}
-
-// convertResponse converts models.Response to client.Response.
-// This is a temporary adapter until we unify the Response types.
-func convertResponse(resp *models.Response) *client.Response {
-	if resp == nil {
-		return nil
-	}
-	return &client.Response{
-		StatusCode: resp.StatusCode,
-		Headers:    resp.Headers,
-		Proto:      resp.Proto,
-		Cookies:    resp.Cookies,
 	}
 }

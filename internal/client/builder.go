@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/sunerpy/requests/codec"
+	"github.com/sunerpy/requests/internal/models"
 )
 
 // queryParam represents a single query parameter
@@ -411,7 +412,7 @@ func (b *RequestBuilder) BuildCopy() (*Request, error) {
 }
 
 // Do builds and executes the request, returning the response.
-func (b *RequestBuilder) Do() (*Response, error) {
+func (b *RequestBuilder) Do() (*models.Response, error) {
 	req, err := b.Build()
 	if err != nil {
 		return nil, err
@@ -432,7 +433,7 @@ func (b *RequestBuilder) Do() (*Response, error) {
 	if err != nil {
 		return nil, &RequestError{Op: "Do", URL: req.URL.String(), Err: err}
 	}
-	return NewResponse(httpResp, req.URL.String())
+	return models.NewResponse(httpResp, req.URL.String())
 }
 
 // DoJSON builds and executes the request, parsing the JSON response into Result[T].
@@ -442,7 +443,7 @@ func DoJSON[T any](b *RequestBuilder) (Result[T], error) {
 	if err != nil {
 		return zero, err
 	}
-	data, err := JSON[T](resp)
+	data, err := models.JSON[T](resp)
 	if err != nil {
 		return zero, err
 	}
@@ -456,7 +457,7 @@ func DoXML[T any](b *RequestBuilder) (Result[T], error) {
 	if err != nil {
 		return zero, err
 	}
-	data, err := XML[T](resp)
+	data, err := models.XML[T](resp)
 	if err != nil {
 		return zero, err
 	}

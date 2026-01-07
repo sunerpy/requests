@@ -8,6 +8,8 @@ import (
 	"github.com/leanovate/gopter"
 	"github.com/leanovate/gopter/gen"
 	"github.com/leanovate/gopter/prop"
+
+	"github.com/sunerpy/requests/internal/models"
 )
 
 // ResultTestUser is a test struct for JSON parsing in result tests
@@ -123,7 +125,7 @@ func TestResultDataRoundTrip(t *testing.T) {
 			headers.Set("Content-Type", "application/json")
 			resp := CreateMockResponse(200, jsonData, headers)
 			// Parse via Result
-			parsed, err := JSON[ResultTestUser](resp)
+			parsed, err := models.JSON[ResultTestUser](resp)
 			if err != nil {
 				return false
 			}
@@ -184,5 +186,73 @@ func TestResultDataAccess(t *testing.T) {
 	}
 	if result.Data().Email != "john@example.com" {
 		t.Errorf("Expected Email 'john@example.com', got '%s'", result.Data().Email)
+	}
+}
+
+// TestResultWithValidResponse tests Result with a valid response
+func TestResultWithValidResponse(t *testing.T) {
+	headers := make(http.Header)
+	headers.Set("Content-Type", "application/json")
+	cookies := []*http.Cookie{{Name: "session", Value: "abc123"}}
+
+	resp := &models.Response{
+		StatusCode: 200,
+		Status:     "200 OK",
+		Headers:    headers,
+		Cookies:    cookies,
+		Proto:      "HTTP/1.1",
+	}
+
+	result := NewResult("test data", resp)
+
+	// Test all accessor methods
+	if result.StatusCode() != 200 {
+		t.Errorf("Expected StatusCode 200, got %d", result.StatusCode())
+	}
+	if result.Headers().Get("Content-Type") != "application/json" {
+		t.Errorf("Expected Content-Type header")
+	}
+	if !result.IsSuccess() {
+		t.Errorf("Expected IsSuccess true for 200")
+	}
+	if result.IsError() {
+		t.Errorf("Expected IsError false for 200")
+	}
+	if result.IsClientError() {
+		t.Errorf("Expected IsClientError false for 200")
+	}
+	if result.IsServerError() {
+		t.Errorf("Expected IsServerError false for 200")
+	}
+	if len(result.Cookies()) != 1 {
+		t.Errorf("Expected 1 cookie, got %d", len(result.Cookies()))
+	}
+	if result.ContentType() != "application/json" {
+		t.Errorf("Expected ContentType 'application/json', got '%s'", result.ContentType())
+	}
+}
+
+// TestResultTextAndBytes tests Text() and Bytes() methods
+func TestResultTextAndBytes(t *testing.T) {
+	body := []byte("Hello, World!")
+	resp := CreateMockResponse(200, body, nil)
+	result := NewResult("data", resp)
+
+	if result.Text() != "Hello, World!" {
+		t.Errorf("Expected Text 'Hello, World!', got '%s'", result.Text())
+	}
+	if string(result.Bytes()) != "Hello, World!" {
+		t.Errorf("Expected Bytes 'Hello, World!', got '%s'", string(result.Bytes()))
+	}
+}
+
+// TestResultURL tests URL() method
+func TestResultURL(t *testing.T) {
+	resp := CreateMockResponse(200, []byte("test"), nil)
+	result := NewResult("data", resp)
+
+	// CreateMockResponse sets finalURL to empty string
+	if result.URL() != "" {
+		t.Errorf("Expected empty URL, got '%s'", result.URL())
 	}
 }

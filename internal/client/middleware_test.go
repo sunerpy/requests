@@ -9,6 +9,8 @@ import (
 	"github.com/leanovate/gopter"
 	"github.com/leanovate/gopter/gen"
 	"github.com/leanovate/gopter/prop"
+
+	"github.com/sunerpy/requests/internal/models"
 )
 
 // Feature: http-client-refactor
@@ -33,7 +35,7 @@ func TestProperty5_MiddlewareExecutionOrder(t *testing.T) {
 			// Add n middlewares
 			for i := 1; i <= n; i++ {
 				idx := i // capture
-				chain.UseFunc(func(req *Request, next Handler) (*Response, error) {
+				chain.UseFunc(func(req *Request, next Handler) (*models.Response, error) {
 					mu.Lock()
 					requestOrder = append(requestOrder, idx)
 					mu.Unlock()
@@ -52,7 +54,7 @@ func TestProperty5_MiddlewareExecutionOrder(t *testing.T) {
 				Headers: make(http.Header),
 			}
 			// Final handler
-			finalHandler := func(r *Request) (*Response, error) {
+			finalHandler := func(r *Request) (*models.Response, error) {
 				return CreateMockResponse(200, nil, nil), nil
 			}
 			_, _ = chain.Execute(req, finalHandler)
@@ -79,19 +81,19 @@ func TestProperty5_MiddlewareCanShortCircuit(t *testing.T) {
 	var executed []string
 	chain := NewMiddlewareChain()
 	// First middleware - executes normally
-	chain.UseFunc(func(req *Request, next Handler) (*Response, error) {
+	chain.UseFunc(func(req *Request, next Handler) (*models.Response, error) {
 		executed = append(executed, "m1-before")
 		resp, err := next(req)
 		executed = append(executed, "m1-after")
 		return resp, err
 	})
 	// Second middleware - short circuits
-	chain.UseFunc(func(req *Request, next Handler) (*Response, error) {
+	chain.UseFunc(func(req *Request, next Handler) (*models.Response, error) {
 		executed = append(executed, "m2-shortcircuit")
 		return CreateMockResponse(401, []byte("Unauthorized"), nil), nil
 	})
 	// Third middleware - should not be called
-	chain.UseFunc(func(req *Request, next Handler) (*Response, error) {
+	chain.UseFunc(func(req *Request, next Handler) (*models.Response, error) {
 		executed = append(executed, "m3-should-not-run")
 		return next(req)
 	})
@@ -101,7 +103,7 @@ func TestProperty5_MiddlewareCanShortCircuit(t *testing.T) {
 		URL:     parsedURL,
 		Headers: make(http.Header),
 	}
-	finalHandler := func(r *Request) (*Response, error) {
+	finalHandler := func(r *Request) (*models.Response, error) {
 		executed = append(executed, "final-should-not-run")
 		return CreateMockResponse(200, nil, nil), nil
 	}
@@ -133,7 +135,7 @@ func TestMiddlewareChain_Empty(t *testing.T) {
 		Headers: make(http.Header),
 	}
 	called := false
-	finalHandler := func(r *Request) (*Response, error) {
+	finalHandler := func(r *Request) (*models.Response, error) {
 		called = true
 		return CreateMockResponse(200, nil, nil), nil
 	}
@@ -151,13 +153,13 @@ func TestMiddlewareChain_Empty(t *testing.T) {
 
 func TestMiddlewareChain_Clone(t *testing.T) {
 	original := NewMiddlewareChain()
-	original.UseFunc(func(req *Request, next Handler) (*Response, error) {
+	original.UseFunc(func(req *Request, next Handler) (*models.Response, error) {
 		req.Headers.Set("X-Original", "true")
 		return next(req)
 	})
 	clone := original.Clone()
 	// Add middleware to clone
-	clone.UseFunc(func(req *Request, next Handler) (*Response, error) {
+	clone.UseFunc(func(req *Request, next Handler) (*models.Response, error) {
 		req.Headers.Set("X-Clone", "true")
 		return next(req)
 	})
@@ -176,13 +178,13 @@ func TestMiddlewareChain_Use(t *testing.T) {
 	if chain.Len() != 0 {
 		t.Error("New chain should be empty")
 	}
-	chain.Use(MiddlewareFunc(func(req *Request, next Handler) (*Response, error) {
+	chain.Use(MiddlewareFunc(func(req *Request, next Handler) (*models.Response, error) {
 		return next(req)
 	}))
 	if chain.Len() != 1 {
 		t.Error("Chain should have 1 middleware")
 	}
-	chain.UseFunc(func(req *Request, next Handler) (*Response, error) {
+	chain.UseFunc(func(req *Request, next Handler) (*models.Response, error) {
 		return next(req)
 	})
 	if chain.Len() != 2 {
@@ -202,7 +204,7 @@ func TestLoggingMiddleware(t *testing.T) {
 		URL:     parsedURL,
 		Headers: make(http.Header),
 	}
-	finalHandler := func(r *Request) (*Response, error) {
+	finalHandler := func(r *Request) (*models.Response, error) {
 		return CreateMockResponse(200, nil, nil), nil
 	}
 	_, _ = m.Process(req, finalHandler)
@@ -223,7 +225,7 @@ func TestLoggingMiddleware_WithError(t *testing.T) {
 		URL:     parsedURL,
 		Headers: make(http.Header),
 	}
-	finalHandler := func(r *Request) (*Response, error) {
+	finalHandler := func(r *Request) (*models.Response, error) {
 		return nil, &RequestError{Op: "Test", Err: ErrNilRequest}
 	}
 	_, err := m.Process(req, finalHandler)
@@ -248,7 +250,7 @@ func TestHeaderMiddleware(t *testing.T) {
 		Headers: make(http.Header),
 	}
 	req.Headers.Set("X-Existing", "old-value")
-	finalHandler := func(r *Request) (*Response, error) {
+	finalHandler := func(r *Request) (*models.Response, error) {
 		// X-Custom should be added
 		if r.Headers.Get("X-Custom") != "value" {
 			t.Error("X-Custom header not added")
@@ -270,7 +272,7 @@ func TestUserAgentMiddleware(t *testing.T) {
 		URL:     parsedURL,
 		Headers: make(http.Header),
 	}
-	finalHandler := func(r *Request) (*Response, error) {
+	finalHandler := func(r *Request) (*models.Response, error) {
 		if r.Headers.Get("User-Agent") != "MyApp/1.0" {
 			t.Error("User-Agent not set")
 		}
@@ -287,7 +289,7 @@ func TestBearerTokenMiddleware(t *testing.T) {
 		URL:     parsedURL,
 		Headers: make(http.Header),
 	}
-	finalHandler := func(r *Request) (*Response, error) {
+	finalHandler := func(r *Request) (*models.Response, error) {
 		if r.Headers.Get("Authorization") != "Bearer secret-token" {
 			t.Error("Bearer token not set")
 		}
@@ -304,7 +306,7 @@ func TestBasicAuthMiddleware(t *testing.T) {
 		URL:     parsedURL,
 		Headers: make(http.Header),
 	}
-	finalHandler := func(r *Request) (*Response, error) {
+	finalHandler := func(r *Request) (*models.Response, error) {
 		auth := r.Headers.Get("Authorization")
 		if auth == "" {
 			t.Error("Authorization header not set")
@@ -328,7 +330,7 @@ func TestRecoveryMiddleware(t *testing.T) {
 		URL:     parsedURL,
 		Headers: make(http.Header),
 	}
-	finalHandler := func(r *Request) (*Response, error) {
+	finalHandler := func(r *Request) (*models.Response, error) {
 		panic("test panic")
 	}
 	resp, err := m.Process(req, finalHandler)
@@ -345,7 +347,7 @@ func TestRecoveryMiddleware(t *testing.T) {
 
 func TestConditionalMiddleware(t *testing.T) {
 	executed := false
-	inner := MiddlewareFunc(func(req *Request, next Handler) (*Response, error) {
+	inner := MiddlewareFunc(func(req *Request, next Handler) (*models.Response, error) {
 		executed = true
 		return next(req)
 	})
@@ -355,7 +357,7 @@ func TestConditionalMiddleware(t *testing.T) {
 	}
 	m := ConditionalMiddleware(condition, inner)
 	parsedURL, _ := url.Parse("https://example.com")
-	finalHandler := func(r *Request) (*Response, error) {
+	finalHandler := func(r *Request) (*models.Response, error) {
 		return CreateMockResponse(200, nil, nil), nil
 	}
 	// Test without header - should not execute
@@ -383,11 +385,11 @@ func TestConditionalMiddleware(t *testing.T) {
 
 func TestChainMiddleware(t *testing.T) {
 	var order []int
-	m1 := MiddlewareFunc(func(req *Request, next Handler) (*Response, error) {
+	m1 := MiddlewareFunc(func(req *Request, next Handler) (*models.Response, error) {
 		order = append(order, 1)
 		return next(req)
 	})
-	m2 := MiddlewareFunc(func(req *Request, next Handler) (*Response, error) {
+	m2 := MiddlewareFunc(func(req *Request, next Handler) (*models.Response, error) {
 		order = append(order, 2)
 		return next(req)
 	})
@@ -398,7 +400,7 @@ func TestChainMiddleware(t *testing.T) {
 		URL:     parsedURL,
 		Headers: make(http.Header),
 	}
-	finalHandler := func(r *Request) (*Response, error) {
+	finalHandler := func(r *Request) (*models.Response, error) {
 		order = append(order, 3)
 		return CreateMockResponse(200, nil, nil), nil
 	}
@@ -422,7 +424,7 @@ func TestAuthMiddleware_DoesNotOverwrite(t *testing.T) {
 		Headers: make(http.Header),
 	}
 	req.Headers.Set("Authorization", "Bearer existing-token")
-	finalHandler := func(r *Request) (*Response, error) {
+	finalHandler := func(r *Request) (*models.Response, error) {
 		// Should keep existing token
 		if r.Headers.Get("Authorization") != "Bearer existing-token" {
 			t.Error("Existing auth was overwritten")
@@ -434,7 +436,7 @@ func TestAuthMiddleware_DoesNotOverwrite(t *testing.T) {
 
 func TestMiddlewareChain_ErrorPropagation(t *testing.T) {
 	chain := NewMiddlewareChain()
-	chain.UseFunc(func(req *Request, next Handler) (*Response, error) {
+	chain.UseFunc(func(req *Request, next Handler) (*models.Response, error) {
 		resp, err := next(req)
 		if err != nil {
 			// Wrap the error
@@ -442,7 +444,7 @@ func TestMiddlewareChain_ErrorPropagation(t *testing.T) {
 		}
 		return resp, nil
 	})
-	chain.UseFunc(func(req *Request, next Handler) (*Response, error) {
+	chain.UseFunc(func(req *Request, next Handler) (*models.Response, error) {
 		return nil, &RequestError{Op: "Middleware2", Err: ErrNilRequest}
 	})
 	parsedURL, _ := url.Parse("https://example.com")
@@ -451,7 +453,7 @@ func TestMiddlewareChain_ErrorPropagation(t *testing.T) {
 		URL:     parsedURL,
 		Headers: make(http.Header),
 	}
-	finalHandler := func(r *Request) (*Response, error) {
+	finalHandler := func(r *Request) (*models.Response, error) {
 		return CreateMockResponse(200, nil, nil), nil
 	}
 	_, err := chain.Execute(req, finalHandler)

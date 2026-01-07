@@ -9,6 +9,8 @@ import (
 	"github.com/leanovate/gopter"
 	"github.com/leanovate/gopter/gen"
 	"github.com/leanovate/gopter/prop"
+
+	"github.com/sunerpy/requests/internal/models"
 )
 
 // Tests for Method type methods
@@ -158,11 +160,11 @@ func TestDefaultRetryCondition_NilResponse(t *testing.T) {
 
 func TestMiddlewareFunc_Process(t *testing.T) {
 	called := false
-	mw := MiddlewareFunc(func(req *Request, next Handler) (*Response, error) {
+	mw := MiddlewareFunc(func(req *Request, next Handler) (*models.Response, error) {
 		called = true
 		return next(req)
 	})
-	handler := func(req *Request) (*Response, error) {
+	handler := func(req *Request) (*models.Response, error) {
 		return CreateMockResponse(200, nil, nil), nil
 	}
 	resp, err := mw.Process(&Request{}, handler)

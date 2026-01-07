@@ -1,5 +1,7 @@
 package client
 
+import "github.com/sunerpy/requests/internal/models"
+
 // MiddlewareChain manages a chain of middleware.
 type MiddlewareChain struct {
 	middlewares []Middleware
@@ -19,12 +21,12 @@ func (c *MiddlewareChain) Use(m Middleware) *MiddlewareChain {
 }
 
 // UseFunc adds a middleware function to the chain.
-func (c *MiddlewareChain) UseFunc(fn func(req *Request, next Handler) (*Response, error)) *MiddlewareChain {
+func (c *MiddlewareChain) UseFunc(fn func(req *Request, next Handler) (*models.Response, error)) *MiddlewareChain {
 	return c.Use(MiddlewareFunc(fn))
 }
 
 // Execute runs the middleware chain with the given handler as the final handler.
-func (c *MiddlewareChain) Execute(req *Request, finalHandler Handler) (*Response, error) {
+func (c *MiddlewareChain) Execute(req *Request, finalHandler Handler) (*models.Response, error) {
 	if len(c.middlewares) == 0 {
 		return finalHandler(req)
 	}
@@ -33,7 +35,7 @@ func (c *MiddlewareChain) Execute(req *Request, finalHandler Handler) (*Response
 	for i := len(c.middlewares) - 1; i >= 0; i-- {
 		m := c.middlewares[i]
 		next := handler
-		handler = func(r *Request) (*Response, error) {
+		handler = func(r *Request) (*models.Response, error) {
 			return m.Process(r, next)
 		}
 	}
@@ -56,7 +58,7 @@ func (c *MiddlewareChain) Len() int {
 
 // LoggingMiddleware creates a middleware that logs requests and responses.
 func LoggingMiddleware(logger func(format string, args ...any)) Middleware {
-	return MiddlewareFunc(func(req *Request, next Handler) (*Response, error) {
+	return MiddlewareFunc(func(req *Request, next Handler) (*models.Response, error) {
 		logger("Request: %s %s", req.Method, req.URL)
 		resp, err := next(req)
 		if err != nil {
@@ -70,7 +72,7 @@ func LoggingMiddleware(logger func(format string, args ...any)) Middleware {
 
 // HeaderMiddleware creates a middleware that adds headers to all requests.
 func HeaderMiddleware(headers map[string]string) Middleware {
-	return MiddlewareFunc(func(req *Request, next Handler) (*Response, error) {
+	return MiddlewareFunc(func(req *Request, next Handler) (*models.Response, error) {
 		for k, v := range headers {
 			if req.Headers.Get(k) == "" {
 				req.Headers.Set(k, v)
@@ -87,7 +89,7 @@ func UserAgentMiddleware(userAgent string) Middleware {
 
 // AuthMiddleware creates a middleware that adds authorization header.
 func AuthMiddleware(authHeader string) Middleware {
-	return MiddlewareFunc(func(req *Request, next Handler) (*Response, error) {
+	return MiddlewareFunc(func(req *Request, next Handler) (*models.Response, error) {
 		if req.Headers.Get("Authorization") == "" {
 			req.Headers.Set("Authorization", authHeader)
 		}
@@ -107,7 +109,7 @@ func BasicAuthMiddleware(username, password string) Middleware {
 
 // RecoveryMiddleware creates a middleware that recovers from panics.
 func RecoveryMiddleware(onPanic func(req *Request, recovered any)) Middleware {
-	return MiddlewareFunc(func(req *Request, next Handler) (resp *Response, err error) {
+	return MiddlewareFunc(func(req *Request, next Handler) (resp *models.Response, err error) {
 		defer func() {
 			if r := recover(); r != nil {
 				if onPanic != nil {
@@ -126,7 +128,7 @@ func RecoveryMiddleware(onPanic func(req *Request, recovered any)) Middleware {
 
 // ConditionalMiddleware creates a middleware that only executes if condition is true.
 func ConditionalMiddleware(condition func(*Request) bool, m Middleware) Middleware {
-	return MiddlewareFunc(func(req *Request, next Handler) (*Response, error) {
+	return MiddlewareFunc(func(req *Request, next Handler) (*models.Response, error) {
 		if condition(req) {
 			return m.Process(req, next)
 		}
@@ -136,7 +138,7 @@ func ConditionalMiddleware(condition func(*Request) bool, m Middleware) Middlewa
 
 // ChainMiddleware combines multiple middlewares into one.
 func ChainMiddleware(middlewares ...Middleware) Middleware {
-	return MiddlewareFunc(func(req *Request, next Handler) (*Response, error) {
+	return MiddlewareFunc(func(req *Request, next Handler) (*models.Response, error) {
 		chain := NewMiddlewareChain(middlewares...)
 		return chain.Execute(req, next)
 	})
