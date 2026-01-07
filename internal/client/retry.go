@@ -5,6 +5,8 @@ import (
 	"math"
 	"math/rand"
 	"time"
+
+	"github.com/sunerpy/requests/internal/models"
 )
 
 // RetryExecutor handles retry logic for HTTP requests.
@@ -18,9 +20,9 @@ func NewRetryExecutor(policy RetryPolicy) *RetryExecutor {
 }
 
 // Execute executes the given function with retry logic.
-func (e *RetryExecutor) Execute(ctx context.Context, fn func() (*Response, error)) (*Response, error) {
+func (e *RetryExecutor) Execute(ctx context.Context, fn func() (*models.Response, error)) (*models.Response, error) {
 	var lastErr error
-	var lastResp *Response
+	var lastResp *models.Response
 	for attempt := 0; attempt < e.policy.MaxAttempts; attempt++ {
 		// Check context cancellation
 		select {
@@ -52,7 +54,7 @@ func (e *RetryExecutor) Execute(ctx context.Context, fn func() (*Response, error
 }
 
 // shouldRetry determines if a request should be retried.
-func (e *RetryExecutor) shouldRetry(resp *Response, err error) bool {
+func (e *RetryExecutor) shouldRetry(resp *models.Response, err error) bool {
 	if e.policy.RetryIf != nil {
 		return e.policy.RetryIf(resp, err)
 	}
@@ -116,7 +118,7 @@ func ExponentialRetryPolicy(maxAttempts int, initialInterval, maxInterval time.D
 }
 
 // RetryOn5xx returns a retry condition that retries on 5xx errors.
-func RetryOn5xx(resp *Response, err error) bool {
+func RetryOn5xx(resp *models.Response, err error) bool {
 	if err != nil {
 		return true
 	}
@@ -127,17 +129,17 @@ func RetryOn5xx(resp *Response, err error) bool {
 }
 
 // RetryOnNetworkError returns a retry condition that only retries on network errors.
-func RetryOnNetworkError(resp *Response, err error) bool {
+func RetryOnNetworkError(resp *models.Response, err error) bool {
 	return err != nil
 }
 
 // RetryOnStatusCodes returns a retry condition that retries on specific status codes.
-func RetryOnStatusCodes(codes ...int) func(*Response, error) bool {
+func RetryOnStatusCodes(codes ...int) func(*models.Response, error) bool {
 	codeSet := make(map[int]bool)
 	for _, code := range codes {
 		codeSet[code] = true
 	}
-	return func(resp *Response, err error) bool {
+	return func(resp *models.Response, err error) bool {
 		if err != nil {
 			return true
 		}
@@ -149,8 +151,8 @@ func RetryOnStatusCodes(codes ...int) func(*Response, error) bool {
 }
 
 // CombineRetryConditions combines multiple retry conditions with OR logic.
-func CombineRetryConditions(conditions ...func(*Response, error) bool) func(*Response, error) bool {
-	return func(resp *Response, err error) bool {
+func CombineRetryConditions(conditions ...func(*models.Response, error) bool) func(*models.Response, error) bool {
+	return func(resp *models.Response, err error) bool {
 		for _, cond := range conditions {
 			if cond(resp, err) {
 				return true
@@ -162,13 +164,13 @@ func CombineRetryConditions(conditions ...func(*Response, error) bool) func(*Res
 
 // RetryMiddleware creates a middleware that adds retry logic.
 func RetryMiddleware(policy RetryPolicy) Middleware {
-	return MiddlewareFunc(func(req *Request, next Handler) (*Response, error) {
+	return MiddlewareFunc(func(req *Request, next Handler) (*models.Response, error) {
 		executor := NewRetryExecutor(policy)
 		ctx := req.Context
 		if ctx == nil {
 			ctx = context.Background()
 		}
-		return executor.Execute(ctx, func() (*Response, error) {
+		return executor.Execute(ctx, func() (*models.Response, error) {
 			return next(req)
 		})
 	})
@@ -193,7 +195,7 @@ func WithMaxRetries(maxAttempts int) RequestOption {
 }
 
 // WithRetryCondition returns a request option that sets a custom retry condition.
-func WithRetryCondition(condition func(*Response, error) bool) RequestOption {
+func WithRetryCondition(condition func(*models.Response, error) bool) RequestOption {
 	return func(c *RequestConfig) {
 		if c.Retry == nil {
 			policy := DefaultRetryPolicy()

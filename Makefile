@@ -148,6 +148,12 @@ lint: ## Run linters
 fmt: ## Format code
 	@echo "Formatting code..."
 	@go fmt ./...
+	@if command -v goimports > /dev/null 2>&1; then \
+		goimports -w -local github.com/sunerpy/requests .; \
+	else \
+		echo "goimports not found. Install with:"; \
+		echo "  go install golang.org/x/tools/cmd/goimports@latest"; \
+	fi
 	@if command -v gofumpt > /dev/null 2>&1; then \
 		gofumpt -extra -w .; \
 	else \

@@ -12,6 +12,8 @@ import (
 	"github.com/leanovate/gopter"
 	"github.com/leanovate/gopter/gen"
 	"github.com/leanovate/gopter/prop"
+
+	"github.com/sunerpy/requests/internal/models"
 )
 
 // Feature: http-client-refactor
@@ -61,10 +63,10 @@ func TestProperty20_ResponseHooksCalledWithContext(t *testing.T) {
 				return true
 			}
 			var receivedReq *Request
-			var receivedResp *Response
+			var receivedResp *models.Response
 			var receivedDuration time.Duration
 			hooks := NewHooks()
-			hooks.OnResponse(func(req *Request, resp *Response, duration time.Duration) {
+			hooks.OnResponse(func(req *Request, resp *models.Response, duration time.Duration) {
 				receivedReq = req
 				receivedResp = resp
 				receivedDuration = duration
@@ -75,7 +77,7 @@ func TestProperty20_ResponseHooksCalledWithContext(t *testing.T) {
 				URL:     parsedURL,
 				Headers: make(http.Header),
 			}
-			resp := CreateMockResponse(statusCode, nil, nil)
+			resp := createMockModelsResponse(statusCode, nil, nil)
 			duration := 100 * time.Millisecond
 			hooks.TriggerResponse(req, resp, duration)
 			return receivedReq == req &&
@@ -219,7 +221,7 @@ func TestHooks_OnRequest(t *testing.T) {
 func TestHooks_OnResponse(t *testing.T) {
 	hooks := NewHooks()
 	var called bool
-	hooks.OnResponse(func(req *Request, resp *Response, duration time.Duration) {
+	hooks.OnResponse(func(req *Request, resp *models.Response, duration time.Duration) {
 		called = true
 	})
 	parsedURL, _ := url.Parse("https://example.com")
@@ -228,7 +230,7 @@ func TestHooks_OnResponse(t *testing.T) {
 		URL:     parsedURL,
 		Headers: make(http.Header),
 	}
-	resp := CreateMockResponse(200, nil, nil)
+	resp := createMockModelsResponse(200, nil, nil)
 	hooks.TriggerResponse(req, resp, 100*time.Millisecond)
 	if !called {
 		t.Error("Response hook was not called")
@@ -290,7 +292,7 @@ func TestHooks_Clone(t *testing.T) {
 func TestHooks_Clear(t *testing.T) {
 	hooks := NewHooks()
 	hooks.OnRequest(func(req *Request) {})
-	hooks.OnResponse(func(req *Request, resp *Response, duration time.Duration) {})
+	hooks.OnResponse(func(req *Request, resp *models.Response, duration time.Duration) {})
 	hooks.OnError(func(req *Request, err error, duration time.Duration) {})
 	if hooks.Len() != 3 {
 		t.Errorf("Expected 3 hooks, got %d", hooks.Len())
@@ -336,7 +338,7 @@ func TestHooksMiddleware(t *testing.T) {
 	hooks.OnRequest(func(req *Request) {
 		requestCalled = true
 	})
-	hooks.OnResponse(func(req *Request, resp *Response, duration time.Duration) {
+	hooks.OnResponse(func(req *Request, resp *models.Response, duration time.Duration) {
 		responseCalled = true
 	})
 	middleware := HooksMiddleware(hooks)
@@ -346,8 +348,8 @@ func TestHooksMiddleware(t *testing.T) {
 		URL:     parsedURL,
 		Headers: make(http.Header),
 	}
-	handler := func(r *Request) (*Response, error) {
-		return CreateMockResponse(200, nil, nil), nil
+	handler := func(r *Request) (*models.Response, error) {
+		return createMockModelsResponse(200, nil, nil), nil
 	}
 	resp, err := middleware.Process(req, handler)
 	if err != nil {
@@ -377,7 +379,7 @@ func TestHooksMiddleware_OnError(t *testing.T) {
 		URL:     parsedURL,
 		Headers: make(http.Header),
 	}
-	handler := func(r *Request) (*Response, error) {
+	handler := func(r *Request) (*models.Response, error) {
 		return nil, errors.New("test error")
 	}
 	_, _ = middleware.Process(req, handler)
@@ -416,7 +418,7 @@ func TestResponseLoggingHook(t *testing.T) {
 		URL:     parsedURL,
 		Headers: make(http.Header),
 	}
-	resp := CreateMockResponse(200, nil, nil)
+	resp := createMockModelsResponse(200, nil, nil)
 	hook(req, resp, 100*time.Millisecond)
 	if logged == "" {
 		t.Error("Logger was not called")
@@ -453,7 +455,7 @@ func TestMetricsHook(t *testing.T) {
 		URL:     parsedURL,
 		Headers: make(http.Header),
 	}
-	resp := CreateMockResponse(200, nil, nil)
+	resp := createMockModelsResponse(200, nil, nil)
 	// Simulate 3 requests, 2 responses, 1 error
 	hooks.TriggerRequest(req)
 	hooks.TriggerRequest(req)
@@ -505,7 +507,7 @@ func TestMetricsHook_Reset(t *testing.T) {
 func TestHooks_Chaining(t *testing.T) {
 	hooks := NewHooks().
 		OnRequest(func(req *Request) {}).
-		OnResponse(func(req *Request, resp *Response, duration time.Duration) {}).
+		OnResponse(func(req *Request, resp *models.Response, duration time.Duration) {}).
 		OnError(func(req *Request, err error, duration time.Duration) {})
 	if hooks.Len() != 3 {
 		t.Errorf("Expected 3 hooks, got %d", hooks.Len())
@@ -515,7 +517,7 @@ func TestHooks_Chaining(t *testing.T) {
 func TestHooksMiddleware_Duration(t *testing.T) {
 	hooks := NewHooks()
 	var receivedDuration time.Duration
-	hooks.OnResponse(func(req *Request, resp *Response, duration time.Duration) {
+	hooks.OnResponse(func(req *Request, resp *models.Response, duration time.Duration) {
 		receivedDuration = duration
 	})
 	middleware := HooksMiddleware(hooks)
@@ -525,14 +527,28 @@ func TestHooksMiddleware_Duration(t *testing.T) {
 		URL:     parsedURL,
 		Headers: make(http.Header),
 	}
-	handler := func(r *Request) (*Response, error) {
+	handler := func(r *Request) (*models.Response, error) {
 		time.Sleep(50 * time.Millisecond)
-		return CreateMockResponse(200, nil, nil), nil
+		return createMockModelsResponse(200, nil, nil), nil
 	}
 	_, _ = middleware.Process(req, handler)
 	// Duration should be at least 50ms
 	if receivedDuration < 50*time.Millisecond {
 		t.Errorf("Expected duration >= 50ms, got %v", receivedDuration)
+	}
+}
+
+// createMockModelsResponse creates a models.Response for testing purposes.
+func createMockModelsResponse(statusCode int, body []byte, headers http.Header) *models.Response {
+	if headers == nil {
+		headers = make(http.Header)
+	}
+	return &models.Response{
+		StatusCode: statusCode,
+		Status:     http.StatusText(statusCode),
+		Headers:    headers,
+		Cookies:    nil,
+		Proto:      "HTTP/1.1",
 	}
 }
 

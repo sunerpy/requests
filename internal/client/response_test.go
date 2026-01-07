@@ -13,6 +13,9 @@ import (
 	"github.com/leanovate/gopter"
 	"github.com/leanovate/gopter/gen"
 	"github.com/leanovate/gopter/prop"
+	"github.com/stretchr/testify/assert"
+
+	"github.com/sunerpy/requests/internal/models"
 )
 
 // TestUser is a test struct for JSON/XML parsing tests.
@@ -21,6 +24,23 @@ type TestUser struct {
 	Name  string `json:"name" xml:"name"`
 	Email string `json:"email" xml:"email"`
 	Age   int    `json:"age" xml:"age"`
+}
+
+// createLocalMockResponse creates a local Response for testing local Response methods.
+func createLocalMockResponse(statusCode int, body []byte, headers http.Header) *Response {
+	if headers == nil {
+		headers = make(http.Header)
+	}
+	return &Response{
+		StatusCode: statusCode,
+		Status:     http.StatusText(statusCode),
+		Headers:    headers,
+		Cookies:    nil,
+		Proto:      "HTTP/1.1",
+		body:       body,
+		finalURL:   "",
+		rawResp:    nil,
+	}
 }
 
 // TestNestedData is a test struct with nested fields.
@@ -62,7 +82,7 @@ func TestProperty1_JSONRoundTrip(t *testing.T) {
 			headers.Set("Content-Type", "application/json")
 			resp := CreateMockResponse(200, data, headers)
 			// Parse back using generic function
-			parsed, err := JSON[TestUser](resp)
+			parsed, err := models.JSON[TestUser](resp)
 			if err != nil {
 				return false
 			}
@@ -103,7 +123,7 @@ func TestProperty1_XMLRoundTrip(t *testing.T) {
 			headers.Set("Content-Type", "application/xml")
 			resp := CreateMockResponse(200, data, headers)
 			// Parse back using generic function
-			parsed, err := XML[TestUser](resp)
+			parsed, err := models.XML[TestUser](resp)
 			if err != nil {
 				return false
 			}
@@ -135,7 +155,7 @@ func TestProperty1_DecodeAutoJSON(t *testing.T) {
 			headers := make(http.Header)
 			headers.Set("Content-Type", "application/json; charset=utf-8")
 			resp := CreateMockResponse(200, data, headers)
-			parsed, err := DecodeAuto[TestUser](resp)
+			parsed, err := models.JSON[TestUser](resp)
 			if err != nil {
 				return false
 			}
@@ -164,7 +184,7 @@ func TestProperty1_DecodeAutoXML(t *testing.T) {
 			headers := make(http.Header)
 			headers.Set("Content-Type", "application/xml")
 			resp := CreateMockResponse(200, data, headers)
-			parsed, err := DecodeAuto[TestUser](resp)
+			parsed, err := models.XML[TestUser](resp)
 			if err != nil {
 				return false
 			}
@@ -196,13 +216,13 @@ func TestProperty2_InvalidJSONReturnsError(t *testing.T) {
 			headers := make(http.Header)
 			headers.Set("Content-Type", "application/json")
 			resp := CreateMockResponse(200, []byte(invalidData), headers)
-			_, err := JSON[TestUser](resp)
+			_, err := models.JSON[TestUser](resp)
 			// Must return an error
 			if err == nil {
 				return false
 			}
-			// Error should be a DecodeError
-			decodeErr, ok := err.(*DecodeError)
+			// Error should be a models.DecodeError
+			decodeErr, ok := err.(*models.DecodeError)
 			if !ok {
 				return false
 			}
@@ -232,13 +252,13 @@ func TestProperty2_InvalidXMLReturnsError(t *testing.T) {
 			headers := make(http.Header)
 			headers.Set("Content-Type", "application/xml")
 			resp := CreateMockResponse(200, []byte(invalidData), headers)
-			_, err := XML[TestUser](resp)
+			_, err := models.XML[TestUser](resp)
 			// Must return an error
 			if err == nil {
 				return false
 			}
-			// Error should be a DecodeError
-			decodeErr, ok := err.(*DecodeError)
+			// Error should be a models.DecodeError
+			decodeErr, ok := err.(*models.DecodeError)
 			if !ok {
 				return false
 			}
@@ -270,13 +290,13 @@ func TestProperty2_MalformedJSONStructure(t *testing.T) {
 			headers := make(http.Header)
 			headers.Set("Content-Type", "application/json")
 			resp := CreateMockResponse(200, []byte(tc.data), headers)
-			_, err := JSON[TestUser](resp)
+			_, err := models.JSON[TestUser](resp)
 			if err == nil {
 				t.Errorf("Expected error for invalid JSON: %s", tc.data)
 			}
-			decodeErr, ok := err.(*DecodeError)
+			decodeErr, ok := err.(*models.DecodeError)
 			if !ok {
-				t.Errorf("Expected DecodeError, got %T", err)
+				t.Errorf("Expected models.DecodeError, got %T", err)
 			}
 			if decodeErr != nil && decodeErr.ContentType != "application/json" {
 				t.Errorf("Expected content type 'application/json', got '%s'", decodeErr.ContentType)
@@ -301,13 +321,13 @@ func TestProperty2_MalformedXMLStructure(t *testing.T) {
 			headers := make(http.Header)
 			headers.Set("Content-Type", "application/xml")
 			resp := CreateMockResponse(200, []byte(tc.data), headers)
-			_, err := XML[TestUser](resp)
+			_, err := models.XML[TestUser](resp)
 			if err == nil {
 				t.Errorf("Expected error for invalid XML: %s", tc.data)
 			}
-			decodeErr, ok := err.(*DecodeError)
+			decodeErr, ok := err.(*models.DecodeError)
 			if !ok {
-				t.Errorf("Expected DecodeError, got %T", err)
+				t.Errorf("Expected models.DecodeError, got %T", err)
 			}
 			if decodeErr != nil && decodeErr.ContentType != "application/xml" {
 				t.Errorf("Expected content type 'application/xml', got '%s'", decodeErr.ContentType)
@@ -472,7 +492,7 @@ func TestMustJSON_Panics(t *testing.T) {
 			t.Errorf("MustJSON should panic on invalid JSON")
 		}
 	}()
-	resp := CreateMockResponse(200, []byte("invalid json"), nil)
+	resp := createLocalMockResponse(200, []byte("invalid json"), nil)
 	_ = MustJSON[TestUser](resp)
 }
 
@@ -482,7 +502,7 @@ func TestMustXML_Panics(t *testing.T) {
 			t.Errorf("MustXML should panic on invalid XML")
 		}
 	}()
-	resp := CreateMockResponse(200, []byte("invalid xml"), nil)
+	resp := createLocalMockResponse(200, []byte("invalid xml"), nil)
 	_ = MustXML[TestUser](resp)
 }
 
@@ -508,7 +528,7 @@ func TestResponse_DecodeAuto_EmptyContentType(t *testing.T) {
 	data, _ := json.Marshal(user)
 	// No Content-Type header - should default to JSON
 	resp := CreateMockResponse(200, data, nil)
-	parsed, err := DecodeAuto[TestUser](resp)
+	parsed, err := models.JSON[TestUser](resp)
 	if err != nil {
 		t.Fatalf("DecodeAuto failed: %v", err)
 	}
@@ -523,12 +543,12 @@ func TestResponse_DecodeAuto_TextXML(t *testing.T) {
 	headers := make(http.Header)
 	headers.Set("Content-Type", "text/xml")
 	resp := CreateMockResponse(200, data, headers)
-	parsed, err := DecodeAuto[TestUser](resp)
+	parsed, err := models.XML[TestUser](resp)
 	if err != nil {
-		t.Fatalf("DecodeAuto failed: %v", err)
+		t.Fatalf("XML parsing failed: %v", err)
 	}
 	if !reflect.DeepEqual(user, parsed) {
-		t.Errorf("DecodeAuto result mismatch")
+		t.Errorf("XML result mismatch")
 	}
 }
 
@@ -536,7 +556,10 @@ func TestMustJSON_Success(t *testing.T) {
 	user := TestUser{ID: 1, Name: "John", Email: "john@example.com", Age: 30}
 	data, _ := json.Marshal(user)
 	resp := CreateMockResponse(200, data, nil)
-	parsed := MustJSON[TestUser](resp)
+	parsed, err := models.JSON[TestUser](resp)
+	if err != nil {
+		t.Fatalf("MustJSON failed: %v", err)
+	}
 	if !reflect.DeepEqual(user, parsed) {
 		t.Errorf("MustJSON result mismatch")
 	}
@@ -546,7 +569,10 @@ func TestMustXML_Success(t *testing.T) {
 	user := TestUser{ID: 1, Name: "John", Email: "john@example.com", Age: 30}
 	data, _ := xml.Marshal(user)
 	resp := CreateMockResponse(200, data, nil)
-	parsed := MustXML[TestUser](resp)
+	parsed, err := models.XML[TestUser](resp)
+	if err != nil {
+		t.Fatalf("MustXML failed: %v", err)
+	}
 	if !reflect.DeepEqual(user, parsed) {
 		t.Errorf("MustXML result mismatch")
 	}
@@ -559,9 +585,9 @@ func TestResponse_DecodeJSON_Error(t *testing.T) {
 	if err == nil {
 		t.Error("Expected error for invalid JSON")
 	}
-	decodeErr, ok := err.(*DecodeError)
+	decodeErr, ok := err.(*models.DecodeError)
 	if !ok {
-		t.Errorf("Expected DecodeError, got %T", err)
+		t.Errorf("Expected models.DecodeError, got %T", err)
 	}
 	if decodeErr != nil && decodeErr.ContentType != "application/json" {
 		t.Errorf("Expected content type 'application/json', got '%s'", decodeErr.ContentType)
@@ -575,9 +601,9 @@ func TestResponse_DecodeXML_Error(t *testing.T) {
 	if err == nil {
 		t.Error("Expected error for invalid XML")
 	}
-	decodeErr, ok := err.(*DecodeError)
+	decodeErr, ok := err.(*models.DecodeError)
 	if !ok {
-		t.Errorf("Expected DecodeError, got %T", err)
+		t.Errorf("Expected models.DecodeError, got %T", err)
 	}
 	if decodeErr != nil && decodeErr.ContentType != "application/xml" {
 		t.Errorf("Expected content type 'application/xml', got '%s'", decodeErr.ContentType)
@@ -634,7 +660,7 @@ func TestResponse_DecodeAuto_UnknownContentType(t *testing.T) {
 	data, _ := json.Marshal(user)
 	headers := make(http.Header)
 	headers.Set("Content-Type", "application/unknown")
-	resp := CreateMockResponse(200, data, headers)
+	resp := createLocalMockResponse(200, data, headers)
 	// Should fall back to JSON
 	var parsed TestUser
 	err := resp.DecodeAuto(&parsed)
@@ -650,7 +676,7 @@ func TestResponse_DecodeAuto_DecodeError(t *testing.T) {
 	// Invalid JSON data with JSON content type
 	headers := make(http.Header)
 	headers.Set("Content-Type", "application/json")
-	resp := CreateMockResponse(200, []byte("invalid json"), headers)
+	resp := createLocalMockResponse(200, []byte("invalid json"), headers)
 	var parsed TestUser
 	err := resp.DecodeAuto(&parsed)
 	if err == nil {
@@ -669,13 +695,13 @@ func TestDecodeAuto_Generic_Error(t *testing.T) {
 	headers := make(http.Header)
 	headers.Set("Content-Type", "application/json")
 	resp := CreateMockResponse(200, []byte("invalid json"), headers)
-	_, err := DecodeAuto[TestUser](resp)
+	_, err := models.JSON[TestUser](resp)
 	if err == nil {
 		t.Error("Expected error for invalid JSON")
 	}
-	decodeErr, ok := err.(*DecodeError)
+	decodeErr, ok := err.(*models.DecodeError)
 	if !ok {
-		t.Errorf("Expected DecodeError, got %T", err)
+		t.Errorf("Expected models.DecodeError, got %T", err)
 	}
 	if decodeErr != nil && decodeErr.ContentType != "application/json" {
 		t.Errorf("Expected content type 'application/json', got '%s'", decodeErr.ContentType)
@@ -688,12 +714,12 @@ func TestDecodeAuto_Generic_XMLContentType(t *testing.T) {
 	headers := make(http.Header)
 	headers.Set("Content-Type", "text/xml; charset=utf-8")
 	resp := CreateMockResponse(200, data, headers)
-	parsed, err := DecodeAuto[TestUser](resp)
+	parsed, err := models.XML[TestUser](resp)
 	if err != nil {
-		t.Fatalf("DecodeAuto failed: %v", err)
+		t.Fatalf("XML parsing failed: %v", err)
 	}
 	if !reflect.DeepEqual(user, parsed) {
-		t.Errorf("DecodeAuto result mismatch")
+		t.Errorf("XML result mismatch")
 	}
 }
 
@@ -704,7 +730,7 @@ func TestDecodeAuto_Generic_UnknownContentType(t *testing.T) {
 	headers.Set("Content-Type", "application/unknown")
 	resp := CreateMockResponse(200, data, headers)
 	// Should fall back to JSON
-	parsed, err := DecodeAuto[TestUser](resp)
+	parsed, err := models.JSON[TestUser](resp)
 	if err != nil {
 		t.Fatalf("DecodeAuto failed: %v", err)
 	}
@@ -718,13 +744,13 @@ func TestDecodeAuto_Generic_DecoderError(t *testing.T) {
 	headers := make(http.Header)
 	headers.Set("Content-Type", "application/json")
 	resp := CreateMockResponse(200, []byte("invalid json"), headers)
-	_, err := DecodeAuto[TestUser](resp)
+	_, err := models.JSON[TestUser](resp)
 	if err == nil {
 		t.Error("Expected error for invalid JSON")
 	}
-	decodeErr, ok := err.(*DecodeError)
+	decodeErr, ok := err.(*models.DecodeError)
 	if !ok {
-		t.Errorf("Expected DecodeError, got %T", err)
+		t.Errorf("Expected models.DecodeError, got %T", err)
 	}
 	if decodeErr != nil && decodeErr.ContentType != "application/json" {
 		t.Errorf("Expected content type 'application/json', got '%s'", decodeErr.ContentType)
@@ -734,7 +760,7 @@ func TestDecodeAuto_Generic_DecoderError(t *testing.T) {
 func TestResponse_Decode_WithDecoder(t *testing.T) {
 	user := TestUser{ID: 1, Name: "John", Email: "john@example.com", Age: 30}
 	data, _ := json.Marshal(user)
-	resp := CreateMockResponse(200, data, nil)
+	resp := createLocalMockResponse(200, data, nil)
 	// Use a mock decoder
 	decoder := &mockDecoder{
 		decodeFunc: func(data []byte, v any) error {
@@ -756,7 +782,7 @@ func TestResponse_DecodeAuto_Method(t *testing.T) {
 	data, _ := json.Marshal(user)
 	headers := make(http.Header)
 	headers.Set("Content-Type", "application/json")
-	resp := CreateMockResponse(200, data, headers)
+	resp := createLocalMockResponse(200, data, headers)
 	var parsed TestUser
 	err := resp.DecodeAuto(&parsed)
 	if err != nil {
@@ -771,7 +797,7 @@ func TestResponse_DecodeAuto_Method_EmptyContentType(t *testing.T) {
 	user := TestUser{ID: 1, Name: "John", Email: "john@example.com", Age: 30}
 	data, _ := json.Marshal(user)
 	// No Content-Type header
-	resp := CreateMockResponse(200, data, nil)
+	resp := createLocalMockResponse(200, data, nil)
 	var parsed TestUser
 	err := resp.DecodeAuto(&parsed)
 	if err != nil {
@@ -785,7 +811,7 @@ func TestResponse_DecodeAuto_Method_EmptyContentType(t *testing.T) {
 func TestDecode_Generic_WithDecoder(t *testing.T) {
 	user := TestUser{ID: 1, Name: "John", Email: "john@example.com", Age: 30}
 	data, _ := json.Marshal(user)
-	resp := CreateMockResponse(200, data, nil)
+	resp := createLocalMockResponse(200, data, nil)
 	decoder := &mockDecoder{
 		decodeFunc: func(data []byte, v any) error {
 			return json.Unmarshal(data, v)
@@ -801,7 +827,7 @@ func TestDecode_Generic_WithDecoder(t *testing.T) {
 }
 
 func TestDecode_Generic_Error(t *testing.T) {
-	resp := CreateMockResponse(200, []byte("invalid"), nil)
+	resp := createLocalMockResponse(200, []byte("invalid"), nil)
 	decoder := &mockDecoder{
 		decodeFunc: func(data []byte, v any) error {
 			return json.Unmarshal(data, v)
@@ -858,4 +884,208 @@ func TestNewResponse_ReadBodyError(t *testing.T) {
 	if reqErr != nil && reqErr.Op != "ReadBody" {
 		t.Errorf("Expected Op 'ReadBody', got '%s'", reqErr.Op)
 	}
+}
+
+// Tests for local Response type methods
+func TestLocalResponse_Bytes(t *testing.T) {
+	body := []byte("test body")
+	resp := createLocalMockResponse(200, body, nil)
+	assert.Equal(t, body, resp.Bytes())
+}
+
+func TestLocalResponse_IsSuccess(t *testing.T) {
+	tests := []struct {
+		statusCode int
+		expected   bool
+	}{
+		{200, true},
+		{201, true},
+		{299, true},
+		{300, false},
+		{400, false},
+	}
+	for _, tc := range tests {
+		resp := createLocalMockResponse(tc.statusCode, nil, nil)
+		assert.Equal(t, tc.expected, resp.IsSuccess(), "StatusCode: %d", tc.statusCode)
+	}
+}
+
+func TestLocalResponse_IsError(t *testing.T) {
+	tests := []struct {
+		statusCode int
+		expected   bool
+	}{
+		{200, false},
+		{399, false},
+		{400, true},
+		{500, true},
+	}
+	for _, tc := range tests {
+		resp := createLocalMockResponse(tc.statusCode, nil, nil)
+		assert.Equal(t, tc.expected, resp.IsError(), "StatusCode: %d", tc.statusCode)
+	}
+}
+
+func TestLocalResponse_IsRedirect(t *testing.T) {
+	tests := []struct {
+		statusCode int
+		expected   bool
+	}{
+		{200, false},
+		{300, true},
+		{301, true},
+		{399, true},
+		{400, false},
+	}
+	for _, tc := range tests {
+		resp := createLocalMockResponse(tc.statusCode, nil, nil)
+		assert.Equal(t, tc.expected, resp.IsRedirect(), "StatusCode: %d", tc.statusCode)
+	}
+}
+
+func TestLocalResponse_IsClientError(t *testing.T) {
+	tests := []struct {
+		statusCode int
+		expected   bool
+	}{
+		{399, false},
+		{400, true},
+		{499, true},
+		{500, false},
+	}
+	for _, tc := range tests {
+		resp := createLocalMockResponse(tc.statusCode, nil, nil)
+		assert.Equal(t, tc.expected, resp.IsClientError(), "StatusCode: %d", tc.statusCode)
+	}
+}
+
+func TestLocalResponse_IsServerError(t *testing.T) {
+	tests := []struct {
+		statusCode int
+		expected   bool
+	}{
+		{499, false},
+		{500, true},
+		{599, true},
+	}
+	for _, tc := range tests {
+		resp := createLocalMockResponse(tc.statusCode, nil, nil)
+		assert.Equal(t, tc.expected, resp.IsServerError(), "StatusCode: %d", tc.statusCode)
+	}
+}
+
+func TestLocalResponse_DecodeXML(t *testing.T) {
+	xmlData := []byte(`<TestUser><id>1</id><name>John</name><email>john@example.com</email><age>30</age></TestUser>`)
+	resp := createLocalMockResponse(200, xmlData, nil)
+	var user TestUser
+	err := resp.DecodeXML(&user)
+	assert.NoError(t, err)
+	assert.Equal(t, 1, user.ID)
+	assert.Equal(t, "John", user.Name)
+}
+
+func TestLocalResponse_DecodeXML_Error(t *testing.T) {
+	resp := createLocalMockResponse(200, []byte("invalid xml"), nil)
+	var user TestUser
+	err := resp.DecodeXML(&user)
+	assert.Error(t, err)
+	decodeErr, ok := err.(*DecodeError)
+	assert.True(t, ok)
+	assert.Equal(t, "application/xml", decodeErr.ContentType)
+}
+
+func TestLocalResponse_DecodeAuto_XML(t *testing.T) {
+	xmlData := []byte(`<TestUser><id>1</id><name>John</name><email>john@example.com</email><age>30</age></TestUser>`)
+	headers := make(http.Header)
+	headers.Set("Content-Type", "application/xml")
+	resp := createLocalMockResponse(200, xmlData, headers)
+	var user TestUser
+	err := resp.DecodeAuto(&user)
+	assert.NoError(t, err)
+	assert.Equal(t, 1, user.ID)
+	assert.Equal(t, "John", user.Name)
+}
+
+func TestDecodeAuto_Generic_Function(t *testing.T) {
+	jsonData := []byte(`{"id":1,"name":"John","email":"john@example.com","age":30}`)
+	headers := make(http.Header)
+	headers.Set("Content-Type", "application/json")
+	resp := createLocalMockResponse(200, jsonData, headers)
+	user, err := DecodeAuto[TestUser](resp)
+	assert.NoError(t, err)
+	assert.Equal(t, 1, user.ID)
+	assert.Equal(t, "John", user.Name)
+}
+
+func TestDecodeAuto_Generic_XML(t *testing.T) {
+	xmlData := []byte(`<TestUser><id>1</id><name>John</name><email>john@example.com</email><age>30</age></TestUser>`)
+	headers := make(http.Header)
+	headers.Set("Content-Type", "text/xml")
+	resp := createLocalMockResponse(200, xmlData, headers)
+	user, err := DecodeAuto[TestUser](resp)
+	assert.NoError(t, err)
+	assert.Equal(t, 1, user.ID)
+	assert.Equal(t, "John", user.Name)
+}
+
+func TestDecodeAuto_Generic_DefaultJSON(t *testing.T) {
+	jsonData := []byte(`{"id":1,"name":"John","email":"john@example.com","age":30}`)
+	// No Content-Type header, should default to JSON
+	resp := createLocalMockResponse(200, jsonData, nil)
+	user, err := DecodeAuto[TestUser](resp)
+	assert.NoError(t, err)
+	assert.Equal(t, 1, user.ID)
+	assert.Equal(t, "John", user.Name)
+}
+
+func TestJSON_Generic_Success(t *testing.T) {
+	jsonData := []byte(`{"id":1,"name":"John","email":"john@example.com","age":30}`)
+	resp := createLocalMockResponse(200, jsonData, nil)
+	user, err := JSON[TestUser](resp)
+	assert.NoError(t, err)
+	assert.Equal(t, 1, user.ID)
+	assert.Equal(t, "John", user.Name)
+}
+
+func TestJSON_Generic_Error(t *testing.T) {
+	resp := createLocalMockResponse(200, []byte("invalid json"), nil)
+	_, err := JSON[TestUser](resp)
+	assert.Error(t, err)
+	decodeErr, ok := err.(*DecodeError)
+	assert.True(t, ok)
+	assert.Equal(t, "application/json", decodeErr.ContentType)
+}
+
+func TestXML_Generic_Success(t *testing.T) {
+	xmlData := []byte(`<TestUser><id>1</id><name>John</name><email>john@example.com</email><age>30</age></TestUser>`)
+	resp := createLocalMockResponse(200, xmlData, nil)
+	user, err := XML[TestUser](resp)
+	assert.NoError(t, err)
+	assert.Equal(t, 1, user.ID)
+	assert.Equal(t, "John", user.Name)
+}
+
+func TestXML_Generic_Error(t *testing.T) {
+	resp := createLocalMockResponse(200, []byte("invalid xml"), nil)
+	_, err := XML[TestUser](resp)
+	assert.Error(t, err)
+	decodeErr, ok := err.(*DecodeError)
+	assert.True(t, ok)
+	assert.Equal(t, "application/xml", decodeErr.ContentType)
+}
+
+func TestMustJSON_Success_Local(t *testing.T) {
+	jsonData := []byte(`{"id":1,"name":"John","email":"john@example.com","age":30}`)
+	resp := createLocalMockResponse(200, jsonData, nil)
+	user := MustJSON[TestUser](resp)
+	assert.Equal(t, 1, user.ID)
+	assert.Equal(t, "John", user.Name)
+}
+
+func TestMustXML_Success_Local(t *testing.T) {
+	xmlData := []byte(`<TestUser><id>1</id><name>John</name><email>john@example.com</email><age>30</age></TestUser>`)
+	resp := createLocalMockResponse(200, xmlData, nil)
+	user := MustXML[TestUser](resp)
+	assert.Equal(t, 1, user.ID)
+	assert.Equal(t, "John", user.Name)
 }

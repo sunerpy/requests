@@ -28,6 +28,7 @@ var smallBufPool = sync.Pool{
 // Response 表示 HTTP 响应
 type Response struct {
 	StatusCode int
+	Status     string // HTTP status text (e.g., "200 OK")
 	Headers    http.Header
 	Cookies    []*http.Cookie
 	body       []byte
@@ -68,6 +69,7 @@ func NewResponse(resp *http.Response, finalURL string) (*Response, error) {
 	}
 	return &Response{
 		StatusCode: resp.StatusCode,
+		Status:     resp.Status,
 		Headers:    resp.Header,
 		Cookies:    resp.Cookies(),
 		body:       data,
@@ -83,6 +85,7 @@ func NewResponse(resp *http.Response, finalURL string) (*Response, error) {
 func NewResponseFast(resp *http.Response, finalURL string, body []byte) *Response {
 	return &Response{
 		StatusCode: resp.StatusCode,
+		Status:     resp.Status,
 		Headers:    resp.Header,
 		Cookies:    resp.Cookies(),
 		body:       body,
@@ -111,26 +114,52 @@ func (r *Response) Bytes() []byte {
 	return r.body
 }
 
+// DecodeError represents an error during response body decoding.
+type DecodeError struct {
+	ContentType string
+	Err         error
+}
+
+func (e *DecodeError) Error() string {
+	return "decode error for content type " + e.ContentType + ": " + e.Err.Error()
+}
+
+func (e *DecodeError) Unwrap() error {
+	return e.Err
+}
+
 // JSON 使用泛型解析 JSON
 func JSON[T any](r *Response) (T, error) {
 	var result T
 	err := codec.Unmarshal(r.body, &result)
-	return result, err
+	if err != nil {
+		return result, &DecodeError{ContentType: "application/json", Err: err}
+	}
+	return result, nil
 }
 
 // XML 使用泛型解析 XML
 func XML[T any](r *Response) (T, error) {
 	var result T
 	err := xml.Unmarshal(r.body, &result)
-	return result, err
+	if err != nil {
+		return result, &DecodeError{ContentType: "application/xml", Err: err}
+	}
+	return result, nil
 }
 
 func (r *Response) DecodeJSON(dest any) error {
-	return codec.Unmarshal(r.body, dest)
+	if err := codec.Unmarshal(r.body, dest); err != nil {
+		return &DecodeError{ContentType: "application/json", Err: err}
+	}
+	return nil
 }
 
 func (r *Response) DecodeXML(dest any) error {
-	return xml.Unmarshal(r.body, dest)
+	if err := xml.Unmarshal(r.body, dest); err != nil {
+		return &DecodeError{ContentType: "application/xml", Err: err}
+	}
+	return nil
 }
 
 // IsSuccess returns true if status code is 2xx.
@@ -141,6 +170,26 @@ func (r *Response) IsSuccess() bool {
 // IsError returns true if status code is 4xx or 5xx.
 func (r *Response) IsError() bool {
 	return r.StatusCode >= 400
+}
+
+// IsRedirect returns true if status code is 3xx.
+func (r *Response) IsRedirect() bool {
+	return r.StatusCode >= 300 && r.StatusCode < 400
+}
+
+// IsClientError returns true if status code is 4xx.
+func (r *Response) IsClientError() bool {
+	return r.StatusCode >= 400 && r.StatusCode < 500
+}
+
+// IsServerError returns true if status code is 5xx.
+func (r *Response) IsServerError() bool {
+	return r.StatusCode >= 500
+}
+
+// ContentType returns the Content-Type header value.
+func (r *Response) ContentType() string {
+	return r.Headers.Get("Content-Type")
 }
 
 // ContentWrapper 封装响应体的二进制数据，并提供链式解码功能
@@ -175,4 +224,21 @@ var ErrUnsupportedEncoding = errors.New("unsupported encoding format")
 
 func (r *Response) GetURL() string {
 	return r.finalURL
+}
+
+// CreateMockResponse creates a Response for testing purposes.
+func CreateMockResponse(statusCode int, body []byte, headers http.Header) *Response {
+	if headers == nil {
+		headers = make(http.Header)
+	}
+	return &Response{
+		StatusCode: statusCode,
+		Status:     http.StatusText(statusCode),
+		Headers:    headers,
+		Cookies:    nil,
+		Proto:      "HTTP/1.1",
+		body:       body,
+		finalURL:   "",
+		rawResp:    nil,
+	}
 }

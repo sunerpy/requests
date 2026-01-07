@@ -95,6 +95,13 @@ linters:
         linters:
           - noctx
 
+      # Exclude bodyclose for methods that pass response to NewResponse
+      # NewResponse internally closes the body with defer resp.Body.Close()
+      - path: internal/client/(builder|methods)\.go
+        text: "response body must be closed"
+        linters:
+          - bodyclose
+
 issues:
   max-issues-per-linter: 50
   max-same-issues: 10

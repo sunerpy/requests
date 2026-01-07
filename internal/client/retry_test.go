@@ -10,6 +10,8 @@ import (
 	"github.com/leanovate/gopter"
 	"github.com/leanovate/gopter/gen"
 	"github.com/leanovate/gopter/prop"
+
+	"github.com/sunerpy/requests/internal/models"
 )
 
 // Feature: http-client-refactor
@@ -32,13 +34,13 @@ func TestProperty17_RetryPolicyExecution(t *testing.T) {
 				InitialInterval: 1 * time.Millisecond,
 				MaxInterval:     10 * time.Millisecond,
 				Multiplier:      2.0,
-				RetryIf: func(resp *Response, err error) bool {
+				RetryIf: func(resp *models.Response, err error) bool {
 					return err != nil
 				},
 			}
 			executor := NewRetryExecutor(policy)
 			ctx := context.Background()
-			_, _ = executor.Execute(ctx, func() (*Response, error) {
+			_, _ = executor.Execute(ctx, func() (*models.Response, error) {
 				atomic.AddInt32(&attempts, 1)
 				return nil, errors.New("always fail")
 			})
@@ -62,13 +64,13 @@ func TestProperty17_RetryStopsOnSuccess(t *testing.T) {
 			policy := RetryPolicy{
 				MaxAttempts:     10,
 				InitialInterval: 1 * time.Millisecond,
-				RetryIf: func(resp *Response, err error) bool {
+				RetryIf: func(resp *models.Response, err error) bool {
 					return err != nil
 				},
 			}
 			executor := NewRetryExecutor(policy)
 			ctx := context.Background()
-			resp, err := executor.Execute(ctx, func() (*Response, error) {
+			resp, err := executor.Execute(ctx, func() (*models.Response, error) {
 				current := int(atomic.AddInt32(&attempts, 1))
 				if current >= successOnAttempt {
 					return CreateMockResponse(200, nil, nil), nil
@@ -100,13 +102,13 @@ func TestProperty17_ExponentialBackoff(t *testing.T) {
 		MaxInterval:     100 * time.Millisecond,
 		Multiplier:      2.0,
 		Jitter:          0, // No jitter for predictable testing
-		RetryIf: func(resp *Response, err error) bool {
+		RetryIf: func(resp *models.Response, err error) bool {
 			return err != nil
 		},
 	}
 	executor := NewRetryExecutor(policy)
 	ctx := context.Background()
-	_, _ = executor.Execute(ctx, func() (*Response, error) {
+	_, _ = executor.Execute(ctx, func() (*models.Response, error) {
 		now := time.Now()
 		if !lastTime.IsZero() {
 			delays = append(delays, now.Sub(lastTime))
@@ -145,7 +147,7 @@ func TestProperty18_CustomRetryCondition(t *testing.T) {
 			policy := RetryPolicy{
 				MaxAttempts:     3,
 				InitialInterval: 1 * time.Millisecond,
-				RetryIf: func(resp *Response, err error) bool {
+				RetryIf: func(resp *models.Response, err error) bool {
 					atomic.AddInt32(&conditionCalled, 1)
 					if resp != nil {
 						return resp.StatusCode == retryOnCode
@@ -155,7 +157,7 @@ func TestProperty18_CustomRetryCondition(t *testing.T) {
 			}
 			executor := NewRetryExecutor(policy)
 			ctx := context.Background()
-			_, _ = executor.Execute(ctx, func() (*Response, error) {
+			_, _ = executor.Execute(ctx, func() (*models.Response, error) {
 				return CreateMockResponse(retryOnCode, nil, nil), nil
 			})
 			// Condition should have been called
@@ -172,7 +174,7 @@ func TestProperty18_CustomConditionControlsRetry(t *testing.T) {
 	policy := RetryPolicy{
 		MaxAttempts:     5,
 		InitialInterval: 1 * time.Millisecond,
-		RetryIf: func(resp *Response, err error) bool {
+		RetryIf: func(resp *models.Response, err error) bool {
 			// Only retry on 503
 			if resp != nil {
 				return resp.StatusCode == 503
@@ -183,7 +185,7 @@ func TestProperty18_CustomConditionControlsRetry(t *testing.T) {
 	executor := NewRetryExecutor(policy)
 	ctx := context.Background()
 	// Return 500 - should not retry
-	_, _ = executor.Execute(ctx, func() (*Response, error) {
+	_, _ = executor.Execute(ctx, func() (*models.Response, error) {
 		atomic.AddInt32(&attempts, 1)
 		return CreateMockResponse(500, nil, nil), nil
 	})
@@ -192,7 +194,7 @@ func TestProperty18_CustomConditionControlsRetry(t *testing.T) {
 	}
 	// Reset and test with 503 - should retry
 	atomic.StoreInt32(&attempts, 0)
-	_, _ = executor.Execute(ctx, func() (*Response, error) {
+	_, _ = executor.Execute(ctx, func() (*models.Response, error) {
 		atomic.AddInt32(&attempts, 1)
 		return CreateMockResponse(503, nil, nil), nil
 	})
@@ -219,13 +221,13 @@ func TestProperty19_MaxRetriesExceededError(t *testing.T) {
 			policy := RetryPolicy{
 				MaxAttempts:     maxAttempts,
 				InitialInterval: 1 * time.Millisecond,
-				RetryIf: func(resp *Response, err error) bool {
+				RetryIf: func(resp *models.Response, err error) bool {
 					return err != nil
 				},
 			}
 			executor := NewRetryExecutor(policy)
 			ctx := context.Background()
-			_, err := executor.Execute(ctx, func() (*Response, error) {
+			_, err := executor.Execute(ctx, func() (*models.Response, error) {
 				return nil, originalErr
 			})
 			// Should return RetryError
@@ -250,13 +252,13 @@ func TestProperty19_RetryErrorUnwrapping(t *testing.T) {
 	policy := RetryPolicy{
 		MaxAttempts:     3,
 		InitialInterval: 1 * time.Millisecond,
-		RetryIf: func(resp *Response, err error) bool {
+		RetryIf: func(resp *models.Response, err error) bool {
 			return err != nil
 		},
 	}
 	executor := NewRetryExecutor(policy)
 	ctx := context.Background()
-	_, err := executor.Execute(ctx, func() (*Response, error) {
+	_, err := executor.Execute(ctx, func() (*models.Response, error) {
 		return nil, originalErr
 	})
 	// Should be able to check for ErrMaxRetriesExceeded
@@ -280,7 +282,7 @@ func TestRetryExecutor_ContextCancellation(t *testing.T) {
 	policy := RetryPolicy{
 		MaxAttempts:     10,
 		InitialInterval: 100 * time.Millisecond,
-		RetryIf: func(resp *Response, err error) bool {
+		RetryIf: func(resp *models.Response, err error) bool {
 			return err != nil
 		},
 	}
@@ -290,7 +292,7 @@ func TestRetryExecutor_ContextCancellation(t *testing.T) {
 		time.Sleep(50 * time.Millisecond)
 		cancel()
 	}()
-	_, err := executor.Execute(ctx, func() (*Response, error) {
+	_, err := executor.Execute(ctx, func() (*models.Response, error) {
 		atomic.AddInt32(&attempts, 1)
 		return nil, errors.New("fail")
 	})
@@ -308,7 +310,7 @@ func TestRetryExecutor_NoRetryOnSuccess(t *testing.T) {
 	executor := NewRetryExecutor(policy)
 	ctx := context.Background()
 	var attempts int32
-	resp, err := executor.Execute(ctx, func() (*Response, error) {
+	resp, err := executor.Execute(ctx, func() (*models.Response, error) {
 		atomic.AddInt32(&attempts, 1)
 		return CreateMockResponse(200, nil, nil), nil
 	})
@@ -421,7 +423,7 @@ func TestRetryOn5xx(t *testing.T) {
 		{0, errors.New("error"), true},
 	}
 	for _, tc := range tests {
-		var resp *Response
+		var resp *models.Response
 		if tc.statusCode > 0 {
 			resp = CreateMockResponse(tc.statusCode, nil, nil)
 		}
@@ -464,10 +466,10 @@ func TestRetryOnStatusCodes(t *testing.T) {
 }
 
 func TestCombineRetryConditions(t *testing.T) {
-	cond1 := func(resp *Response, err error) bool {
+	cond1 := func(resp *models.Response, err error) bool {
 		return resp != nil && resp.StatusCode == 500
 	}
-	cond2 := func(resp *Response, err error) bool {
+	cond2 := func(resp *models.Response, err error) bool {
 		return resp != nil && resp.StatusCode == 503
 	}
 	combined := CombineRetryConditions(cond1, cond2)
@@ -494,12 +496,12 @@ func TestRetryMiddleware(t *testing.T) {
 	policy := RetryPolicy{
 		MaxAttempts:     3,
 		InitialInterval: 1 * time.Millisecond,
-		RetryIf: func(resp *Response, err error) bool {
+		RetryIf: func(resp *models.Response, err error) bool {
 			return err != nil
 		},
 	}
 	middleware := RetryMiddleware(policy)
-	handler := func(req *Request) (*Response, error) {
+	handler := func(req *Request) (*models.Response, error) {
 		current := int(atomic.AddInt32(&attempts, 1))
 		if current < 3 {
 			return nil, errors.New("fail")
@@ -543,7 +545,7 @@ func TestWithMaxRetries(t *testing.T) {
 }
 
 func TestWithRetryCondition(t *testing.T) {
-	customCondition := func(resp *Response, err error) bool {
+	customCondition := func(resp *models.Response, err error) bool {
 		return resp != nil && resp.StatusCode == 418
 	}
 	config := NewRequestConfig()
@@ -565,7 +567,7 @@ func TestWithRetryCondition(t *testing.T) {
 func TestDefaultRetryCondition(t *testing.T) {
 	tests := []struct {
 		name        string
-		resp        *Response
+		resp        *models.Response
 		err         error
 		shouldRetry bool
 	}{
@@ -631,12 +633,12 @@ func TestRetryMiddleware_NilContext(t *testing.T) {
 	policy := RetryPolicy{
 		MaxAttempts:     2,
 		InitialInterval: 1 * time.Millisecond,
-		RetryIf: func(resp *Response, err error) bool {
+		RetryIf: func(resp *models.Response, err error) bool {
 			return err != nil
 		},
 	}
 	middleware := RetryMiddleware(policy)
-	handler := func(req *Request) (*Response, error) {
+	handler := func(req *Request) (*models.Response, error) {
 		current := int(atomic.AddInt32(&attempts, 1))
 		if current < 2 {
 			return nil, errors.New("fail")

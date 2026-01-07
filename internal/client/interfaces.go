@@ -35,14 +35,16 @@ import (
 	"net/http"
 	"net/url"
 	"time"
+
+	"github.com/sunerpy/requests/internal/models"
 )
 
 // Client is the core HTTP client interface.
 type Client interface {
 	// Do executes an HTTP request and returns the response.
-	Do(req *Request) (*Response, error)
+	Do(req *Request) (*models.Response, error)
 	// DoWithContext executes an HTTP request with context.
-	DoWithContext(ctx context.Context, req *Request) (*Response, error)
+	DoWithContext(ctx context.Context, req *Request) (*models.Response, error)
 	// Clone creates a copy of the client.
 	Clone() Client
 }
@@ -222,18 +224,18 @@ type FileUpload struct {
 // Middleware defines the request/response middleware interface.
 type Middleware interface {
 	// Process handles the request and calls next to continue the chain.
-	Process(req *Request, next Handler) (*Response, error)
+	Process(req *Request, next Handler) (*models.Response, error)
 }
 
 // Handler is the next handler in the middleware chain.
 type (
-	Handler func(*Request) (*Response, error)
+	Handler func(*Request) (*models.Response, error)
 	// MiddlewareFunc is a function adapter for Middleware interface.
-	MiddlewareFunc func(req *Request, next Handler) (*Response, error)
+	MiddlewareFunc func(req *Request, next Handler) (*models.Response, error)
 )
 
 // Process implements the Middleware interface.
-func (f MiddlewareFunc) Process(req *Request, next Handler) (*Response, error) {
+func (f MiddlewareFunc) Process(req *Request, next Handler) (*models.Response, error) {
 	return f(req, next)
 }
 
@@ -244,7 +246,7 @@ type RetryPolicy struct {
 	MaxInterval     time.Duration
 	Multiplier      float64
 	Jitter          float64
-	RetryIf         func(resp *Response, err error) bool
+	RetryIf         func(resp *models.Response, err error) bool
 }
 
 // DefaultRetryPolicy returns a sensible default retry policy.
@@ -260,7 +262,7 @@ func DefaultRetryPolicy() RetryPolicy {
 }
 
 // DefaultRetryCondition is the default condition for retrying requests.
-func DefaultRetryCondition(resp *Response, err error) bool {
+func DefaultRetryCondition(resp *models.Response, err error) bool {
 	if err != nil {
 		return true
 	}

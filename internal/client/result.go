@@ -1,16 +1,20 @@
 package client
 
-import "net/http"
+import (
+	"net/http"
+
+	"github.com/sunerpy/requests/internal/models"
+)
 
 // Result encapsulates both the parsed response data and response metadata.
 // It provides a clean API that returns only 2 values (Result[T], error) instead of 3.
 type Result[T any] struct {
 	data     T
-	response *Response
+	response *models.Response
 }
 
 // NewResult creates a new Result with the given data and response.
-func NewResult[T any](data T, response *Response) Result[T] {
+func NewResult[T any](data T, response *models.Response) Result[T] {
 	return Result[T]{
 		data:     data,
 		response: response,
@@ -23,7 +27,7 @@ func (r Result[T]) Data() T {
 }
 
 // Response returns the underlying Response object.
-func (r Result[T]) Response() *Response {
+func (r Result[T]) Response() *models.Response {
 	return r.response
 }
 

@@ -2,6 +2,7 @@ package requests
 
 import (
 	"github.com/sunerpy/requests/internal/client"
+	"github.com/sunerpy/requests/internal/models"
 )
 
 // Type aliases for client package types - allows users to import only the main package
@@ -10,7 +11,8 @@ import (
 type (
 	Result[T any] = client.Result[T]
 	// Response represents an HTTP response.
-	Response = client.Response
+	// This is the unified response type used throughout the library.
+	Response = models.Response
 	// RequestBuilder provides a fluent interface for building HTTP requests.
 	RequestBuilder = client.RequestBuilder
 	// RequestOption is a function that modifies request configuration.

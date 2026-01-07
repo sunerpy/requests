@@ -579,3 +579,84 @@ func TestRegistry_GetCodec_FallbackToRegistry(t *testing.T) {
 	assert.True(t, ok)
 	assert.Equal(t, codec, retrieved)
 }
+
+// Tests for global Marshal and Unmarshal functions
+func TestMarshal(t *testing.T) {
+	data := TestStruct{
+		Name:   "test",
+		Age:    25,
+		Score:  95.5,
+		Active: true,
+		Tags:   []string{"a", "b"},
+	}
+	encoded, err := Marshal(data)
+	assert.NoError(t, err)
+	assert.Contains(t, string(encoded), `"name":"test"`)
+	assert.Contains(t, string(encoded), `"age":25`)
+}
+
+func TestUnmarshal(t *testing.T) {
+	jsonData := []byte(`{"name":"test","age":25,"score":95.5,"active":true,"tags":["a","b"]}`)
+	var decoded TestStruct
+	err := Unmarshal(jsonData, &decoded)
+	assert.NoError(t, err)
+	assert.Equal(t, "test", decoded.Name)
+	assert.Equal(t, 25, decoded.Age)
+	assert.Equal(t, 95.5, decoded.Score)
+	assert.True(t, decoded.Active)
+	assert.Equal(t, []string{"a", "b"}, decoded.Tags)
+}
+
+func TestMarshal_Error(t *testing.T) {
+	// Channels cannot be marshaled
+	ch := make(chan int)
+	_, err := Marshal(ch)
+	assert.Error(t, err)
+}
+
+func TestUnmarshal_Error(t *testing.T) {
+	invalidJSON := []byte(`{"name": invalid}`)
+	var decoded TestStruct
+	err := Unmarshal(invalidJSON, &decoded)
+	assert.Error(t, err)
+}
+
+// Tests for NewSonicCodecStd
+func TestNewSonicCodecStd(t *testing.T) {
+	codec := NewSonicCodecStd()
+	assert.NotNil(t, codec)
+	assert.Equal(t, "application/json", codec.ContentType())
+
+	// Test encode
+	data := TestStruct{Name: "test", Age: 25}
+	encoded, err := codec.Encode(data)
+	assert.NoError(t, err)
+	assert.Contains(t, string(encoded), `"name":"test"`)
+
+	// Test decode
+	var decoded TestStruct
+	err = codec.Decode(encoded, &decoded)
+	assert.NoError(t, err)
+	assert.Equal(t, "test", decoded.Name)
+	assert.Equal(t, 25, decoded.Age)
+}
+
+// Tests for NewSonicCodecFastest
+func TestNewSonicCodecFastest(t *testing.T) {
+	codec := NewSonicCodecFastest()
+	assert.NotNil(t, codec)
+	assert.Equal(t, "application/json", codec.ContentType())
+
+	// Test encode
+	data := TestStruct{Name: "fastest", Age: 30}
+	encoded, err := codec.Encode(data)
+	assert.NoError(t, err)
+	assert.Contains(t, string(encoded), `"name":"fastest"`)
+
+	// Test decode
+	var decoded TestStruct
+	err = codec.Decode(encoded, &decoded)
+	assert.NoError(t, err)
+	assert.Equal(t, "fastest", decoded.Name)
+	assert.Equal(t, 30, decoded.Age)
+}
