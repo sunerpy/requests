@@ -7,6 +7,7 @@ require (
 	github.com/bytedance/sonic v1.14.2
 	github.com/leanovate/gopter v0.2.11
 	github.com/stretchr/testify v1.11.1
+	pgregory.net/rapid v1.2.0
 )
 
 require (

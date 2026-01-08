@@ -31,7 +31,7 @@ var (
 	sessionPool         sync.Pool
 	defaultHTTP2Enabled = false
 	defaultHTTP2Lock    sync.Mutex
-	defaultSess         Session
+	defaultSess         client.Session
 )
 
 // Initialize Transport pools and create default Session
@@ -94,7 +94,7 @@ func PutTransport(transport *http.Transport) {
 
 // AcquireSession gets a Session from the pool.
 // Remember to call ReleaseSession when done.
-func AcquireSession() Session {
+func AcquireSession() client.Session {
 	s := sessionPool.Get().(*defaultSession)
 	defaultHTTP2Lock.Lock()
 	useHTTP2 := defaultHTTP2Enabled
@@ -109,7 +109,7 @@ func AcquireSession() Session {
 }
 
 // ReleaseSession returns a Session to the pool.
-func ReleaseSession(sess Session) {
+func ReleaseSession(sess client.Session) {
 	if sess == nil {
 		return
 	}
@@ -135,6 +135,8 @@ func ReleaseSession(sess Session) {
 	s.bearerToken = ""
 	s.keepAlive = true
 	s.maxIdleConns = defaultMaxIdleConns
+	s.retryPolicy = nil
+	s.middlewares = nil
 	// Clear headers but keep the map
 	for k := range s.headers {
 		delete(s.headers, k)
@@ -158,32 +160,6 @@ func IsHTTP2Enabled() bool {
 	return defaultHTTP2Enabled
 }
 
-// Client is the HTTP client interface.
-type Client interface {
-	Do(req *Request) (*models.Response, error)
-	Clone() Client
-}
-
-// Session extends Client with session management capabilities.
-type Session interface {
-	Client
-	WithBaseURL(base string) Session
-	WithTimeout(d time.Duration) Session
-	WithProxy(proxyURL string) Session
-	WithDNS(dnsServers []string) Session
-	WithHeader(key, value string) Session
-	WithHeaders(headers map[string]string) Session
-	WithBasicAuth(username, password string) Session
-	WithBearerToken(token string) Session
-	WithHTTP2(enabled bool) Session
-	WithKeepAlive(enabled bool) Session
-	WithMaxIdleConns(maxIdle int) Session
-	WithIdleTimeout(d time.Duration) Session
-	WithCookieJar(jar http.CookieJar) Session
-	Close() error
-	Clear() Session
-}
-
 // defaultSession implements the Session interface.
 type defaultSession struct {
 	baseURL      string
@@ -199,10 +175,13 @@ type defaultSession struct {
 	dnsServers   []string
 	authHeader   string
 	bearerToken  string
+	// New fields for retry and middleware support
+	retryPolicy *client.RetryPolicy
+	middlewares []client.Middleware
 }
 
 // NewSession creates a new Session with default settings.
-func NewSession() Session {
+func NewSession() client.Session {
 	defaultHTTP2Lock.Lock()
 	defer defaultHTTP2Lock.Unlock()
 	var transport *http.Transport
@@ -222,14 +201,14 @@ func NewSession() Session {
 	}
 }
 
-func (s *defaultSession) WithBaseURL(base string) Session {
+func (s *defaultSession) WithBaseURL(base string) client.Session {
 	s.clientLock.Lock()
 	defer s.clientLock.Unlock()
 	s.baseURL = base
 	return s
 }
 
-func (s *defaultSession) WithTimeout(d time.Duration) Session {
+func (s *defaultSession) WithTimeout(d time.Duration) client.Session {
 	s.clientLock.Lock()
 	defer s.clientLock.Unlock()
 	s.timeout = d
@@ -239,7 +218,7 @@ func (s *defaultSession) WithTimeout(d time.Duration) Session {
 	return s
 }
 
-func (s *defaultSession) WithIdleTimeout(d time.Duration) Session {
+func (s *defaultSession) WithIdleTimeout(d time.Duration) client.Session {
 	s.clientLock.Lock()
 	defer s.clientLock.Unlock()
 	s.idleTimeout = d
@@ -249,7 +228,7 @@ func (s *defaultSession) WithIdleTimeout(d time.Duration) Session {
 	return s
 }
 
-func (s *defaultSession) WithProxy(proxyURL string) Session {
+func (s *defaultSession) WithProxy(proxyURL string) client.Session {
 	s.clientLock.Lock()
 	defer s.clientLock.Unlock()
 	u, err := url.Parse(proxyURL)
@@ -267,7 +246,7 @@ func (s *defaultSession) WithProxy(proxyURL string) Session {
 	return s
 }
 
-func (s *defaultSession) WithDNS(dnsServers []string) Session {
+func (s *defaultSession) WithDNS(dnsServers []string) client.Session {
 	s.clientLock.Lock()
 	defer s.clientLock.Unlock()
 	s.dnsServers = dnsServers
@@ -320,7 +299,7 @@ func customDial(ctx context.Context, network, address string, dnsServers []strin
 	return nil, fmt.Errorf("failed to connect to any resolved IPs for %s, address: %v", address, ips)
 }
 
-func (s *defaultSession) WithBasicAuth(username, password string) Session {
+func (s *defaultSession) WithBasicAuth(username, password string) client.Session {
 	s.clientLock.Lock()
 	defer s.clientLock.Unlock()
 	auth := fmt.Sprintf("%s:%s", username, password)
@@ -330,7 +309,7 @@ func (s *defaultSession) WithBasicAuth(username, password string) Session {
 	return s
 }
 
-func (s *defaultSession) WithBearerToken(token string) Session {
+func (s *defaultSession) WithBearerToken(token string) client.Session {
 	s.clientLock.Lock()
 	defer s.clientLock.Unlock()
 	s.bearerToken = token
@@ -338,14 +317,14 @@ func (s *defaultSession) WithBearerToken(token string) Session {
 	return s
 }
 
-func (s *defaultSession) WithHeader(key, value string) Session {
+func (s *defaultSession) WithHeader(key, value string) client.Session {
 	s.clientLock.Lock()
 	defer s.clientLock.Unlock()
 	s.headers.Set(key, value)
 	return s
 }
 
-func (s *defaultSession) WithHeaders(headers map[string]string) Session {
+func (s *defaultSession) WithHeaders(headers map[string]string) client.Session {
 	s.clientLock.Lock()
 	defer s.clientLock.Unlock()
 	for k, v := range headers {
@@ -354,7 +333,7 @@ func (s *defaultSession) WithHeaders(headers map[string]string) Session {
 	return s
 }
 
-func (s *defaultSession) WithHTTP2(enabled bool) Session {
+func (s *defaultSession) WithHTTP2(enabled bool) client.Session {
 	s.clientLock.Lock()
 	defer s.clientLock.Unlock()
 	if s.useHTTP2 == enabled {
@@ -377,7 +356,7 @@ func (s *defaultSession) WithHTTP2(enabled bool) Session {
 	return s
 }
 
-func (s *defaultSession) WithKeepAlive(enabled bool) Session {
+func (s *defaultSession) WithKeepAlive(enabled bool) client.Session {
 	s.clientLock.Lock()
 	defer s.clientLock.Unlock()
 	s.keepAlive = enabled
@@ -392,7 +371,7 @@ func (s *defaultSession) WithKeepAlive(enabled bool) Session {
 	return s
 }
 
-func (s *defaultSession) WithMaxIdleConns(maxIdle int) Session {
+func (s *defaultSession) WithMaxIdleConns(maxIdle int) client.Session {
 	s.clientLock.Lock()
 	defer s.clientLock.Unlock()
 	s.maxIdleConns = maxIdle
@@ -408,14 +387,30 @@ func (s *defaultSession) WithMaxIdleConns(maxIdle int) Session {
 	return s
 }
 
-func (s *defaultSession) WithCookieJar(jar http.CookieJar) Session {
+func (s *defaultSession) WithCookieJar(jar http.CookieJar) client.Session {
 	s.clientLock.Lock()
 	defer s.clientLock.Unlock()
 	s.client.Jar = jar
 	return s
 }
 
-func (s *defaultSession) Clone() Client {
+// WithRetry configures the retry policy for the session.
+func (s *defaultSession) WithRetry(policy client.RetryPolicy) client.Session {
+	s.clientLock.Lock()
+	defer s.clientLock.Unlock()
+	s.retryPolicy = &policy
+	return s
+}
+
+// WithMiddleware adds a middleware to the session's middleware chain.
+func (s *defaultSession) WithMiddleware(m client.Middleware) client.Session {
+	s.clientLock.Lock()
+	defer s.clientLock.Unlock()
+	s.middlewares = append(s.middlewares, m)
+	return s
+}
+
+func (s *defaultSession) Clone() client.Client {
 	s.clientLock.Lock()
 	defer s.clientLock.Unlock()
 	var transport *http.Transport
@@ -430,6 +425,18 @@ func (s *defaultSession) Clone() Client {
 		Jar:       jar,
 	}
 	newHeaders := s.headers.Clone()
+	// Copy middlewares slice
+	var newMiddlewares []client.Middleware
+	if len(s.middlewares) > 0 {
+		newMiddlewares = make([]client.Middleware, len(s.middlewares))
+		copy(newMiddlewares, s.middlewares)
+	}
+	// Copy retry policy
+	var newRetryPolicy *client.RetryPolicy
+	if s.retryPolicy != nil {
+		policyCopy := *s.retryPolicy
+		newRetryPolicy = &policyCopy
+	}
 	newSession := &defaultSession{
 		baseURL:      s.baseURL,
 		timeout:      s.timeout,
@@ -441,6 +448,8 @@ func (s *defaultSession) Clone() Client {
 		keepAlive:    s.keepAlive,
 		maxIdleConns: s.maxIdleConns,
 		bearerToken:  s.bearerToken,
+		retryPolicy:  newRetryPolicy,
+		middlewares:  newMiddlewares,
 	}
 	if !s.useHTTP2 {
 		newSession.client.Transport.(*http.Transport).TLSNextProto = make(map[string]func(string, *tls.Conn) http.RoundTripper)
@@ -462,7 +471,7 @@ func (s *defaultSession) Close() error {
 	return nil
 }
 
-func (s *defaultSession) Clear() Session {
+func (s *defaultSession) Clear() client.Session {
 	s.clientLock.Lock()
 	defer s.clientLock.Unlock()
 	s.baseURL = ""
@@ -475,6 +484,8 @@ func (s *defaultSession) Clear() Session {
 	s.bearerToken = ""
 	s.authHeader = ""
 	s.headers = http.Header{}
+	s.retryPolicy = nil
+	s.middlewares = nil
 	jar, _ := cookiejar.New(nil)
 	s.client = &http.Client{
 		Transport: GetTransport(false),
@@ -505,22 +516,105 @@ func applyHeaders(dst, src http.Header) {
 }
 
 func (s *defaultSession) Do(req *Request) (*models.Response, error) {
+	return s.DoWithContext(context.Background(), req)
+}
+
+// DoWithContext executes an HTTP request with the given context.
+// The context is used for cancellation and deadline control.
+func (s *defaultSession) DoWithContext(ctx context.Context, req *Request) (*models.Response, error) {
 	if req.URL == nil {
 		return nil, errors.New("request URL cannot be nil")
 	}
-	if req.Context == nil {
-		req.Context = context.Background()
+	if ctx == nil {
+		ctx = context.Background()
 	}
 	finalURL, err := s.resolveURL(req.URL)
 	if err != nil {
 		return nil, err
 	}
-	ctx := req.Context
+	// Apply session timeout if set and context doesn't have a deadline
 	if s.timeout > 0 {
-		var cancel context.CancelFunc
-		ctx, cancel = context.WithTimeout(ctx, s.timeout)
-		defer cancel()
+		if _, hasDeadline := ctx.Deadline(); !hasDeadline {
+			var cancel context.CancelFunc
+			ctx, cancel = context.WithTimeout(ctx, s.timeout)
+			defer cancel()
+		}
 	}
+	// Execute with middleware chain if configured
+	if len(s.middlewares) > 0 {
+		return s.executeWithMiddleware(ctx, req, finalURL)
+	}
+	// Execute with retry if configured
+	if s.retryPolicy != nil {
+		return s.executeWithRetry(ctx, req, finalURL)
+	}
+	return s.executeRequest(ctx, req, finalURL)
+}
+
+// executeWithMiddleware executes the request through the middleware chain.
+func (s *defaultSession) executeWithMiddleware(ctx context.Context, req *Request, finalURL *url.URL) (*models.Response, error) {
+	// Build the final handler
+	finalHandler := func(r *Request) (*models.Response, error) {
+		if s.retryPolicy != nil {
+			return s.executeWithRetry(ctx, r, finalURL)
+		}
+		return s.executeRequest(ctx, r, finalURL)
+	}
+	// Build middleware chain (reverse order)
+	handler := finalHandler
+	for i := len(s.middlewares) - 1; i >= 0; i-- {
+		m := s.middlewares[i]
+		next := handler
+		handler = func(r *Request) (*models.Response, error) {
+			return m.Process(r, next)
+		}
+	}
+	return handler(req)
+}
+
+// executeWithRetry executes the request with retry logic.
+func (s *defaultSession) executeWithRetry(ctx context.Context, req *Request, finalURL *url.URL) (*models.Response, error) {
+	var lastErr error
+	var lastResp *models.Response
+	policy := s.retryPolicy
+	interval := policy.InitialInterval
+	for attempt := 0; attempt < policy.MaxAttempts; attempt++ {
+		// Check context before each attempt
+		if err := ctx.Err(); err != nil {
+			return nil, err
+		}
+		resp, err := s.executeRequest(ctx, req, finalURL)
+		if err == nil && (policy.RetryIf == nil || !policy.RetryIf(resp, nil)) {
+			return resp, nil
+		}
+		lastErr = err
+		lastResp = resp
+		// Check if we should retry
+		if policy.RetryIf != nil && !policy.RetryIf(resp, err) {
+			return resp, err
+		}
+		// Wait before next attempt (except for last attempt)
+		if attempt < policy.MaxAttempts-1 {
+			select {
+			case <-ctx.Done():
+				return nil, ctx.Err()
+			case <-time.After(interval):
+			}
+			// Calculate next interval with exponential backoff
+			interval = time.Duration(float64(interval) * policy.Multiplier)
+			if interval > policy.MaxInterval {
+				interval = policy.MaxInterval
+			}
+		}
+	}
+	if lastErr != nil {
+		return nil, lastErr
+	}
+	return lastResp, nil
+}
+
+// executeRequest performs the actual HTTP request.
+func (s *defaultSession) executeRequest(ctx context.Context, req *Request, finalURL *url.URL) (*models.Response, error) {
 	httpReq, err := http.NewRequestWithContext(ctx, req.Method.String(), finalURL.String(), req.Body)
 	if err != nil {
 		return nil, err

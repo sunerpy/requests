@@ -41,6 +41,12 @@ func main() {
 	retryExample()
 	// Example 7: Hooks for observability
 	hooksExample()
+	// Example 8: Context with timeout and cancellation
+	contextExample()
+	// Example 9: Session with retry policy
+	sessionRetryExample()
+	// Example 10: Session with middleware
+	sessionMiddlewareExample()
 }
 
 func basicGetExample() {
@@ -225,4 +231,137 @@ func hooksExample() {
 	totalRequests, responses, errors, avgDuration := metrics.Stats()
 	fmt.Printf("Metrics: %d requests, %d responses, %d errors, avg duration: %v\n",
 		totalRequests, responses, errors, avgDuration)
+}
+
+func contextExample() {
+	fmt.Println("--- Example 8: Context with Timeout and Cancellation ---")
+
+	// Example 8a: Context with timeout
+	fmt.Println("  8a: Context with timeout")
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	session := requests.NewSession()
+	defer session.Close()
+
+	req, _ := requests.NewGet("https://httpbin.org/get").Build()
+
+	// DoWithContext respects context timeout and cancellation
+	resp, err := session.DoWithContext(ctx, req)
+	if err != nil {
+		switch err {
+		case context.DeadlineExceeded:
+			fmt.Println("  Request timed out")
+		case context.Canceled:
+			fmt.Println("  Request was canceled")
+		default:
+			log.Printf("  Context Error: %v\n", err)
+		}
+		return
+	}
+	fmt.Printf("  Status: %d\n", resp.StatusCode)
+
+	// Example 8b: Context cancellation
+	fmt.Println("  8b: Context cancellation (simulated)")
+	cancelCtx, cancelFunc := context.WithCancel(context.Background())
+
+	// In a real scenario, you might cancel based on user action or other events
+	go func() {
+		time.Sleep(100 * time.Millisecond)
+		// cancelFunc() // Uncomment to test cancellation
+		_ = cancelFunc // Avoid unused variable warning
+	}()
+
+	req2, _ := requests.NewGet("https://httpbin.org/delay/1").Build()
+	resp2, err := session.DoWithContext(cancelCtx, req2)
+	if err != nil {
+		fmt.Printf("  Canceled or error: %v\n", err)
+	} else {
+		fmt.Printf("  Completed with status: %d\n", resp2.StatusCode)
+	}
+	cancelFunc() // Clean up
+
+	fmt.Println()
+}
+
+func sessionRetryExample() {
+	fmt.Println("--- Example 9: Session with Retry Policy ---")
+
+	// Create session with built-in retry support
+	session := requests.NewSession().
+		WithBaseURL("https://httpbin.org").
+		WithTimeout(30 * time.Second).
+		WithRetry(requests.RetryPolicy{
+			MaxAttempts:     3,
+			InitialInterval: 100 * time.Millisecond,
+			MaxInterval:     2 * time.Second,
+			Multiplier:      2.0,
+			Jitter:          0.1,
+			RetryIf: func(resp *requests.Response, err error) bool {
+				if err != nil {
+					fmt.Println("  Retrying due to error...")
+					return true
+				}
+				if resp != nil && (resp.StatusCode >= 500 || resp.StatusCode == 429) {
+					fmt.Printf("  Retrying due to status %d...\n", resp.StatusCode)
+					return true
+				}
+				return false
+			},
+		})
+	defer session.Close()
+
+	// Make request - will automatically retry on failure
+	req, _ := requests.NewGet("/get").Build()
+	resp, err := session.Do(req)
+	if err != nil {
+		log.Printf("  Session Retry Error: %v\n", err)
+		return
+	}
+	fmt.Printf("  Success! Status: %d\n", resp.StatusCode)
+	fmt.Println()
+}
+
+func sessionMiddlewareExample() {
+	fmt.Println("--- Example 10: Session with Middleware ---")
+
+	// Create a logging middleware
+	loggingMiddleware := requests.MiddlewareFunc(func(req *requests.Request, next requests.Handler) (*requests.Response, error) {
+		start := time.Now()
+		fmt.Printf("  [Middleware] Starting request: %s %s\n", req.Method, req.URL)
+
+		resp, err := next(req)
+
+		duration := time.Since(start)
+		if resp != nil {
+			fmt.Printf("  [Middleware] Completed: %d in %v\n", resp.StatusCode, duration)
+		} else if err != nil {
+			fmt.Printf("  [Middleware] Failed: %v in %v\n", err, duration)
+		}
+		return resp, err
+	})
+
+	// Create an auth middleware
+	authMiddleware := requests.MiddlewareFunc(func(req *requests.Request, next requests.Handler) (*requests.Response, error) {
+		req.SetHeader("X-Auth-Token", "secret-token-123")
+		fmt.Println("  [Auth Middleware] Added auth header")
+		return next(req)
+	})
+
+	// Create session with multiple middlewares
+	session := requests.NewSession().
+		WithBaseURL("https://httpbin.org").
+		WithMiddleware(loggingMiddleware).
+		WithMiddleware(authMiddleware)
+	defer session.Close()
+
+	// Make request - middlewares will be executed in order
+	req, _ := requests.NewGet("/headers").Build()
+	resp, err := session.Do(req)
+	if err != nil {
+		log.Printf("  Session Middleware Error: %v\n", err)
+		return
+	}
+	fmt.Printf("  Response preview: %s...\n", resp.Text()[:100])
+	fmt.Println()
 }

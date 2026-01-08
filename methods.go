@@ -150,7 +150,7 @@ func Options(baseURL string, opts ...client.RequestOption) (*Response, error) {
 }
 
 // DefaultSession returns the default session.
-func DefaultSession() Session {
+func DefaultSession() client.Session {
 	return defaultSess
 }
 
