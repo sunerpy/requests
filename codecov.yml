@@ -1,3 +1,6 @@
 ignore:
   # exclude any directories that start with "example"
   - "example/*"
+  # exclude docs directory (contains example code, not production code)
+  - "docs/*"
+  - "docs/**/*"
