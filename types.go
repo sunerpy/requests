@@ -31,6 +31,20 @@ type (
 	RetryPolicy = client.RetryPolicy
 	// RetryExecutor executes requests with retry logic.
 	RetryExecutor = client.RetryExecutor
+	// BasicAuth holds basic authentication credentials.
+	BasicAuth = client.BasicAuth
+)
+
+// Interface type aliases - allows external packages to use these interfaces
+type (
+	// Client is the core HTTP client interface.
+	// It provides Do, DoWithContext, and Clone methods.
+	Client = client.Client
+	// Session extends Client with session management capabilities.
+	// It provides configuration methods like WithTimeout, WithRetry, WithMiddleware, etc.
+	Session = client.Session
+	// MiddlewareFunc is a function adapter for Middleware interface.
+	MiddlewareFunc = client.MiddlewareFunc
 )
 
 // Error types

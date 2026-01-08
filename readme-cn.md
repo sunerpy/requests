@@ -131,6 +131,109 @@ req, _ := requests.NewGet("/users").Build()
 resp, err := session.Do(req)
 ```
 
+### 使用 Context 控制超时和取消
+
+```go
+import "context"
+
+// 创建带超时的 context
+ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+defer cancel()
+
+session := requests.NewSession()
+defer session.Close()
+
+req, _ := requests.NewGet("https://api.example.com/data").Build()
+
+// 使用 context 执行请求 - 支持超时和取消
+resp, err := session.DoWithContext(ctx, req)
+if err != nil {
+    if err == context.DeadlineExceeded {
+        log.Println("请求超时")
+    } else if err == context.Canceled {
+        log.Println("请求被取消")
+    }
+    return
+}
+fmt.Println("响应:", resp.Text())
+```
+
+### Context 取消示例
+
+```go
+ctx, cancel := context.WithCancel(context.Background())
+
+// 2 秒后取消请求
+go func() {
+    time.Sleep(2 * time.Second)
+    cancel()
+}()
+
+session := requests.NewSession()
+defer session.Close()
+
+req, _ := requests.NewGet("https://api.example.com/slow-endpoint").Build()
+resp, err := session.DoWithContext(ctx, req)
+if err != nil {
+    // 处理取消
+    log.Printf("请求被取消: %v", err)
+}
+```
+
+### 带重试策略的 Session
+
+```go
+session := requests.NewSession().
+    WithBaseURL("https://api.example.com").
+    WithTimeout(30 * time.Second).
+    WithRetry(requests.RetryPolicy{
+        MaxAttempts:     3,                        // 最大重试次数
+        InitialInterval: 100 * time.Millisecond,   // 初始重试间隔
+        MaxInterval:     5 * time.Second,          // 最大重试间隔
+        Multiplier:      2.0,                      // 退避乘数
+        RetryIf: func(resp *requests.Response, err error) bool {
+            if err != nil {
+                return true // 网络错误时重试
+            }
+            // 5xx 错误和 429 太多请求时重试
+            return resp.StatusCode >= 500 || resp.StatusCode == 429
+        },
+    })
+
+defer session.Close()
+
+req, _ := requests.NewGet("/users").Build()
+resp, err := session.Do(req) // 失败时自动重试
+```
+
+### 带中间件的 Session
+
+```go
+// 创建日志中间件
+loggingMiddleware := requests.MiddlewareFunc(func(req *requests.Request, next requests.Handler) (*requests.Response, error) {
+    start := time.Now()
+    log.Printf("请求: %s %s", req.Method, req.URL)
+    
+    resp, err := next(req)
+    
+    duration := time.Since(start)
+    if resp != nil {
+        log.Printf("响应: %d 耗时 %v", resp.StatusCode, duration)
+    }
+    return resp, err
+})
+
+// 创建带中间件的 session
+session := requests.NewSession().
+    WithBaseURL("https://api.example.com").
+    WithMiddleware(loggingMiddleware)
+
+defer session.Close()
+
+req, _ := requests.NewGet("/users").Build()
+resp, err := session.Do(req) // 中间件会记录请求/响应
+```
+
 ### 中间件
 
 ```go
@@ -169,6 +272,38 @@ resp, err := executor.Execute(nil, func() (*requests.Response, error) {
 | `Delete(url, opts...)` | 发送 DELETE 请求 |
 | `GetJSON[T](url, opts...)` | GET 并解析 JSON，返回 `(Result[T], error)` |
 | `PostJSON[T](url, data, opts...)` | POST JSON，返回 `(Result[T], error)` |
+| `NewSession()` | 创建新的 Session |
+| `DefaultSession()` | 获取默认 Session |
+
+### Session 方法
+
+| 方法 | 描述 |
+| ------ | ------ |
+| `Do(req)` | 执行请求 |
+| `DoWithContext(ctx, req)` | 使用 context 执行请求（支持超时/取消） |
+| `Clone()` | 创建 Session 副本 |
+| `Close()` | 关闭 Session 并释放资源 |
+| `Clear()` | 重置 Session 到默认状态 |
+
+### Session 配置方法
+
+| 方法 | 描述 |
+| ------ | ------ |
+| `WithBaseURL(url)` | 设置所有请求的基础 URL |
+| `WithTimeout(duration)` | 设置请求超时 |
+| `WithProxy(url)` | 设置代理 URL |
+| `WithDNS(servers)` | 设置自定义 DNS 服务器 |
+| `WithHeader(key, value)` | 添加默认请求头 |
+| `WithHeaders(map)` | 添加多个默认请求头 |
+| `WithBasicAuth(user, pass)` | 设置 Basic 认证 |
+| `WithBearerToken(token)` | 设置 Bearer Token |
+| `WithHTTP2(enabled)` | 启用/禁用 HTTP/2 |
+| `WithKeepAlive(enabled)` | 启用/禁用 Keep-Alive |
+| `WithMaxIdleConns(n)` | 设置最大空闲连接数 |
+| `WithIdleTimeout(duration)` | 设置空闲连接超时 |
+| `WithRetry(policy)` | 设置重试策略 |
+| `WithMiddleware(m)` | 添加中间件 |
+| `WithCookieJar(jar)` | 设置 Cookie Jar |
 
 ### Result[T] 方法
 

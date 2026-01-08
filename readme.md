@@ -153,6 +153,109 @@ req, _ := requests.NewGet("/users").Build()
 resp, err := session.Do(req)
 ```
 
+### Using Context for Timeout and Cancellation
+
+```go
+import "context"
+
+// Create a context with timeout
+ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+defer cancel()
+
+session := requests.NewSession()
+defer session.Close()
+
+req, _ := requests.NewGet("https://api.example.com/data").Build()
+
+// Execute with context - respects timeout and cancellation
+resp, err := session.DoWithContext(ctx, req)
+if err != nil {
+    if err == context.DeadlineExceeded {
+        log.Println("Request timed out")
+    } else if err == context.Canceled {
+        log.Println("Request was cancelled")
+    }
+    return
+}
+fmt.Println("Response:", resp.Text())
+```
+
+### Context Cancellation Example
+
+```go
+ctx, cancel := context.WithCancel(context.Background())
+
+// Cancel the request after 2 seconds
+go func() {
+    time.Sleep(2 * time.Second)
+    cancel()
+}()
+
+session := requests.NewSession()
+defer session.Close()
+
+req, _ := requests.NewGet("https://api.example.com/slow-endpoint").Build()
+resp, err := session.DoWithContext(ctx, req)
+if err != nil {
+    // Handle cancellation
+    log.Printf("Request cancelled: %v", err)
+}
+```
+
+### Session with Retry Policy
+
+```go
+session := requests.NewSession().
+    WithBaseURL("https://api.example.com").
+    WithTimeout(30 * time.Second).
+    WithRetry(requests.RetryPolicy{
+        MaxAttempts:     3,
+        InitialInterval: 100 * time.Millisecond,
+        MaxInterval:     5 * time.Second,
+        Multiplier:      2.0,
+        RetryIf: func(resp *requests.Response, err error) bool {
+            if err != nil {
+                return true // Retry on network errors
+            }
+            // Retry on 5xx errors and 429 Too Many Requests
+            return resp.StatusCode >= 500 || resp.StatusCode == 429
+        },
+    })
+
+defer session.Close()
+
+req, _ := requests.NewGet("/users").Build()
+resp, err := session.Do(req) // Will automatically retry on failure
+```
+
+### Session with Middleware
+
+```go
+// Create a logging middleware
+loggingMiddleware := requests.MiddlewareFunc(func(req *requests.Request, next requests.Handler) (*requests.Response, error) {
+    start := time.Now()
+    log.Printf("Request: %s %s", req.Method, req.URL)
+    
+    resp, err := next(req)
+    
+    duration := time.Since(start)
+    if resp != nil {
+        log.Printf("Response: %d in %v", resp.StatusCode, duration)
+    }
+    return resp, err
+})
+
+// Create session with middleware
+session := requests.NewSession().
+    WithBaseURL("https://api.example.com").
+    WithMiddleware(loggingMiddleware)
+
+defer session.Close()
+
+req, _ := requests.NewGet("/users").Build()
+resp, err := session.Do(req) // Middleware will log request/response
+```
+
 ### Middleware
 
 ```go
@@ -254,6 +357,37 @@ codec.Register("application/yaml", &YAMLCodec{})
 | `GetBytes(url, opts...)` | GET and return body as bytes |
 | `DoJSON[T](builder)` | Execute builder and parse JSON response |
 | `NewSession()` | Create new session |
+| `DefaultSession()` | Get the default session |
+
+### Session Methods
+
+| Method | Description |
+| ------ | ----------- |
+| `Do(req)` | Execute request |
+| `DoWithContext(ctx, req)` | Execute request with context (supports timeout/cancellation) |
+| `Clone()` | Create a copy of the session |
+| `Close()` | Close the session and release resources |
+| `Clear()` | Reset session to default state |
+
+### Session Configuration Methods
+
+| Method | Description |
+| ------ | ----------- |
+| `WithBaseURL(url)` | Set base URL for all requests |
+| `WithTimeout(duration)` | Set request timeout |
+| `WithProxy(url)` | Set proxy URL |
+| `WithDNS(servers)` | Set custom DNS servers |
+| `WithHeader(key, value)` | Add default header |
+| `WithHeaders(map)` | Add multiple default headers |
+| `WithBasicAuth(user, pass)` | Set basic authentication |
+| `WithBearerToken(token)` | Set bearer token |
+| `WithHTTP2(enabled)` | Enable/disable HTTP/2 |
+| `WithKeepAlive(enabled)` | Enable/disable keep-alive |
+| `WithMaxIdleConns(n)` | Set max idle connections |
+| `WithIdleTimeout(duration)` | Set idle connection timeout |
+| `WithRetry(policy)` | Set retry policy |
+| `WithMiddleware(m)` | Add middleware |
+| `WithCookieJar(jar)` | Set cookie jar |
 
 ### Request Builder
 

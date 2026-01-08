@@ -56,6 +56,7 @@ type Session interface {
 	WithBaseURL(base string) Session
 	WithTimeout(d time.Duration) Session
 	WithProxy(proxyURL string) Session
+	WithDNS(dnsServers []string) Session
 	WithHeader(key, value string) Session
 	WithHeaders(headers map[string]string) Session
 	WithBasicAuth(username, password string) Session
